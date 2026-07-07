@@ -55,31 +55,33 @@
 }
 
 :root {
-  /* advida.com palette (extracted from theme main.css) */
-  --advida-bg: #021222;
-  --advida-card: #10253e;
-  --advida-accent: #00aeef;
-  --advida-blue: #0662b0;
-  --advida-panel: rgba(64, 156, 234, 0.08);
+  /* Trivoxa Group palette — premium dark monochrome + warm gold (sunset) */
+  --advida-bg: #0a0a0c;                       /* near-black canvas */
+  --advida-card: #151519;                      /* lifted charcoal surface */
+  --advida-accent: #c9a24a;                    /* warm gold accent */
+  --advida-blue: #a17d33;                      /* deep gold */
+  --advida-panel: rgba(201, 162, 74, 0.07);    /* faint gold panel fill */
+  --trivoxa-silver: #cfd2d4;                   /* eagle / particle silver */
+  --trivoxa-gold: #d9b36c;                      /* bright gold highlight */
 
-  --background: #021222;
-  --foreground: #ffffff;
-  --card: #10253e;
-  --card-foreground: #ffffff;
-  --popover: #10253e;
-  --popover-foreground: #ffffff;
-  --primary: #00aeef;
-  --primary-foreground: #021222;
-  --secondary: #162e44;
-  --secondary-foreground: #ffffff;
-  --muted: #10253e;
-  --muted-foreground: rgba(255, 255, 255, 0.55);
-  --accent: #00aeef;
-  --accent-foreground: #021222;
+  --background: #0a0a0c;
+  --foreground: #f4f3f1;
+  --card: #151519;
+  --card-foreground: #f4f3f1;
+  --popover: #151519;
+  --popover-foreground: #f4f3f1;
+  --primary: #c9a24a;
+  --primary-foreground: #0a0a0c;
+  --secondary: #1c1c22;
+  --secondary-foreground: #f4f3f1;
+  --muted: #151519;
+  --muted-foreground: rgba(244, 243, 241, 0.55);
+  --accent: #c9a24a;
+  --accent-foreground: #0a0a0c;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: rgba(255, 255, 255, 0.44);
-  --input: rgba(64, 156, 234, 0.08);
-  --ring: #00aeef;
+  --border: rgba(255, 255, 255, 0.14);
+  --input: rgba(201, 162, 74, 0.07);
+  --ring: #c9a24a;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -155,22 +157,37 @@
   background-color: transparent !important;
 }
 .scrollbar-thumb {
-  background: #00aeef !important;
+  background: #c9a24a !important;
   width: 4px !important;
 }
 
-/* GSAP text-split reveal targets */
+/* GSAP text-split reveal targets — refined timing */
 .word_inner {
   opacity: 0;
-  filter: blur(4px);
+  filter: blur(6px);
+  will-change: opacity, filter;
 }
 .p_inner {
   opacity: 0;
+  will-change: opacity;
 }
 .testimonial_inner {
   opacity: 0;
-  transform: translateY(30px);
+  transform: translateY(24px);
   display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* Smooth universal scroll behavior for non-smooth-scroll contexts */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Global transition for interactive elements */
+a, button {
+  transition: color 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
+              border-color 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
+              background-color 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 /* preloader spinner */
@@ -184,6 +201,37 @@
 }
 
 /* odometer-style digit roll */
+.odometer {
+  display: inline-flex;
+}
+.odometer-digit {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  height: 72px;
+  width: 0.55em;
+}
+.odometer-digit-spacer {
+  visibility: hidden;
+  display: inline-block;
+}
+.odometer-digit-inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+}
+.odometer-ribbon {
+  display: block;
+}
 .odometer-ribbon-inner {
-  transition-duration: 4s !important;
+  display: block;
+  transition: transform 4s ease-out !important;
+}
+.odometer-value {
+  display: block;
+  text-align: center;
+  height: 72px;
+  line-height: 72px;
 }

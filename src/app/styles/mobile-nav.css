@@ -1,0 +1,120 @@
+body.nav-active {
+  overflow: hidden;
+}
+
+body.nav-active .mobile-nav {
+  pointer-events: all;
+}
+
+body.nav-active .hamburger > div:first-child {
+  transform: rotate(45deg) translateX(6px);
+}
+
+body.nav-active .hamburger > div:nth-child(2) {
+  transform: rotate(-45deg) translateX(6px);
+}
+
+.mobile-nav {
+  position: fixed;
+  z-index: 999;
+  display: flex;
+  pointer-events: none;
+  justify-content: center;
+  height: 100vh;
+  width: 100%;
+  background-color: #151519;
+  clip-path: circle(50% at 50% 0%);
+  transform: translateY(-100%);
+}
+
+.mobile-nav .nav__content {
+  position: fixed;
+  top: 50%;
+  transform: translate(0%, -50%);
+  width: 90%;
+  height: 80%;
+  overflow-y: scroll;
+  display: flex;
+  padding-top: 50px;
+  flex-direction: column;
+}
+
+.mobile-nav .nav__content > ul {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+}
+
+.mobile-nav .nav__content > ul > li {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.mobile-nav .nav__content > ul > li a {
+  font-size: 30px;
+  line-height: 32px;
+  letter-spacing: 1px;
+  display: block;
+  font-family: var(--font-lufga);
+  font-weight: 400;
+}
+
+.mobile-nav .nav__content > ul > li:first-child.opened > a::before {
+  transform: scaleY(-1);
+}
+
+.mobile-nav .nav__content > ul > li:first-child > a {
+  width: 100%;
+  cursor: pointer;
+  position: relative;
+}
+
+.mobile-nav .nav__content > ul > li:first-child > a::before {
+  content: "";
+  position: absolute;
+  width: 13px;
+  bottom: 0;
+  right: 0;
+  margin: auto 0;
+  height: 8px;
+  top: 0;
+  background-image: url(/images/icons/chevron-down.svg);
+  background-repeat: no-repeat;
+  transition: all 0.3s;
+}
+
+.mobile-nav .nav__content > ul > li:first-child > .sub-menu {
+  display: none;
+  margin-top: 20px;
+}
+
+.mobile-nav .nav__content > ul > li:first-child > .sub-menu > li:not(:last-child) {
+  margin-bottom: 30px;
+}
+
+.mobile-nav .nav__content > ul > li:first-child > .sub-menu > li > a {
+  font-size: 22px;
+  line-height: 28px;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+  padding-bottom: 5px;
+  font-family: var(--font-lufga);
+  font-weight: 600;
+  width: fit-content;
+  padding-left: 15px;
+}
+
+.mobile-nav .nav__content > ul > li:first-child > .sub-menu ul {
+  padding: revert;
+  list-style: circle;
+}
+
+.mobile-nav .nav__content > ul > li:first-child > .sub-menu ul a {
+  padding: 7px 0;
+  font-size: 18px;
+  line-height: 26px;
+}
+
+.mobile-nav .nav__content > ul > li:not(:last-child) {
+  margin-bottom: 25px;
+}

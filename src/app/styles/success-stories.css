@@ -1,0 +1,402 @@
+.case-studies .slider {
+  width: 100%;
+  overflow: visible;
+}
+
+.case-studies .slider .animation-wrap {
+  width: fit-content;
+  display: flex;
+}
+
+.case-studies .slider .item {
+  display: flex;
+  border-radius: 12px;
+  width: 837px;
+  min-width: 837px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: linear-gradient(135deg, rgba(201, 162, 74, 0.06) 0%, rgba(3, 49, 88, 0.06) 100%);
+  padding: 52px 42px 42px 42px;
+  transition: transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1),
+              border-color 0.45s cubic-bezier(0.25, 0.1, 0.25, 1),
+              background 0.45s cubic-bezier(0.25, 0.1, 0.25, 1),
+              box-shadow 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
+  height: auto;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.case-studies .slider .item:not(:last-child) {
+  margin-right: 48px;
+}
+
+.case-studies .slider .item:hover {
+  border-color: rgba(201, 162, 74, 0.5);
+  transform: translateY(-8px);
+  background: linear-gradient(135deg, rgba(201, 162, 74, 0.1) 0%, rgba(3, 49, 88, 0.2) 100%);
+  box-shadow: 0 12px 40px -12px rgba(201, 162, 74, 0.12);
+}
+
+.case-studies .slider .item:hover .text-wrapper .bottom button {
+  transform: translateX(0);
+  pointer-events: all;
+  opacity: 1;
+}
+
+.case-studies .slider .item .image {
+  margin-right: 36px;
+  flex-shrink: 0;
+}
+
+.case-studies .slider .item .image > div {
+  width: 240px;
+  height: 240px;
+  background: #0a0a0c;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.case-studies .slider .item .image > div img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  mix-blend-mode: luminosity;
+  opacity: 0.85;
+  transition: opacity 0.4s ease;
+}
+
+.case-studies .slider .item:hover .image > div img {
+  opacity: 1;
+  mix-blend-mode: normal;
+}
+
+.case-studies .slider .item .text-wrapper {
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+}
+
+.case-studies .slider .item .text-wrapper h4 {
+  margin-bottom: 10px;
+}
+
+.case-studies .slider .item .text-wrapper p {
+  color: rgba(244, 243, 241, 0.65);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.case-studies .slider .item .text-wrapper .bottom {
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 36px;
+}
+
+.case-studies .slider .item .text-wrapper .bottom button {
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+  pointer-events: none;
+  transform: translateX(-24px);
+}
+
+.case-studies .slider .item .text-wrapper .bottom button a {
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  border-radius: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  transition: border-color 0.3s ease;
+}
+
+.case-studies .slider .item .text-wrapper .bottom button a:hover {
+  border-color: var(--advida-accent, #c9a24a);
+}
+
+.case-studies .slider .item .text-wrapper .bottom button a span {
+  margin-right: 28px;
+  font-size: 14px;
+  line-height: 1;
+  font-family: var(--font-lufga);
+  font-weight: 300;
+  transition: transform 0.3s ease;
+}
+
+.case-studies .slider .item .text-wrapper .bottom button a:hover span {
+  transform: translateX(4px);
+}
+
+.case-studies .slider .item .text-wrapper .bottom button a img {
+  transition: transform 0.3s ease;
+}
+
+.case-studies .slider .item .text-wrapper .bottom button a:hover img {
+  transform: translateX(-4px);
+}
+
+.case-studies .slider .item .text-wrapper .bottom .logo {
+  max-width: 100px;
+  padding-top: 28px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.case-studies .slider .item .text-wrapper .bottom .logo img {
+  max-width: 100%;
+  opacity: 0.7;
+}
+
+.hp-sec-2 {
+  margin-top: 100px;
+  padding-top: 80px;
+  padding-bottom: 100px;
+  overflow-x: hidden;
+}
+
+.hp-sec-2 .container {
+  flex-direction: column;
+}
+
+.hp-sec-2 .container > div {
+  width: 100%;
+}
+
+.hp-sec-2 .container > .upper {
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 120px;
+  position: relative;
+}
+
+.hp-sec-2 .container > .upper .right {
+  display: flex;
+  flex-direction: column;
+}
+
+.hp-sec-2 .container > .upper .right h2 {
+  transform: scale(0.94);
+}
+
+.hp-sec-2 .container > .upper .right .lg-text {
+  font-family: var(--font-lufga);
+  font-weight: 600;
+  font-size: 104px;
+  line-height: 120px;
+  transform: scale(0.94);
+}
+
+.hp-sec-2 .container > .upper .right .text {
+  font-family: var(--font-lufga);
+  font-weight: 300;
+  font-size: 22px;
+  line-height: 40px;
+  letter-spacing: 1.1px;
+}
+
+.hp-sec-2 .container > .middle {
+  margin-top: 100px;
+  margin-bottom: 77px;
+}
+
+.hp-sec-2 .container > .bottom {
+  align-items: center;
+  padding: 48px 52px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(201, 162, 74, 0.04) 0%, rgba(3, 49, 88, 0.04) 100%);
+  backdrop-filter: blur(5px);
+}
+
+.hp-sec-2 .container > .bottom .left {
+  max-width: 415px;
+}
+
+.hp-sec-2 .container > .bottom .left h5 {
+  transform: scale(0.94);
+  font-weight: 400;
+}
+
+.hp-sec-2 .container > .bottom .right {
+  max-width: 700px;
+}
+
+.hp-sec-2 .container > .bottom .right p {
+  font-size: 17px;
+  line-height: 1.75;
+  color: rgba(244, 243, 241, 0.7);
+}
+
+.hp-sec-2 .container > .bottom .middle {
+  height: 72px;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(201, 162, 74, 0.4) 50%,
+    transparent 100%
+  );
+  margin: 0 72px;
+}
+
+@media (max-width: 1599px) {
+  .case-studies .slider .item .image {
+    margin-right: 34px;
+  }
+  .case-studies .slider .item .image > div {
+    width: 200px;
+    height: 200px;
+  }
+  .case-studies .slider .item .text-wrapper .bottom {
+    margin-top: 28px;
+  }
+  .hp-sec-2 .container > .upper {
+    margin-bottom: 80px;
+  }
+  .hp-sec-2 .container > .upper .right .lg-text {
+    font-size: 94px;
+    line-height: 104px;
+  }
+  .hp-sec-2 .container > .bottom .middle {
+    margin: 0 65px;
+  }
+  .hp-sec-2 .container > .bottom .right {
+    max-width: 466px;
+  }
+}
+
+@media (max-width: 1399px) {
+  .hp-sec-2 .container > .upper .right .lg-text {
+    font-size: 84px;
+    line-height: 94px;
+  }
+  .hp-sec-2 .container > .bottom .right {
+    max-width: 360px;
+  }
+  .hp-sec-2 .container > .bottom .middle {
+    margin: 0 50px;
+  }
+}
+
+@media (max-width: 1199px) {
+  .case-studies .slider .item .image {
+    margin-right: 24px;
+  }
+  .case-studies .slider .item .image > div {
+    width: 130px;
+    height: 130px;
+  }
+  .hp-sec-2 .container > .upper {
+    margin-bottom: 40px;
+  }
+  .hp-sec-2 .container > .upper .right .lg-text {
+    font-size: 74px;
+    line-height: 84px;
+  }
+  .hp-sec-2 .container > .bottom {
+    padding: 32px;
+  }
+  .hp-sec-2 .container > .bottom .right {
+    max-width: 333px;
+  }
+  .hp-sec-2 .container > .bottom .middle {
+    margin: 0 32px;
+  }
+}
+
+@media (max-width: 991px) {
+  .case-studies .slider .item {
+    padding: 45px 30px 35px 30px;
+    width: auto;
+    min-width: auto;
+  }
+  .case-studies .slider .item .text-wrapper .bottom .logo {
+    max-width: 113px;
+  }
+  .case-studies .slider .item .text-wrapper .bottom button a {
+    padding: 15px;
+  }
+  .hp-sec-2 .container > .upper .right .lg-text {
+    font-size: 64px;
+    line-height: 74px;
+  }
+  .hp-sec-2 .container > .middle {
+    margin-top: 50px;
+  }
+  .hp-sec-2 .container > .bottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .hp-sec-2 .container > .bottom > div {
+    max-width: 100% !important;
+  }
+  .hp-sec-2 .container > .bottom .middle {
+    margin: 35px 0;
+    width: 80px;
+    height: 1px;
+  }
+}
+
+@media (max-width: 767px) {
+  .hp-sec-2 {
+    margin-top: 0;
+  }
+  .case-studies .swiper .swiper-slide {
+    flex-direction: column;
+  }
+  .case-studies .swiper .swiper-slide .image {
+    margin-right: 0;
+    margin-bottom: 30px;
+  }
+}
+
+@media (max-width: 575px) {
+  .case-studies .swiper .swiper-slide .text-wrapper .bottom .logo {
+    max-width: 95px;
+  }
+  .hp-sec-2 .container > .upper {
+    margin-bottom: 0;
+  }
+  .hp-sec-2 .container > .upper .right .lg-text {
+    font-size: 54px;
+    line-height: 64px;
+  }
+}
+
+@media (max-width: 399px) {
+  .case-studies .swiper .swiper-slide .image {
+    margin-bottom: 20px;
+  }
+  .case-studies .swiper .swiper-slide .image > div {
+    width: 100px;
+    height: 100px;
+  }
+  .case-studies .swiper .swiper-slide {
+    padding: 25px;
+  }
+  .case-studies .swiper .swiper-slide .text-wrapper .bottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .case-studies .swiper .swiper-slide .text-wrapper .bottom button {
+    margin-bottom: 20px;
+    width: fit-content;
+  }
+}
+
+@media (min-width: 2000px) {
+  .case-studies .slider .item {
+    width: 1000px;
+    min-width: 1000px;
+  }
+  .hp-sec-2 .container > .upper .right {
+    width: 50%;
+  }
+  .hp-sec-2 .container > .upper .right .lg-text {
+    font-size: 114px;
+    line-height: 124px;
+  }
+  .hp-sec-2 .container > .bottom .right,
+  .hp-sec-2 .container > .bottom .left {
+    max-width: none;
+  }
+}

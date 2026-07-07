@@ -29,10 +29,10 @@ const calisto = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Advida | Acquire New Customers At Massive Scale",
+  title: "Trivoxa Group | Building the Future of Global Commerce",
   description:
-    "We combine the art of storytelling with the science of media buying to acquire new customers at massive scale.",
-  icons: { icon: "/seo/favicon.ico", shortcut: "/seo/favicon.ico" },
+    "Trivoxa Group is an international business group delivering trusted products, strategic sourcing solutions, and professional services across global markets.",
+  icons: { icon: "/favicon.ico", shortcut: "/favicon.ico" },
 };
 
 export default function RootLayout({
