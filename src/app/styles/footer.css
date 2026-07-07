@@ -1,8 +1,17 @@
 .footer {
   padding-top: 100px;
   padding-bottom: 64px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid transparent;
+  border-image: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0.06) 20%,
+    rgba(255, 255, 255, 0.06) 80%,
+    rgba(255, 255, 255, 0)
+  ) 1;
   background: linear-gradient(180deg, #0a0a0c 0%, #0e0e11 100%);
+  opacity: 0;
+  transform: translateY(40px);
 }
 
 .footer .container {
@@ -44,6 +53,7 @@
 
 .footer .container > div.socials .social:hover {
   transform: scale(1.15);
+  box-shadow: 0 0 16px rgba(201, 162, 74, 0.15);
 }
 
 .footer .container > div.socials .social:hover a {
@@ -145,12 +155,15 @@
   font-size: 14px;
   line-height: 1.8;
   letter-spacing: 0.01em;
-  color: rgba(244, 243, 241, 0.5);
-  transition: color 0.3s ease;
+  color: rgba(244, 243, 241, 0.55);
+  display: inline-block;
+  transition: color 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
 }
 
 .footer .container > div.footer-content > div ul li a:hover {
   color: var(--advida-accent, #c9a24a);
+  opacity: 1;
+  transform: translateX(4px);
 }
 
 .footer .container > div.footer-content > div ul li:not(:last-child) {

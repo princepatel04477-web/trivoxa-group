@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 
 const footerLinks = [
   {
@@ -37,13 +38,42 @@ const moreLinks = [
 
 export default function SiteFooter() {
   const [expanded, setExpanded] = useState(false);
+  const footerRef = useRef<HTMLElement>(null);
 
   const toggle = useCallback(() => {
     setExpanded((prev) => !prev);
   }, []);
 
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: footerRef.current,
+          start: "top 90%",
+          toggleActions: "play none none none",
+        },
+      });
+
+      tl.fromTo(footerRef.current, {}, { opacity: 1, y: 0, duration: 1, ease: "power2.out" });
+      tl.fromTo(
+        ".footer .socials",
+        { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" },
+        "-=0.4"
+      );
+      tl.fromTo(
+        ".footer .footer-content > div",
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.6, stagger: 0.12, ease: "power2.out" },
+        "-=0.3"
+      );
+    }, footerRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="footer">
+    <section className="footer" ref={footerRef}>
       <div className="container">
         <div className="socials d-flex">
           <div className="text">Follow Us</div>

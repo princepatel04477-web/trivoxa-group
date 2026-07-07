@@ -64,9 +64,7 @@ export default function HeroSection() {
         </div>
         <div className="hero-cta d-flex">
           <button className="primary-button" type="button" onClick={() => emit("modal:open")}>
-            <span className="d-flex">
-              <span>Request a Quote</span>
-            </span>
+            <span>Request a Quote</span>
           </button>
           <Link className="ghost-button" href="/businesses/">
             <span>Explore Businesses</span>

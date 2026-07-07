@@ -1,7 +1,7 @@
 .hp-contact-section {
   overflow: hidden;
-  padding-top: 80px;
-  padding-bottom: 120px;
+  padding-top: 60px;
+  padding-bottom: 70px;
 }
 
 .hp-contact-section .container {
@@ -9,7 +9,7 @@
 }
 
 .hp-contact-section .container .brands {
-  margin-bottom: 120px;
+  margin-bottom: 64px;
 }
 
 .hp-contact-section .container .contact {
@@ -18,7 +18,7 @@
 }
 
 .hp-contact-section .container .contact .row {
-  margin-left: 200px;
+  margin-left: 180px;
   justify-content: space-between;
 }
 

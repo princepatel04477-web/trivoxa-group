@@ -141,6 +141,14 @@
     font-weight: 300;
     overflow-x: hidden;
   }
+  h1, h2, h3, h4, h5, h6 {
+    text-rendering: optimizeLegibility;
+  }
+  :focus-visible {
+    outline: 1px solid var(--advida-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
 }
 
 /* ---------- advida.com global patterns (ported from theme main.css) ---------- */
@@ -159,6 +167,10 @@
 .scrollbar-thumb {
   background: #c9a24a !important;
   width: 4px !important;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+.scrollbar-thumb:hover {
+  box-shadow: 0 0 12px rgba(201, 162, 74, 0.15);
 }
 
 /* GSAP text-split reveal targets — refined timing */

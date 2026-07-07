@@ -33,9 +33,13 @@ export default function Home() {
       <ContactModal />
       <ScrollTopWidget />
       <HeroSection />
+      <div className="section-divider" />
       <SuccessStoriesSection />
+      <div className="section-divider" />
       <StatisticsSection />
+      <div className="section-divider" />
       <CoreServicesSection />
+      <div className="section-divider" />
       <ContactSection />
       <SiteFooter />
     </SmoothScrollProvider>

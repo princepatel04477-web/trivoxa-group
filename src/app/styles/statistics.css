@@ -1,6 +1,6 @@
 .hp-sec-3 {
-  padding-top: 80px;
-  padding-bottom: 160px;
+  padding-top: 60px;
+  padding-bottom: 90px;
 }
 
 .hp-sec-3 .container {
@@ -14,7 +14,7 @@
 }
 
 .hp-sec-3 .statistics h2 {
-  margin-bottom: 42px;
+  margin-bottom: 32px;
   max-width: 585px;
   transform: scale(0.94);
 }
@@ -23,7 +23,7 @@
   height: 1px;
   background: linear-gradient(90deg, rgba(201, 162, 74, 0.4), rgba(255, 255, 255, 0.1));
   width: 140px;
-  margin-bottom: 36px;
+  margin-bottom: 28px;
 }
 
 .hp-sec-3 .statistics .numbers .statistic {
@@ -55,7 +55,7 @@
 
 @media (max-width: 1599px) {
   .hp-sec-3 {
-    padding-bottom: 100px;
+    padding-bottom: 80px;
   }
 }
 
@@ -66,8 +66,8 @@
     margin-left: 160px;
   }
   .hp-sec-3 {
-    padding-top: 60px;
-    padding-bottom: 80px;
+    padding-top: 55px;
+    padding-bottom: 65px;
   }
   .hp-sec-3 .statistics .numbers .statistic:not(:last-child) {
     margin-right: 52px;

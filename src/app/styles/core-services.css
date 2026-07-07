@@ -1,6 +1,6 @@
 .hp-sec-4 {
-  padding-top: 80px;
-  padding-bottom: 120px;
+  padding-top: 60px;
+  padding-bottom: 70px;
 }
 
 .hp-sec-4 .container {
@@ -59,7 +59,7 @@
 }
 
 .hp-sec-4 .container .row-wrapper .row > div.right h4 {
-  margin-bottom: 32px;
+  margin-bottom: 24px;
   font-weight: 400;
 }
 
@@ -86,11 +86,11 @@
 }
 
 .hp-sec-4 .container .row-wrapper .row > div.right .checks > .check:not(:last-child) {
-  margin-bottom: 26px;
+  margin-bottom: 20px;
 }
 
 .hp-sec-4 .container .row-wrapper:not(:last-child) {
-  margin-bottom: 140px;
+  margin-bottom: 80px;
 }
 
 @media (max-width: 1399px) {

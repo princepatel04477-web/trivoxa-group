@@ -179,7 +179,7 @@ h4 {
   font-weight: 400;
   font-size: clamp(22px, 2vw, 28px);
   line-height: 1.36;
-  letter-spacing: 0;
+  letter-spacing: -0.005em;
   color: #fff;
 }
 
@@ -223,6 +223,11 @@ ul {
 /* Primary button used across the site */
 .primary-button {
   position: relative;
+  transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.primary-button:hover {
+  transform: translateY(-1px);
 }
 
 .primary-button a {
@@ -269,7 +274,7 @@ ul {
 }
 
 .primary-button.style-2:hover .arrow {
-  transform: translateX(4px);
+  transform: translateX(6px);
 }
 
 /* Font family fallbacks */
@@ -280,7 +285,7 @@ body {
   font-weight: 300;
   font-size: 16px;
   line-height: 1.75;
-  letter-spacing: 0.015em;
+  letter-spacing: 0.01em;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
