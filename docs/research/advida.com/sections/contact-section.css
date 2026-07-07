@@ -1,0 +1,186 @@
+
+
+.hp-contact-section {
+  overflow: hidden; }
+
+  .hp-contact-section .container {
+    flex-direction: column; }
+
+    .hp-contact-section .container .brands {
+      margin-bottom: 200px; }
+
+    .hp-contact-section .container .contact {
+      position: relative;
+      width: 100%; }
+
+      .hp-contact-section .container .contact .row {
+        margin-left: 200px;
+        justify-content: space-between; }
+
+        .hp-contact-section .container .contact .row .left {
+          padding-right: 20px; }
+
+          .hp-contact-section .container .contact .row .left .contact-form {
+            border-radius: 15px;
+            background: -moz-linear-gradient(180deg, rgba(64, 156, 234, 0.08) 0%, rgba(3, 49, 88, 0.08) 100%);
+            background: -webkit-linear-gradient(180deg, rgba(64, 156, 234, 0.08) 0%, rgba(3, 49, 88, 0.08) 100%);
+            background: linear-gradient(180deg, rgba(64, 156, 234, 0.08) 0%, rgba(3, 49, 88, 0.08) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            flex-direction: column;
+            padding: 61px 70px 84px 70px;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px); }
+
+            .hp-contact-section .container .contact .row .left .contact-form form > div.checkbox {
+              margin-top: 49px;
+              align-items: center;
+              margin-bottom: 36px; }
+
+              .hp-contact-section .container .contact .row .left .contact-form form > div.checkbox input {
+                width: 31px;
+                border-radius: 5px;
+                height: 31px; }
+
+              .hp-contact-section .container .contact .row .left .contact-form form > div.checkbox span {
+                margin-left: 16px;
+                font-size: 14px;
+                line-height: 16px;
+                letter-spacing: 0.42px; }
+
+                .hp-contact-section .container .contact .row .left .contact-form form > div.checkbox span a {
+                  text-decoration: underline;
+                  color: #00AEEF; }
+
+        .hp-contact-section .container .contact .row .information {
+          padding-left: 20px;
+          flex-direction: column;
+          width: 35%; }
+
+          .hp-contact-section .container .contact .row .information .line {
+            margin: 46px 0;
+            width: 179px;
+            height: 1px;
+            opacity: 0.5;
+            background-color: #fff; }
+
+
+.brands {
+  flex-direction: column; }
+
+  .brands h2 {
+    margin-bottom: 60px;
+    -webkit-transform: scale(0.94);
+    -moz-transform: scale(0.94);
+    -ms-transform: scale(0.94);
+    -o-transform: scale(0.94);
+    transform: scale(0.94); }
+
+  .brands .swiper {
+    width: 100%;
+    overflow: visible;
+    pointer-events: none; }
+
+    .brands .swiper .swiper-wrapper {
+      transition-timing-function: linear; }
+
+    .brands .swiper .swiper-slide {
+      border-radius: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      padding: 50px 40px;
+      height: auto;
+      display: -webkit-box;
+      display: -moz-box;
+      display: -ms-flexbox;
+      display: -webkit-flex;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(6, 98, 176, 0.08);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px); }
+
+      .brands .swiper .swiper-slide img {
+        max-width: 100%; }
+
+    .ss-hp-entry-section .container .brands .swiper {
+      opacity: 0; }
+@media (max-width: 1599px) {
+
+
+  .hp-contact-section .container .contact .row .information {
+    width: 45%; }
+
+  .hp-contact-section .container .contact .row .left .contact-form {
+    padding: 50px 55px 74px 55px; }
+}
+@media (max-width: 1399px) {
+
+
+  .hp-sec-3 .statistics,
+  .hp-sec-4 .container .row-wrapper,
+  .hp-contact-section .container .contact .row {
+    margin-left: 160px; }
+
+
+  .hp-contact-section .container .contact .row .information {
+    width: 50%; }
+
+  .hp-contact-section .container .contact .row .left .contact-form {
+    padding: 40px 45px 60px 45px; }
+}
+@media (max-width: 1199px) {
+
+
+  .hp-sec-3 .statistics,
+  .hp-sec-4 .container .row-wrapper,
+  .hp-contact-section .container .contact .row {
+    margin-left: 120px; }
+
+
+  .hp-contact-section .container .contact .row .left .contact-form {
+    padding: 30px; }
+
+  .hp-contact-section .container .contact .row .information {
+    width: 68%; }
+}
+@media (max-width: 991px) {
+
+
+  .hp-sec-3 .statistics,
+  .hp-sec-4 .container .row-wrapper,
+  .hp-contact-section .container .contact .row {
+    margin-left: 80px; }
+
+
+  .brands .swiper .swiper-slide {
+    padding: 30px 20px; }
+
+
+  .hp-contact-section .container .contact .row {
+    flex-direction: column-reverse; }
+
+    .hp-contact-section .container .contact .row > div {
+      width: 100% !important;
+      padding: 0 !important; }
+
+      .hp-contact-section .container .contact .row > div.information {
+        margin-bottom: 35px; }
+}
+@media (max-width: 767px) {
+
+
+  .hp-contact-section .container .brands {
+    margin-bottom: 100px; }
+
+
+  .hp-sec-3 .statistics,
+  .hp-sec-4 .container .row-wrapper,
+  .hp-contact-section .container .contact .row {
+    margin-left: 0; }
+}
+@media (min-width: 2000px) {
+
+
+  .hp-contact-section .container .contact .row .information {
+    width: 50%; }
+}

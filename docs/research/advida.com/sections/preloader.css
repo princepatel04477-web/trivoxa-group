@@ -1,0 +1,29 @@
+
+
+#preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #021222;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; }
+
+
+#loader {
+  border-top: 2px solid #00AEEF;
+  border-radius: 50%;
+  width: 70px;
+  height: 70px;
+  position: absolute;
+  -webkit-animation: spin 1s linear infinite;
+  -moz-animation: spin 1s linear infinite;
+  -o-animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite;
+  top: 50%;
+  left: 50%;
+  margin-left: -20px;
+  margin-top: -20px; }

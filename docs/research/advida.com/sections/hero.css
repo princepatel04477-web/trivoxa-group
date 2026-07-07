@@ -1,0 +1,111 @@
+
+
+.scroll-to {
+  position: absolute;
+  left: 125px;
+  bottom: 80px;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  align-items: center; }
+
+  .scroll-to .line {
+    width: 368px;
+    margin-right: 25.8px; }
+
+    .scroll-to .line > div {
+      width: 46px;
+      height: 1px;
+      background-color: #fff;
+      opacity: 0.4; }
+
+  .scroll-to .text {
+    text-transform: uppercase;
+    font-size: 12px;
+    line-height: 12px;
+    letter-spacing: 0.6px;
+    opacity: 0; }
+
+
+.hp-sec-1 {
+  min-height: 100vh;
+  position: relative; }
+
+  .hp-sec-1 .container {
+    flex-direction: column; }
+
+    .hp-sec-1 .container h1 {
+      max-width: 970px;
+      margin-bottom: 47px;
+      -webkit-transform: scale(0.94);
+      -moz-transform: scale(0.94);
+      -ms-transform: scale(0.94);
+      -o-transform: scale(0.94);
+      transform: scale(0.94); }
+
+    .hp-sec-1 .container .subtitle {
+      max-width: 500px;
+      font-size: 22px;
+      line-height: 38px;
+      letter-spacing: 0.44px; }
+
+  .tech-services-entry-section .scroll-to {
+    bottom: 100px; }
+@media (max-width: 1199px) {
+
+
+  .ss-single-entry-section .scroll-to {
+    bottom: 38px; }
+}
+@media (max-width: 991px) {
+
+
+  .scroll-to .line {
+    width: 250px; }
+
+
+  .hp-sec-1 .scroll-to {
+    bottom: 50px; }
+}
+@media (max-width: 767px) {
+
+
+  .tech-services-entry-section .scroll-to, .creative-studio-entry-section .scroll-to {
+    left: 70px; }
+
+
+  .hp-sec-1 .scroll-to .line {
+    width: 200px; }
+}
+@media (max-width: 575px) {
+
+
+  .scroll-to {
+    display: none; }
+}
+@media (max-width: 399px) {
+
+
+  .hp-sec-1 .container .subtitle {
+    font-size: 20px;
+    line-height: 30px; }
+
+
+  .hp-sec-1 .container h1 {
+    margin-bottom: 30px; }
+}
+@media (min-width: 2000px) {
+
+
+  .hp-sec-1 .container h1 {
+    max-width: 1145px; }
+
+
+  .hp-sec-1 .container .subtitle {
+    max-width: 540px;
+    font-size: 26px;
+    line-height: 38px;
+    letter-spacing: 1.44px; }
+}
