@@ -4,7 +4,6 @@ import localFont from "next/font/local";
 import "./globals.css";
 import LenisProvider from "@/components/providers/LenisProvider";
 import CustomCursor from "@/components/CustomCursor";
-import VelocitySkewHeadings from "@/components/VelocitySkewHeadings";
 
 const workSans = Work_Sans({
   variable: "--font-work-sans",
@@ -52,7 +51,6 @@ export default function RootLayout({
       <body className="min-h-full" suppressHydrationWarning>
         <LenisProvider>
           <CustomCursor />
-          <VelocitySkewHeadings />
           {children}
         </LenisProvider>
       </body>

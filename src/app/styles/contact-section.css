@@ -28,8 +28,8 @@
 
 .hp-contact-section .container .contact .row .left .contact-form {
   border-radius: 12px;
-  background: linear-gradient(135deg, rgba(201, 162, 74, 0.05) 0%, rgba(10, 10, 12, 0.35) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--gold) 5%, transparent) 0%, color-mix(in srgb, var(--bg) 35%, transparent) 100%);
+  border: 1px solid color-mix(in srgb, var(--text) 15%, transparent);
   flex-direction: column;
   padding: 56px 60px 72px 60px;
   backdrop-filter: blur(8px);
@@ -50,7 +50,7 @@
   margin: 42px 0;
   width: 120px;
   height: 1px;
-  background: linear-gradient(90deg, rgba(201, 162, 74, 0.5), rgba(255, 255, 255, 0.1));
+  background: linear-gradient(90deg, color-mix(in srgb, var(--gold) 50%, transparent), color-mix(in srgb, var(--text) 10%, transparent));
 }
 
 .brands {
@@ -74,13 +74,13 @@
 
 .brands .swiper .swiper-slide {
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
   padding: 42px 36px;
   height: auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, rgba(201, 162, 74, 0.04) 0%, rgba(10, 10, 12, 0.3) 100%);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--gold) 4%, transparent) 0%, color-mix(in srgb, var(--bg) 30%, transparent) 100%);
   backdrop-filter: blur(6px);
 }
 
@@ -97,8 +97,8 @@
 .contact-form .form-field input,
 .contact-form .form-field textarea {
   width: 100%;
-  background: rgba(10, 10, 12, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: color-mix(in srgb, var(--bg) 40%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 12%, transparent);
   border-radius: 8px;
   padding: 18px 24px;
   color: var(--foreground);
@@ -113,13 +113,13 @@
 
 .contact-form .form-field input::placeholder,
 .contact-form .form-field textarea::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+  color: color-mix(in srgb, var(--text) 40%, transparent);
 }
 
 .contact-form .form-field input:focus,
 .contact-form .form-field textarea:focus {
-  border-color: var(--advida-accent, #c9a24a);
-  background: rgba(201, 162, 74, 0.06);
+  border-color: var(--advida-accent, var(--gold));
+  background: color-mix(in srgb, var(--gold) 6%, transparent);
 }
 
 .contact-form .form-field textarea {
@@ -130,7 +130,7 @@
 .contact-form .form-submit {
   width: 100%;
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: 1px solid color-mix(in srgb, var(--text) 22%, transparent);
   border-radius: 40px;
   padding: 18px;
   color: var(--foreground);
@@ -145,9 +145,9 @@
 }
 
 .contact-form .form-submit:hover {
-  border-color: var(--advida-accent, #c9a24a);
-  background: rgba(201, 162, 74, 0.08);
-  color: var(--advida-accent, #c9a24a);
+  border-color: var(--advida-accent, var(--gold));
+  background: color-mix(in srgb, var(--gold) 8%, transparent);
+  color: var(--advida-accent, var(--gold));
 }
 
 @media (max-width: 1599px) {
@@ -224,12 +224,12 @@
   font-size: clamp(24px, 3vw, 44px);
   line-height: 1;
   white-space: nowrap;
-  color: rgba(244, 243, 241, 0.35);
+  color: color-mix(in srgb, var(--text) 35%, transparent);
   letter-spacing: -0.005em;
 }
 .hp-contact-section .marquee-word::after {
   content: "·";
   margin: 0 0.7em;
-  color: var(--advida-accent, #c9a24a);
+  color: var(--advida-accent, var(--gold));
   opacity: 0.6;
 }

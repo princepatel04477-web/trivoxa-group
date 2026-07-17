@@ -1,9 +1,6 @@
 "use client";
 
-import { useEffect, type RefObject } from "react";
-import { usePathname } from "next/navigation";
 import { gsap } from "@/lib/gsap";
-import { getLenis } from "@/components/providers/LenisProvider";
 
 /** Signature reveal ease — matches --ease-out (cubic-bezier(0.16, 1, 0.3, 1)). */
 export const REVEAL_EASE = "expo.out";
@@ -95,39 +92,8 @@ export function initSectionReveals(scope: Element) {
   revealImages(scope);
 }
 
-/**
- * Subtle skewY on display headings driven by scroll velocity (Lenis when active,
- * a frame-delta fallback otherwise). Raw velocity is divided by 30 before the
- * [-2, 2] clamp so typical scroll speeds land inside the range and only fast
- * flicks saturate it — the brief's clamp assumes a pre-scaled value.
- */
-export function useVelocitySkew(selector: string, containerRef?: RefObject<HTMLElement | null>) {
-  const pathname = usePathname();
-
-  useEffect(() => {
-    const root: Element | Document = containerRef?.current ?? document;
-    const els = gsap.utils.toArray<HTMLElement>(selector, root);
-    if (!els.length) return;
-
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reducedMotion) return;
-
-    const quickSkews = els.map((el) => gsap.quickTo(el, "skewY", { duration: 0.5, ease: "power2.out" }));
-
-    let lastScroll = window.scrollY;
-    let rafId: number;
-
-    const tick = () => {
-      const lenis = getLenis();
-      const raw = lenis ? lenis.velocity : window.scrollY - lastScroll;
-      lastScroll = window.scrollY;
-      const clamped = gsap.utils.clamp(-2, 2, raw / 30);
-      quickSkews.forEach((qt) => qt(clamped * 3));
-      rafId = requestAnimationFrame(tick);
-    };
-    rafId = requestAnimationFrame(tick);
-
-    return () => cancelAnimationFrame(rafId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selector, pathname]);
-}
+/* Operation Midnight Navy · Phase 2 — the scroll-velocity skewY on display
+   headings (formerly useVelocitySkew, mounted site-wide) was removed per client
+   rejection of text tilt. No rotation/skew of any axis remains in text reveals;
+   the reveal choreography above (clip-path headings, fade-rise body, scale
+   images) is intentionally preserved and tilt-free. */

@@ -16,7 +16,7 @@
   top: 0;
   opacity: 0;
   left: 0;
-  background: linear-gradient(180deg, rgba(10, 10, 12, 0.95) 0%, rgba(10, 10, 12, 0) 100%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg) 95%, transparent) 0%, color-mix(in srgb, var(--bg) 0%, transparent) 100%);
   z-index: -1;
   pointer-events: none;
   backdrop-filter: blur(12px);
@@ -96,7 +96,7 @@
   content: "";
   bottom: 15px;
   left: 0;
-  background-color: var(--advida-accent, #c9a24a);
+  background-color: var(--advida-accent, var(--gold));
   height: 1px;
   opacity: 0;
   transition: opacity 0.35s ease;
@@ -126,7 +126,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 1px solid color-mix(in srgb, var(--text) 50%, transparent);
 }
 
 .header .header-wrapper .h-right button:hover a span {
@@ -169,8 +169,8 @@
   z-index: -1;
   pointer-events: none;
   padding: 108px 40px 120px 40px;
-  background-color: #151519;
-  border-bottom: 1px solid rgba(201, 162, 74, 0.1);
+  background-color: var(--bg-card);
+  border-bottom: 1px solid color-mix(in srgb, var(--gold) 10%, transparent);
 }
 
 .header .mega-menu .m-left {
@@ -182,7 +182,7 @@
 .header .mega-menu .m-right {
   padding-top: 56.5px;
   width: 100%;
-  border-top: 1px solid rgba(255, 255, 255, 0.35);
+  border-top: 1px solid color-mix(in srgb, var(--text) 35%, transparent);
 }
 
 .header .mega-menu .m-right > li {
@@ -330,7 +330,7 @@
        GPUs; the denser gradient alone keeps the nav readable. */
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-    background: linear-gradient(180deg, rgba(10, 10, 12, 0.97) 0%, rgba(10, 10, 12, 0.85) 55%, rgba(10, 10, 12, 0) 100%);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--bg) 97%, transparent) 0%, color-mix(in srgb, var(--bg) 85%, transparent) 55%, color-mix(in srgb, var(--bg) 0%, transparent) 100%);
   }
   .header .header-wrapper .h-left ul,
   .header .header-wrapper .h-right button {

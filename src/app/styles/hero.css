@@ -30,7 +30,7 @@
   background: radial-gradient(
     circle at 50% 45%,
     transparent 40%,
-    rgba(5, 5, 5, 0.4) 100%
+    color-mix(in srgb, var(--bg) 40%, transparent) 100%
   );
 }
 
@@ -44,9 +44,9 @@
   height: 200px;
   background: linear-gradient(
     to bottom,
-    rgba(201, 162, 74, 0),
-    rgba(201, 162, 74, 0.12) 30%,
-    rgba(201, 162, 74, 0) 100%
+    color-mix(in srgb, var(--gold) 0%, transparent),
+    color-mix(in srgb, var(--gold) 12%, transparent) 30%,
+    color-mix(in srgb, var(--gold) 0%, transparent) 100%
   );
   pointer-events: none;
 }
@@ -70,7 +70,7 @@
   font-size: clamp(18px, 1.6vw, 22px);
   line-height: 1.68;
   letter-spacing: 0.01em;
-  color: rgba(244, 243, 241, 0.78);
+  color: color-mix(in srgb, var(--text) 78%, transparent);
 }
 
 /* Trivoxa hero tagline — gold accent with refined spacing */
@@ -79,7 +79,7 @@
   font-size: 13px;
   letter-spacing: 4.5px;
   font-weight: 500;
-  color: var(--trivoxa-gold, #d9b36c);
+  color: var(--trivoxa-gold, var(--gold-hover));
   margin-bottom: 32px;
   display: flex;
   align-items: center;
@@ -91,7 +91,7 @@
   display: inline-block;
   width: 48px;
   height: 1px;
-  background: var(--trivoxa-gold, #d9b36c);
+  background: var(--trivoxa-gold, var(--gold-hover));
   opacity: 0.5;
 }
 
@@ -108,9 +108,9 @@
   align-items: center;
   padding: 18px 42px;
   border-radius: 40px;
-  border: 1px solid var(--advida-accent, #c9a24a);
-  background: var(--advida-accent, #c9a24a);
-  color: #0a0a0c;
+  border: 1px solid var(--advida-accent, var(--gold));
+  background: var(--advida-accent, var(--gold));
+  color: var(--bg);
   font-family: var(--font-lufga);
   font-size: 15px;
   font-weight: 500;
@@ -124,7 +124,7 @@
 
 .hp-sec-1 .container .hero-cta .primary-button:hover {
   background: transparent;
-  color: var(--advida-accent, #c9a24a);
+  color: var(--advida-accent, var(--gold));
   transform: translateY(-2px);
 }
 
@@ -133,8 +133,8 @@
   align-items: center;
   padding: 18px 42px;
   border-radius: 40px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  color: #fff;
+  border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
+  color: var(--text);
   font-family: var(--font-lufga);
   font-size: 15px;
   font-weight: 300;
@@ -146,9 +146,9 @@
 }
 
 .hp-sec-1 .container .hero-cta .ghost-button:hover {
-  border-color: var(--advida-accent, #c9a24a);
-  color: var(--advida-accent, #c9a24a);
-  background: rgba(201, 162, 74, 0.06);
+  border-color: var(--advida-accent, var(--gold));
+  color: var(--advida-accent, var(--gold));
+  background: color-mix(in srgb, var(--gold) 6%, transparent);
   transform: translateY(-1px);
 }
 
@@ -170,7 +170,7 @@
 .hp-sec-1 .scroll-to .line > div {
   width: 46px;
   height: 1px;
-  background-color: var(--advida-accent, #c9a24a);
+  background-color: var(--advida-accent, var(--gold));
   opacity: 0.5;
 }
 
@@ -180,7 +180,7 @@
   line-height: 1;
   letter-spacing: 2px;
   opacity: 0;
-  color: rgba(244, 243, 241, 0.5);
+  color: color-mix(in srgb, var(--text) 50%, transparent);
 }
 
 @media (max-width: 1199px) {

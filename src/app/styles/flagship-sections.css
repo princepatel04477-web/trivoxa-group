@@ -189,7 +189,7 @@
 .arm-panel__overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(120deg, rgba(10, 10, 11, 0.82), rgba(10, 10, 11, 0.45));
+  background: linear-gradient(120deg, color-mix(in srgb, var(--bg) 82%, transparent), color-mix(in srgb, var(--bg) 45%, transparent));
 }
 .arm-panel__content {
   position: relative;
@@ -467,7 +467,7 @@
   color: var(--color-ink-2);
 }
 .ticker-row.status-delivered {
-  color: #6fbf73;
+  color: var(--success);
 }
 .ticker-row.status-in-transit {
   color: var(--color-accent);
@@ -505,7 +505,7 @@
   margin: var(--space-xl) auto 0;
 }
 .presence-geo {
-  fill: #141418;
+  fill: var(--bg-elev);
   stroke: var(--color-rule);
   stroke-width: 0.5;
   outline: none;

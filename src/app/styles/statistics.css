@@ -21,7 +21,7 @@
 
 .hp-sec-3 .statistics .line {
   height: 1px;
-  background: linear-gradient(90deg, rgba(201, 162, 74, 0.4), rgba(255, 255, 255, 0.1));
+  background: linear-gradient(90deg, color-mix(in srgb, var(--gold) 40%, transparent), color-mix(in srgb, var(--text) 10%, transparent));
   width: 140px;
   margin-bottom: 28px;
 }
@@ -41,7 +41,7 @@
   font-size: 72px;
   line-height: 1;
   color: transparent;
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.85);
+  -webkit-text-stroke: 1px color-mix(in srgb, var(--text) 85%, transparent);
   letter-spacing: -0.02em;
 }
 
@@ -50,7 +50,7 @@
   font-size: 13px;
   line-height: 1.6;
   letter-spacing: 2.2px;
-  color: rgba(244, 243, 241, 0.55);
+  color: color-mix(in srgb, var(--text) 55%, transparent);
 }
 
 @media (max-width: 1599px) {

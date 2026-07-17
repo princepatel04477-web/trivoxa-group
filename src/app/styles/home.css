@@ -24,7 +24,7 @@
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 4px;
-  color: var(--trivoxa-gold, #d9b36c);
+  color: var(--trivoxa-gold, var(--gold-hover));
   margin-bottom: 28px;
 }
 
@@ -32,7 +32,7 @@
   content: "";
   width: 42px;
   height: 1px;
-  background: var(--trivoxa-gold, #d9b36c);
+  background: var(--trivoxa-gold, var(--gold-hover));
   opacity: 0.55;
 }
 
@@ -42,12 +42,12 @@
   font-size: clamp(32px, 3.6vw, 52px);
   line-height: 1.16;
   letter-spacing: -0.01em;
-  color: #fff;
+  color: var(--text);
   max-width: 16ch;
 }
 
 .home-lead {
-  color: rgba(244, 243, 241, 0.72);
+  color: color-mix(in srgb, var(--text) 72%, transparent);
   font-size: clamp(16px, 1.25vw, 19px);
   line-height: 1.8;
   font-weight: 300;
@@ -84,28 +84,28 @@
 }
 
 .btn-gold {
-  border: 1px solid var(--advida-accent, #c9a24a);
-  background: var(--advida-accent, #c9a24a);
-  color: #0a0a0c;
+  border: 1px solid var(--advida-accent, var(--gold));
+  background: var(--advida-accent, var(--gold));
+  color: var(--bg);
   font-weight: 500;
 }
 
 .btn-gold:hover {
   background: transparent;
-  color: var(--advida-accent, #c9a24a);
+  color: var(--advida-accent, var(--gold));
   transform: translateY(-2px);
 }
 
 .btn-ghost {
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  color: #fff;
+  border: 1px solid color-mix(in srgb, var(--text) 16%, transparent);
+  color: var(--text);
   font-weight: 300;
 }
 
 .btn-ghost:hover {
-  border-color: var(--advida-accent, #c9a24a);
-  color: var(--advida-accent, #c9a24a);
-  background: rgba(201, 162, 74, 0.06);
+  border-color: var(--advida-accent, var(--gold));
+  color: var(--advida-accent, var(--gold));
+  background: color-mix(in srgb, var(--gold) 6%, transparent);
   transform: translateY(-1px);
 }
 
@@ -160,12 +160,12 @@
   font-size: 13px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: var(--trivoxa-gold, #d9b36c);
+  color: var(--trivoxa-gold, var(--gold-hover));
 }
 
 .hp-global .globe-stats .stat .v {
   font-size: 15px;
-  color: rgba(244, 243, 241, 0.7);
+  color: color-mix(in srgb, var(--text) 70%, transparent);
   font-weight: 300;
 }
 
@@ -192,10 +192,10 @@
 .article-card {
   display: flex;
   flex-direction: column;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
   border-radius: 18px;
   overflow: hidden;
-  background: rgba(21, 21, 25, 0.55);
+  background: color-mix(in srgb, var(--bg-card) 55%, transparent);
   backdrop-filter: blur(6px);
   transition: transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1),
     border-color 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
@@ -203,12 +203,12 @@
 
 .article-card:hover {
   transform: translateY(-6px);
-  border-color: rgba(201, 162, 74, 0.5);
+  border-color: color-mix(in srgb, var(--gold) 50%, transparent);
 }
 
 .article-card .thumb {
   height: 168px;
-  background: linear-gradient(135deg, #6b5327 0%, #0c0b0a 100%);
+  background: linear-gradient(135deg, color-mix(in oklab, var(--gold) 40%, var(--bg)) 0%, var(--bg) 100%);
   position: relative;
   overflow: hidden;
 }
@@ -219,7 +219,7 @@
   inset: 0;
   background: radial-gradient(
     circle at 30% 20%,
-    rgba(217, 179, 108, 0.45),
+    color-mix(in srgb, var(--gold-hover) 45%, transparent),
     transparent 60%
   );
   mix-blend-mode: screen;
@@ -237,7 +237,7 @@
   font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: var(--trivoxa-gold, #d9b36c);
+  color: var(--trivoxa-gold, var(--gold-hover));
   margin-bottom: 16px;
 }
 
@@ -253,13 +253,13 @@
   align-items: center;
   gap: 10px;
   font-size: 14px;
-  color: rgba(244, 243, 241, 0.75);
+  color: color-mix(in srgb, var(--text) 75%, transparent);
   transition: gap 0.3s ease, color 0.3s ease;
 }
 
 .article-card:hover .read {
   gap: 16px;
-  color: var(--advida-accent, #c9a24a);
+  color: var(--advida-accent, var(--gold));
 }
 
 /* ---------- Careers Preview ---------- */
@@ -277,15 +277,15 @@
 }
 
 .hp-careers .highlight {
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
   border-radius: 14px;
   padding: 26px 24px;
-  background: rgba(21, 21, 25, 0.5);
+  background: color-mix(in srgb, var(--bg-card) 50%, transparent);
   transition: border-color 0.4s ease, transform 0.4s ease;
 }
 
 .hp-careers .highlight:hover {
-  border-color: rgba(201, 162, 74, 0.45);
+  border-color: color-mix(in srgb, var(--gold) 45%, transparent);
   transform: translateY(-4px);
 }
 
@@ -293,7 +293,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--trivoxa-gold, #d9b36c);
+  background: var(--trivoxa-gold, var(--gold-hover));
   margin-bottom: 18px;
 }
 
@@ -306,7 +306,7 @@
   margin: 0;
   font-size: 14px;
   line-height: 1.6;
-  color: rgba(244, 243, 241, 0.62);
+  color: color-mix(in srgb, var(--text) 62%, transparent);
   font-weight: 300;
 }
 

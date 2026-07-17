@@ -35,7 +35,7 @@
   transition: background 0.2s ease;
 }
 .ind-table tbody tr:hover {
-  background: rgba(201, 162, 74, 0.06);
+  background: color-mix(in srgb, var(--gold) 6%, transparent);
 }
 .ind-table tbody tr:focus-visible {
   outline: 1px solid var(--gold);
@@ -146,8 +146,8 @@
   border: 1px solid var(--hair);
   min-height: 320px;
   background:
-    radial-gradient(70% 60% at 70% 20%, rgba(201, 162, 74, 0.14), transparent 60%),
-    linear-gradient(200deg, #1a1610, #0c0b0a);
+    radial-gradient(70% 60% at 70% 20%, color-mix(in srgb, var(--gold) 14%, transparent), transparent 60%),
+    linear-gradient(200deg, var(--bg-elev), var(--bg));
   position: relative;
   overflow: hidden;
 }
@@ -156,14 +156,14 @@
   height: 100%;
 }
 .ind-ports-map .presence-geo {
-  fill: rgba(244, 243, 241, 0.06);
-  stroke: rgba(244, 243, 241, 0.12);
+  fill: color-mix(in srgb, var(--text) 6%, transparent);
+  stroke: color-mix(in srgb, var(--text) 12%, transparent);
   stroke-width: 0.5;
   outline: none;
 }
 .ind-ports-map .port-dot {
   fill: var(--gold-bright);
-  stroke: rgba(217, 179, 108, 0.35);
+  stroke: color-mix(in srgb, var(--gold-hover) 35%, transparent);
   stroke-width: 6;
 }
 

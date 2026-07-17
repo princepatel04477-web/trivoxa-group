@@ -38,8 +38,8 @@
 
 .contact-modal .container .contact-form {
   border-radius: 15px;
-  background-color: #151519;
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  background-color: var(--bg-card);
+  border: 1px solid color-mix(in srgb, var(--text) 50%, transparent);
   flex-direction: column;
   padding: 40px 50px;
   max-height: 100%;
@@ -61,7 +61,7 @@ body.contact-modal-open .contact-modal .container {
 }
 
 .contact-form .form-status--success {
-  color: var(--gold, #c9a24a);
+  color: var(--gold, var(--gold));
 }
 
 .contact-form .form-status--error {

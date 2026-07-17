@@ -52,7 +52,7 @@
 .footer .footer-brand {
   width: 32%;
   padding-right: 40px;
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 1px solid color-mix(in srgb, var(--text) 8%, transparent);
 }
 
 .footer .col:not(.footer-brand):not(.footer-newsletter) {
@@ -78,12 +78,12 @@
   font-weight: 500;
   font-size: 15px;
   line-height: 1.5;
-  color: var(--color-accent, #c9a24a);
+  color: var(--color-accent, var(--gold));
   margin-bottom: 28px;
 }
 
 .footer-legal-block {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid color-mix(in srgb, var(--text) 8%, transparent);
   padding-top: 20px;
 }
 
@@ -92,10 +92,10 @@
   flex-direction: column;
   gap: 4px;
   padding: 10px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid color-mix(in srgb, var(--text) 6%, transparent);
   font-size: 13.5px;
   line-height: 1.6;
-  color: rgba(244, 243, 241, 0.55);
+  color: color-mix(in srgb, var(--text) 55%, transparent);
 }
 
 .footer-legal-row:last-child {
@@ -107,7 +107,7 @@
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(244, 243, 241, 0.35);
+  color: color-mix(in srgb, var(--text) 35%, transparent);
 }
 
 .footer-legal-row .mono {
@@ -122,7 +122,7 @@
   line-height: 1;
   letter-spacing: 0.02em;
   margin-bottom: 22px;
-  color: rgba(244, 243, 241, 0.85);
+  color: color-mix(in srgb, var(--text) 85%, transparent);
 }
 
 /* Sitemap links */
@@ -134,13 +134,13 @@
   font-size: 14px;
   line-height: 1.8;
   letter-spacing: 0.01em;
-  color: rgba(244, 243, 241, 0.55);
+  color: color-mix(in srgb, var(--text) 55%, transparent);
   display: inline-block;
   transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .footer .footer-content ul li a:hover {
-  color: var(--color-accent, #c9a24a);
+  color: var(--color-accent, var(--gold));
   transform: translateX(4px);
 }
 
@@ -152,7 +152,7 @@
 .footer-newsletter__copy {
   font-size: 14px;
   line-height: 1.6;
-  color: rgba(244, 243, 241, 0.55);
+  color: color-mix(in srgb, var(--text) 55%, transparent);
   margin-bottom: 22px;
   max-width: 260px;
 }
@@ -160,13 +160,13 @@
 .footer-newsletter__form {
   display: flex;
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  border-bottom: 1px solid color-mix(in srgb, var(--text) 18%, transparent);
   padding-bottom: 10px;
   transition: border-color 0.3s ease;
 }
 
 .footer-newsletter__form:focus-within {
-  border-color: var(--color-accent, #c9a24a);
+  border-color: var(--color-accent, var(--gold));
 }
 
 .footer-newsletter__form input {
@@ -175,18 +175,18 @@
   border: none;
   outline: none;
   font-size: 14px;
-  color: rgba(244, 243, 241, 0.85);
+  color: color-mix(in srgb, var(--text) 85%, transparent);
   padding: 4px 0;
 }
 
 .footer-newsletter__form input::placeholder {
-  color: rgba(244, 243, 241, 0.35);
+  color: color-mix(in srgb, var(--text) 35%, transparent);
 }
 
 .footer-newsletter__form button {
   background: none;
   border: none;
-  color: var(--color-accent, #c9a24a);
+  color: var(--color-accent, var(--gold));
   font-size: 18px;
   line-height: 1;
   cursor: pointer;
@@ -200,7 +200,7 @@
 
 .footer-newsletter__thanks {
   font-size: 14px;
-  color: var(--color-accent, #c9a24a);
+  color: var(--color-accent, var(--gold));
 }
 
 .footer-newsletter__error {
@@ -216,18 +216,18 @@
   align-items: center;
   gap: 24px;
   padding: 26px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid color-mix(in srgb, var(--text) 8%, transparent);
   font-size: 13px;
-  color: rgba(244, 243, 241, 0.4);
+  color: color-mix(in srgb, var(--text) 40%, transparent);
 }
 
 .footer-bottom a {
-  color: rgba(244, 243, 241, 0.4);
+  color: color-mix(in srgb, var(--text) 40%, transparent);
   transition: color 0.3s ease;
 }
 
 .footer-bottom a:hover {
-  color: var(--color-accent, #c9a24a);
+  color: var(--color-accent, var(--gold));
 }
 
 /* --- Responsive --- */
@@ -253,7 +253,7 @@
     width: 100%;
     border-right: none;
     padding-right: 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid color-mix(in srgb, var(--text) 8%, transparent);
     padding-bottom: 32px;
   }
   .footer .col:not(.footer-brand):not(.footer-newsletter) {

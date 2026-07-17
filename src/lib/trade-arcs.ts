@@ -37,14 +37,17 @@ const ROUTES: RouteDef[] = [
   { from: "Mumbai", to: "New York", status: "delivered" },
 ];
 
-const GOLD = 0xd9b36c;
-const SILVER = 0xcfd2d4;
-const GREEN = 0x8fbf9f;
+// Midnight Navy palette (mirrors globals.css tokens): --route arc blue,
+// --gold, --success, --text-2. No old ivory-era particle hues survive here.
+const ROUTE = 0x8fb4e8; // --route: trade-route arc lines
+const GOLD = 0xc9a24b; // --gold: origin port markers
+const SILVER = 0x9facc4; // --text-2: destination port markers
+const SUCCESS = 0x5fa97c; // --success: DELIVERED
 
 const STATUS_COLOR: Record<ArcStatus, number> = {
-  in_transit: GOLD,
-  confirmed: SILVER,
-  delivered: GREEN,
+  in_transit: ROUTE,
+  confirmed: GOLD,
+  delivered: SUCCESS,
 };
 
 const ARC_SEGMENTS = 64;

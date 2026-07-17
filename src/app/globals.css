@@ -65,15 +65,33 @@
 }
 
 :root {
-  /* Hallmark System Variables */
-  --color-paper: oklch(0.12 0.015 280);
-  --color-paper-2: oklch(0.16 0.015 280);
-  --color-ink: oklch(0.96 0.005 60);
-  --color-ink-2: oklch(0.70 0.01 60);
-  --color-rule: oklch(0.24 0.015 280);
-  --color-accent: oklch(0.74 0.13 85);
-  --color-accent-ink: oklch(0.12 0.015 280);
-  --color-focus: oklch(0.74 0.13 85);
+  /* ============================================================
+     OPERATION MIDNIGHT NAVY — canonical token system.
+     Every surface/text/accent color in the app resolves through
+     these. Do NOT hardcode hex in components or page CSS.
+     ============================================================ */
+  --bg:            #0B1325;  /* page background, hero, canvas ground */
+  --bg-elev:       #121D36;  /* alternating sections, scrolled navbar */
+  --bg-card:       #16233E;  /* cards, panels, insight tiles, compliance chips */
+  --line:          #223251;  /* borders, dividers, ticker rules */
+  --text:          #EDF1F8;  /* headlines + body — never pure #FFFFFF */
+  --text-2:        #9FACC4;  /* supporting copy */
+  --text-3:        #7E8CA8;  /* captions, footer meta (lightened from spec #64738F to clear WCAG AA on --bg-card) */
+  --gold:          #C9A24B;  /* CTAs, labels, links, active states */
+  --gold-hover:    #E0BC6A;  /* hover/focus on gold */
+  --gold-particle: #D4AF5E;  /* ALL particle rendering: globe, plane, map, compass */
+  --route:         #8FB4E8;  /* trade-route arc lines ONLY */
+  --success:       #5FA97C;  /* DELIVERED ticker state */
+
+  /* Hallmark System Variables — repointed onto Midnight Navy */
+  --color-paper: var(--bg);
+  --color-paper-2: var(--bg-elev);
+  --color-ink: var(--text);
+  --color-ink-2: var(--text-2);
+  --color-rule: var(--line);
+  --color-accent: var(--gold);
+  --color-accent-ink: var(--bg);
+  --color-focus: var(--gold);
 
   --font-display: var(--font-lufga), sans-serif;
   --font-body: var(--font-sans), sans-serif;
@@ -90,33 +108,34 @@
   --space-3xl: 7rem;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 
-  /* Trivoxa Group palette — premium dark monochrome + warm gold (sunset) */
-  --advida-bg: #0a0a0c;                       /* near-black canvas */
-  --advida-card: #151519;                      /* lifted charcoal surface */
-  --advida-accent: #c9a24a;                    /* warm gold accent */
-  --advida-blue: #a17d33;                      /* deep gold */
-  --advida-panel: rgba(201, 162, 74, 0.07);    /* faint gold panel fill */
-  --trivoxa-silver: #cfd2d4;                   /* eagle / particle silver */
-  --trivoxa-gold: #d9b36c;                      /* bright gold highlight */
+  /* Legacy semantic aliases — repointed onto the navy tokens so all existing
+     var(--advida-*) / var(--trivoxa-*) references migrate automatically. */
+  --advida-bg: var(--bg);
+  --advida-card: var(--bg-card);
+  --advida-accent: var(--gold);
+  --advida-blue: var(--gold);
+  --advida-panel: color-mix(in srgb, var(--gold) 8%, transparent);
+  --trivoxa-silver: var(--text-2);
+  --trivoxa-gold: var(--gold-hover);
 
-  --background: #0a0a0c;
-  --foreground: #f4f3f1;
-  --card: #151519;
-  --card-foreground: #f4f3f1;
-  --popover: #151519;
-  --popover-foreground: #f4f3f1;
-  --primary: #c9a24a;
-  --primary-foreground: #0a0a0c;
-  --secondary: #1c1c22;
-  --secondary-foreground: #f4f3f1;
-  --muted: #151519;
-  --muted-foreground: rgba(244, 243, 241, 0.55);
-  --accent: #c9a24a;
-  --accent-foreground: #0a0a0c;
+  --background: var(--bg);
+  --foreground: var(--text);
+  --card: var(--bg-card);
+  --card-foreground: var(--text);
+  --popover: var(--bg-card);
+  --popover-foreground: var(--text);
+  --primary: var(--gold);
+  --primary-foreground: var(--bg);
+  --secondary: var(--bg-elev);
+  --secondary-foreground: var(--text);
+  --muted: var(--bg-card);
+  --muted-foreground: var(--text-2);
+  --accent: var(--gold);
+  --accent-foreground: var(--bg);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: rgba(255, 255, 255, 0.14);
-  --input: rgba(201, 162, 74, 0.07);
-  --ring: #c9a24a;
+  --border: var(--line);
+  --input: color-mix(in srgb, var(--gold) 7%, transparent);
+  --ring: var(--gold);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -180,10 +199,72 @@
     text-rendering: optimizeLegibility;
   }
   :focus-visible {
-    outline: 1px solid var(--advida-accent);
+    outline: 2px solid var(--gold);
     outline-offset: 3px;
     border-radius: 2px;
   }
+  /* Gold selection on navy text (Phase 1.7) */
+  ::selection {
+    background: var(--gold);
+    color: var(--bg);
+  }
+  ::-moz-selection {
+    background: var(--gold);
+    color: var(--bg);
+  }
+  /* Form controls inherit the theme instead of the UA's light chrome */
+  input,
+  textarea,
+  select {
+    background: var(--bg-elev);
+    color: var(--text);
+    border: 1px solid var(--line);
+    caret-color: var(--gold);
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--text-3);
+  }
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+    border-color: var(--gold);
+  }
+  /* Validation states */
+  input[aria-invalid="true"],
+  textarea[aria-invalid="true"],
+  select[aria-invalid="true"],
+  .is-invalid {
+    border-color: var(--destructive);
+  }
+}
+
+/* Photography scrim (Phase 1.4): seat bright photographic rectangles into the
+   navy ground. Apply .photo-scrim to any element wrapping a photo (industry
+   images, insight thumbnails) — the ::after lays a bottom-up navy gradient. */
+.photo-scrim {
+  position: relative;
+}
+.photo-scrim > img,
+.photo-scrim > picture,
+.photo-scrim > video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.photo-scrim::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(11, 19, 37, 0) 40%,
+    rgba(11, 19, 37, 0.85)
+  );
 }
 
 /* ---------- advida.com global patterns (ported from theme main.css) ---------- */
@@ -192,7 +273,7 @@
    the real document, so no virtualized track/thumb elements exist to target). */
 html {
   scrollbar-width: thin;
-  scrollbar-color: #c9a24a transparent;
+  scrollbar-color: var(--line) transparent;
 }
 ::-webkit-scrollbar {
   width: 4px;
@@ -201,11 +282,11 @@ html {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #c9a24a;
-  transition: box-shadow 0.3s ease;
+  background: var(--line);
+  transition: background 0.3s ease;
 }
 ::-webkit-scrollbar-thumb:hover {
-  box-shadow: 0 0 12px rgba(201, 162, 74, 0.15);
+  background: var(--gold);
 }
 
 /* GSAP text-split reveal targets — refined timing */
@@ -324,10 +405,10 @@ a, button {
 .custom-cursor-dot {
   width: 8px;
   height: 8px;
-  background: var(--advida-accent, #c9a24a);
+  background: var(--gold);
 }
 .custom-cursor-ring {
   width: 32px;
   height: 32px;
-  border: 1px solid var(--advida-accent, #c9a24a);
+  border: 1px solid var(--gold);
 }

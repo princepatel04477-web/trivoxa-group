@@ -1,9 +1,9 @@
 import * as THREE from "three";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 import { MeshSurfaceSampler } from "three/examples/jsm/math/MeshSurfaceSampler.js";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
+import { buildGlobeGeometry } from "./globe-geometry";
 import {
   EffectComposer,
   RenderPass,
@@ -16,10 +16,16 @@ import {
   type Effect,
 } from "postprocessing";
 
-const COUNT_DESKTOP = 10000;
-const COUNT_MOBILE = 4000;
+// Density tiers (Phase 3.3): desktop 12–18k, mobile 5–7k instanced points.
+const COUNT_DESKTOP = 14000;
+const COUNT_MOBILE = 6000;
 const MAX_DPR_DESKTOP = 1.5;
 const MAX_DPR_MOBILE = 1.5;
+
+// Globe motion (Phase 3.2)
+const IDLE_OMEGA = (2 * Math.PI) / 26; // rad/s — single-axis idle spin, 26s/rev
+const AXIAL_TILT = (23.4 * Math.PI) / 180; // Earth-accurate axial tilt
+const PARALLAX_MAX = (4 * Math.PI) / 180; // max ±4° mouse parallax offset
 
 interface ProxyVertex {
   x: number;
@@ -40,43 +46,9 @@ export interface ParticleScene {
   dispose(): void;
 }
 
-// Trivoxa particle palette
-const GOLD = 0xd9b36c;
-
-function loadOBJ(
-  url: string,
-  name: string,
-  scale: number,
-  color: number,
-  count: number
-): Promise<Shape> {
-  return new Promise((resolve) => {
-    const loader = new OBJLoader();
-    loader.load(url, (obj) => {
-      const firstMesh = obj.children.find((c): c is THREE.Mesh => c instanceof THREE.Mesh);
-      if (!firstMesh) {
-        resolve({ name, data: new Float32Array(count * 3), color });
-        return;
-      }
-      const mesh = firstMesh;
-      const box = new THREE.Box3().setFromObject(obj);
-      const yOffset = box.max.y * scale * 0.5;
-
-      mesh.geometry.scale(scale, scale, scale);
-      const sampler = new MeshSurfaceSampler(mesh).build();
-      const shapeData = new Float32Array(count * 3);
-      const tmp = new THREE.Vector3();
-
-      for (let i = 0; i < count; i++) {
-        sampler.sample(tmp);
-        shapeData[i * 3] = tmp.x;
-        shapeData[i * 3 + 1] = tmp.y - yOffset;
-        shapeData[i * 3 + 2] = tmp.z;
-      }
-      resolve({ name, data: shapeData, color });
-    });
-  });
-}
+// All particle rendering uses --gold-particle (#D4AF5E). Layer B is dimmed via
+// opacity in the shader, never a different hue.
+const GOLD = 0xd4af5e;
 
 /** Sample `count` points off any BufferGeometry surface (for procedural import/export shapes). */
 function sampleGeometry(geo: THREE.BufferGeometry, name: string, color: number, count: number): Shape {
@@ -192,6 +164,15 @@ export async function createParticleScene(): Promise<ParticleScene> {
   const textureLoader = new THREE.TextureLoader();
   const texture = textureLoader.load("/images/particle-tiny.png");
 
+  // Nominal shape radius (shared scale system, see S/R below). Built here so the
+  // globe geometry and its per-particle layer attribute exist before first paint.
+  const vpScale = width > 1024 ? 1 : width > 576 ? 0.82 : 0.66;
+  const globeRadius = 7 * vpScale;
+
+  // Fibonacci two-layer globe (Phase 3): Layer A landmass first, Layer B shell.
+  const globeGeo = buildGlobeGeometry(count, globeRadius);
+  const globe: Shape = { name: "globe", data: globeGeo.positions, color: GOLD };
+
   const geometry = new THREE.BufferGeometry();
   const positions = new Float32Array(count * 3);
   geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
@@ -203,7 +184,15 @@ export async function createParticleScene(): Promise<ParticleScene> {
   for (let i = 0; i < count; i++) phases[i] = Math.random() * Math.PI * 2;
   geometry.setAttribute("aPhase", new THREE.BufferAttribute(phases, 1));
 
+  // Layer flag per particle (0 = landmass, 1 = shell). Fixed for the pool; the
+  // shader only acts on it while the field is the globe (uGlobe), so flat shapes
+  // are unaffected.
+  geometry.setAttribute("aLayer", new THREE.BufferAttribute(globeGeo.layer, 1));
+
   const shimmerUniform = { value: 0 };
+  // 1 while the field is the globe, 0 for flat formations — gates the globe-only
+  // depth cueing and Layer-B dimming. Lerped in the render loop for smoothness.
+  const uGlobeUniform = { value: 1 };
   const material = new THREE.PointsMaterial({
     color: 0xffffff,
     size: 0.2,
@@ -214,25 +203,49 @@ export async function createParticleScene(): Promise<ParticleScene> {
   });
   material.onBeforeCompile = (shader) => {
     shader.uniforms.uTime = shimmerUniform;
+    shader.uniforms.uGlobe = uGlobeUniform;
     shader.vertexShader = shader.vertexShader
       .replace(
         "#include <common>",
-        "#include <common>\nattribute float aPhase;\nuniform float uTime;\nvarying float vShimmer;"
+        "#include <common>\nattribute float aPhase;\nattribute float aLayer;\nuniform float uTime;\nuniform float uGlobe;\nvarying float vAlpha;"
       )
       .replace(
-        "#include <begin_vertex>",
-        "#include <begin_vertex>\nvShimmer = 0.68 + 0.32 * sin(uTime + aPhase);"
-      );
+        "#include <project_vertex>",
+        `#include <project_vertex>
+        // Depth cueing (Phase 3.2.5): fade + shrink the far hemisphere so the
+        // globe reads as a sphere, not a flat disc of dots. Frontness is the
+        // view-space z of this particle's offset from the object centre.
+        vec3 vCenter = (modelViewMatrix * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
+        vec3 vOff = mvPosition.xyz - vCenter;
+        float frontness = length(vOff) > 0.0001 ? normalize(vOff).z : 0.0;
+        float f01 = frontness * 0.5 + 0.5;               // 0 (far) .. 1 (near)
+        float depthSize = mix(0.6, 1.0, f01);            // far 60% .. near 100% size
+        float depthOpac = mix(0.35, 1.0, f01);            // far 35% .. near 100% opacity
+        depthSize = mix(1.0, depthSize, uGlobe);          // no cueing on flat shapes
+        depthOpac = mix(1.0, depthOpac, uGlobe);
+        float layerDim = mix(1.0, 0.4, aLayer * uGlobe);  // Layer B shell dimmer, globe only
+        float shimmer = 0.68 + 0.32 * sin(uTime + aPhase);
+        vAlpha = shimmer * depthOpac * layerDim;`
+      )
+      // Fold the far-hemisphere size cue into PointsMaterial's own size
+      // assignment (which runs after <project_vertex>, so an earlier
+      // gl_PointSize *= would be overwritten). depthSize is in scope here.
+      .replace("gl_PointSize = size;", "gl_PointSize = size * depthSize;");
     shader.fragmentShader = shader.fragmentShader
-      .replace("#include <common>", "#include <common>\nvarying float vShimmer;")
+      .replace("#include <common>", "#include <common>\nvarying float vAlpha;")
       .replace(
         "vec4 diffuseColor = vec4( diffuse, opacity );",
-        "vec4 diffuseColor = vec4( diffuse, opacity * vShimmer );"
+        "vec4 diffuseColor = vec4( diffuse, opacity * vAlpha );"
       );
   };
 
   const points = new THREE.Points(geometry, material);
-  scene.add(points);
+  // Holder carries the globe's axial tilt + mouse parallax so those never touch
+  // the flat formations (which live on `points` and stay upright). The idle spin
+  // is on `points.rotation.y`; the tilt on `holder.rotation.z`.
+  const holder = new THREE.Group();
+  holder.add(points);
+  scene.add(holder);
 
   const proxy: ProxyVertex[] = Array.from({ length: count }, () => ({ x: 0, y: 0, z: 0 }));
   const sourceX = new Float32Array(count);
@@ -240,12 +253,12 @@ export async function createParticleScene(): Promise<ParticleScene> {
   const sourceZ = new Float32Array(count);
   const morphProgress = { value: 0 };
 
-  const speed = { value: 0.005 };
   let animId = 0;
   let paused = false;
   let needsUpdate = false;
   let currentFlat = false; // hero starts on the spinning globe
-  // Pointer parallax — the hero eagle subtly follows the cursor.
+  let currentIsGlobe = true; // drives axial tilt, parallax and depth cueing
+  // Pointer parallax — the globe subtly leans toward the cursor.
   const pointer = { x: 0, y: 0 };
   const pointerTarget = { x: 0, y: 0 };
   function handlePointer(e: PointerEvent) {
@@ -268,25 +281,48 @@ export async function createParticleScene(): Promise<ParticleScene> {
     const dt60 = delta * 60; // frames-equivalent, for the old per-frame rates
     // prefers-reduced-motion: freeze the per-particle twinkle too, not just spin.
     if (!reducedMotion) shimmerUniform.value += delta * 2.2; // GPU per-particle shimmer clock
-    pointer.x += (pointerTarget.x - pointer.x) * (1 - Math.pow(0.95, dt60));
-    pointer.y += (pointerTarget.y - pointer.y) * (1 - Math.pow(0.95, dt60));
+
+    const kSettle = 1 - Math.pow(0.9, dt60);
+    const kParallax = 1 - Math.pow(0.95, dt60); // ~0.05 per 60fps frame
+    pointer.x += (pointerTarget.x - pointer.x) * kParallax;
+    pointer.y += (pointerTarget.y - pointer.y) * kParallax;
+
+    // uGlobe eases 0..1 so depth cueing / Layer-B dimming fade in and out with
+    // the formation rather than popping on a morph.
+    uGlobeUniform.value += ((currentIsGlobe ? 1 : 0) - uGlobeUniform.value) * kSettle;
 
     // prefers-reduced-motion: no idle spin/breathing — the object still
     // relocates and reshapes as the user scrolls (see morphTo/sweep below),
     // it just doesn't move on its own between scroll events.
     if (!reducedMotion) {
-      if (currentFlat) {
-        // LOCKED formation (trade map / eagle logo / cargo plane §4). The centroid
-        // must not drift, rotate, or breathe: ease any residual spin and scale
-        // to identity and hold dead still. Stillness reads as precision.
-        points.rotation.y += (0 - points.rotation.y) * (1 - Math.pow(0.9, dt60));
-        points.rotation.x += (0 - points.rotation.x) * (1 - Math.pow(0.9, dt60));
-        points.scale.setScalar(points.scale.x + (1 - points.scale.x) * (1 - Math.pow(0.9, dt60)));
+      const scaleTo1 = () =>
+        points.scale.setScalar(points.scale.x + (1 - points.scale.x) * kSettle);
+      if (currentIsGlobe) {
+        // Idle rotation: single Y-axis, constant velocity, 26s/rev (Phase 3.2.1).
+        // Tilt lives on the holder (23.4°); no secondary-axis wobble on points.
+        points.rotation.y += IDLE_OMEGA * delta;
+        points.rotation.x += (0 - points.rotation.x) * kSettle;
+        holder.rotation.z += (AXIAL_TILT - holder.rotation.z) * kSettle;
+        holder.rotation.x += (pointer.y * PARALLAX_MAX - holder.rotation.x) * kParallax;
+        holder.rotation.y += (pointer.x * PARALLAX_MAX - holder.rotation.y) * kParallax;
+        scaleTo1();
+      } else if (currentFlat) {
+        // LOCKED formation (trade map / eagle logo / cargo plane). The centroid
+        // must not drift, rotate, or breathe — ease all residual motion to zero.
+        points.rotation.y += (0 - points.rotation.y) * kSettle;
+        points.rotation.x += (0 - points.rotation.x) * kSettle;
+        holder.rotation.z += (0 - holder.rotation.z) * kSettle;
+        holder.rotation.x += (0 - holder.rotation.x) * kSettle;
+        holder.rotation.y += (0 - holder.rotation.y) * kSettle;
+        scaleTo1();
       } else {
-        // Idle rotation (hero globe ≈24s/rev) + settle x-tilt + scale to 1.
-        points.rotation.y += speed.value * dt60;
-        points.rotation.x += (0 - points.rotation.x) * (1 - Math.pow(0.96, dt60));
-        points.scale.setScalar(points.scale.x + (1 - points.scale.x) * (1 - Math.pow(0.9, dt60)));
+        // Ambient footer drift — slow single-axis wander, no tilt or parallax.
+        points.rotation.y += IDLE_OMEGA * 0.35 * delta;
+        points.rotation.x += (0 - points.rotation.x) * kSettle;
+        holder.rotation.z += (0 - holder.rotation.z) * kSettle;
+        holder.rotation.x += (0 - holder.rotation.x) * kSettle;
+        holder.rotation.y += (0 - holder.rotation.y) * kSettle;
+        scaleTo1();
       }
     }
 
@@ -331,10 +367,9 @@ export async function createParticleScene(): Promise<ParticleScene> {
   }
   window.addEventListener("resize", handleResize);
 
-  // scale multiplier per viewport
+  // scale multiplier per viewport (matches vpScale used for the globe radius)
   const S = width > 1024 ? 1 : width > 576 ? 0.82 : 0.66;
-  const globeS = width > 1024 ? 4.5 : width > 576 ? 4 : 3.5;
-  const R = 7 * S; // nominal shape radius in world units
+  const R = 7 * S; // nominal shape radius in world units (== globeRadius)
 
   // Cargo plane (Services) — side-profile silhouette flying +X, with a subset
   // of grains pulled into trailing streaks behind the tail to read as speed.
@@ -376,10 +411,9 @@ export async function createParticleScene(): Promise<ParticleScene> {
     return { name: "drift", data, color: GOLD };
   })();
 
-  const [globe, eagle] = await Promise.all([
-    loadOBJ("/objects/globe2.obj", "globe", globeS, GOLD, count),
-    loadEagle("/images/trivoxa-eagle.png", "eagle", 20 * S, GOLD, count), // brand mark for the final CTA
-  ]);
+  // globe is built procedurally above (buildGlobeGeometry). Only the eagle mark
+  // still needs async decode of its PNG alpha.
+  const eagle = await loadEagle("/images/trivoxa-eagle.png", "eagle", 20 * S, GOLD, count);
 
   // Container ship (Global Presence) — maritime trade "across borders": long
   // hull, a grid of stacked deck containers, and a bridge tower at the stern.
@@ -415,6 +449,7 @@ export async function createParticleScene(): Promise<ParticleScene> {
 
   function morphTo(shape: Shape, onProgress?: (eased: number) => void) {
     currentFlat = !!shape.flat;
+    currentIsGlobe = shape.name === "globe";
     material.color.setHex(shape.color);
 
     if (reducedMotion) {
@@ -436,15 +471,6 @@ export async function createParticleScene(): Promise<ParticleScene> {
       sourceY[i] = proxy[i].y;
       sourceZ[i] = proxy[i].z;
     }
-
-    gsap.to(speed, {
-      duration: 0.3,
-      ease: "power4.in",
-      value: 0.02,
-      onComplete: () => {
-        gsap.to(speed, { duration: 4, ease: "power2.out", value: 0.005, delay: 1 });
-      },
-    });
 
     morphProgress.value = 0;
     gsap.killTweensOf(morphProgress);
@@ -477,6 +503,7 @@ export async function createParticleScene(): Promise<ParticleScene> {
   function assembleGlobe() {
     material.color.setHex(globe.color);
     currentFlat = false;
+    currentIsGlobe = true;
     if (reducedMotion) {
       for (let i = 0; i < count; i++) {
         proxy[i].x = globe.data[i * 3];
@@ -503,7 +530,6 @@ export async function createParticleScene(): Promise<ParticleScene> {
     material.opacity = 0;
     writeIntoBufferAttribute();
     gsap.to(material, { opacity: 1, duration: 1.4, ease: "power1.out" });
-    gsap.fromTo(speed, { value: 0.02 }, { value: 0.005, duration: 3, ease: "power2.out" });
     morphProgress.value = 0;
     gsap.killTweensOf(morphProgress);
     gsap.to(morphProgress, {
@@ -637,7 +663,6 @@ export async function createParticleScene(): Promise<ParticleScene> {
       geometry.dispose();
       material.dispose();
       texture.dispose();
-      gsap.killTweensOf(speed);
       gsap.killTweensOf(morphProgress);
       instanceScrollTriggers.forEach((st) => st.kill());
     },
