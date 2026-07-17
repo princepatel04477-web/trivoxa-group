@@ -4,6 +4,7 @@ import Link from "next/link";
 import { gsap } from "@/lib/gsap";
 import { useCallback, useEffect, useRef } from "react";
 import { on, emit } from "@/lib/site-events";
+import { getLenis } from "@/components/providers/LenisProvider";
 
 const MEGA_TRIGGER = "Exports";
 
@@ -85,23 +86,63 @@ export default function Header() {
 
   // Solid chrome once the page scrolls — without this the home hero's fixed
   // header floats transparent over section content (nav becomes unreadable).
+  // It also auto-hides on scroll-down and reveals on scroll-up, so the fixed
+  // bar never sits on top of / overlaps section content while reading. GSAP
+  // drives the hide (it owns the header's inline transform via the hero intro
+  // tween), so a plain CSS class can't fight it.
+  //
+  // Lenis is the scroll driver on this site, so we subscribe to its scroll
+  // event (fires every frame with the real position). window's native scroll
+  // is kept as a fallback for the reduced-motion path where Lenis is disabled.
   const rootRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+    let lastY = window.scrollY;
+    let hidden = false;
+    const REVEAL_ZONE = 120; // always show near the very top
+    const DELTA = 6; // ignore sub-pixel jitter
+    const setHidden = (next: boolean) => {
+      if (next === hidden) return;
+      hidden = next;
+      if (next) hideMenu(); // close the mega-menu when the bar slides away
+      gsap.to(el, { yPercent: next ? -130 : 0, duration: 0.4, ease: "power2.out", overwrite: "auto" });
+    };
+    const apply = (y: number) => {
+      el.classList.toggle("header--scrolled", y > 40);
+      if (y <= REVEAL_ZONE) setHidden(false);
+      else if (y > lastY + DELTA) setHidden(true); // scrolling down
+      else if (y < lastY - DELTA) setHidden(false); // scrolling up
+      lastY = y;
+    };
+
+    // Primary: Lenis scroll event (the real driver).
+    let lenisOff = () => {};
+    const hookLenis = () => {
+      const lenis = getLenis();
+      if (!lenis) return;
+      const cb = () => apply(lenis.animatedScroll ?? window.scrollY);
+      lenis.on("scroll", cb);
+      lenisOff = () => lenis.off("scroll", cb);
+    };
+    hookLenis();
+    const offInit = on("lenis:init", hookLenis); // Lenis may init after Header mounts
+
+    // Fallback: native window scroll (reduced-motion path, no Lenis).
     let raf = 0;
-    const update = () => {
-      raf = 0;
-      rootRef.current?.classList.toggle("header--scrolled", window.scrollY > 40);
-    };
     const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(update);
+      if (!raf) raf = requestAnimationFrame(() => { raf = 0; apply(window.scrollY); });
     };
-    update();
     window.addEventListener("scroll", onScroll, { passive: true });
+
+    apply(window.scrollY);
     return () => {
+      lenisOff();
+      offInit();
       window.removeEventListener("scroll", onScroll);
       if (raf) cancelAnimationFrame(raf);
     };
-  }, []);
+  }, [hideMenu]);
 
   const openModal = () => emit("modal:open");
 

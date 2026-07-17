@@ -152,14 +152,13 @@
   }
 }
 
-/* ---------- Our Vision: full-viewport typographic panel with grain ---------- */
+/* ---------- Our Vision: centered typographic statement, section-scaled ----------
+   Previously a second full-viewport hero (min-height:100vh, ~140px type) dropped
+   mid-page, which read as an inconsistent format. Now a normal section: standard
+   vertical rhythm and a statement sized in proportion to the other sections. */
 .group-vision {
   position: relative;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  padding: clamp(72px, 10vw, 128px) 0;
   overflow: hidden;
 }
 
@@ -180,24 +179,27 @@
 .group-vision__inner {
   position: relative;
   z-index: 2;
-  max-width: 56rem;
+  max-width: 52rem;
+  margin: 0 auto;
+  text-align: center;
 }
 
 .group-vision__statement {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 7.5vw, 8.75rem);
-  line-height: 1.02;
-  letter-spacing: -0.03em;
-  margin: var(--space-md) 0 var(--space-lg);
+  font-size: clamp(1.6rem, 3.4vw, 2.75rem);
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  margin: var(--space-md) auto var(--space-lg);
+  max-width: 40rem;
 }
 
 .group-vision__support {
   font-family: var(--font-body);
   font-style: italic;
-  font-size: 1.5rem;
-  line-height: 1.6;
+  font-size: clamp(1.0625rem, 1.4vw, 1.375rem);
+  line-height: 1.7;
   color: var(--color-ink-2);
-  max-width: 40rem;
+  max-width: 38rem;
   margin: 0 auto;
 }
 
