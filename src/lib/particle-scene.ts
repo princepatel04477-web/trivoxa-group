@@ -247,6 +247,16 @@ export async function createParticleScene(): Promise<ParticleScene> {
   holder.add(points);
   scene.add(holder);
 
+  // Responsive fit — the globe (and every formation) scales with the viewport
+  // so the field never dominates a smaller laptop screen the way a fixed
+  // world-space size does. Keyed off the shorter viewport dimension and
+  // recomputed on resize (see handleResize).
+  const fitScale = () => {
+    const vpMin = Math.min(window.innerWidth, window.innerHeight);
+    return THREE.MathUtils.clamp(vpMin / 1200, 0.5, 0.82);
+  };
+  holder.scale.setScalar(fitScale());
+
   const proxy: ProxyVertex[] = Array.from({ length: count }, () => ({ x: 0, y: 0, z: 0 }));
   const sourceX = new Float32Array(count);
   const sourceY = new Float32Array(count);
@@ -364,6 +374,7 @@ export async function createParticleScene(): Promise<ParticleScene> {
     camera.updateProjectionMatrix();
     renderer.setSize(w, h);
     composer?.setSize(w, h);
+    holder.scale.setScalar(fitScale()); // keep the globe proportionate on resize
   }
   window.addEventListener("resize", handleResize);
 
@@ -559,7 +570,12 @@ export async function createParticleScene(): Promise<ParticleScene> {
   // grab-bag: globe (hero) → cargo plane (exports) → flat trade map, locked
   // (global) → globe again (why-choose-us hold) → eagle logo (CTA) → drift (footer).
   const isTablet = width > 575 && width <= 1024;
-  const side = isMobile ? 0 : isTablet ? 5 : 8;
+  // Horizontal offset scales with the visible world-width at the globe's depth
+  // so it sits at a consistent fraction of the screen on any aspect ratio,
+  // rather than a fixed world offset that shoves it off a narrower display.
+  const halfH = Math.tan((35 * Math.PI) / 180 / 2) * camera.position.z; // ~11.3
+  const halfW = halfH * (width / height);
+  const side = isMobile ? 0 : Math.min(isTablet ? 5 : 8, halfW * 0.34);
 
   scene.position.x = side; // hero: globe sits opposite the left-aligned headline
 
