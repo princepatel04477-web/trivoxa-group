@@ -1,0 +1,238 @@
+/* ============================================================
+   Industry detail page ([slug]) — editorial, no card containers.
+   Extends the .tvx inner-page system from pages.css.
+   ============================================================ */
+
+/* ---------- Category table ---------- */
+.ind-table-wrap {
+  margin-top: 30px;
+  overflow-x: auto;
+}
+.ind-table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+}
+.ind-table thead th {
+  text-align: left;
+  padding: 14px 20px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--hair-strong);
+  white-space: nowrap;
+}
+.ind-table tbody td {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--hair);
+  font-size: 14.5px;
+  white-space: nowrap;
+}
+.ind-table tbody tr {
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.ind-table tbody tr:hover {
+  background: rgba(201, 162, 74, 0.06);
+}
+.ind-table tbody tr:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: -1px;
+}
+.ind-table .mono {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--silver);
+}
+
+/* ---------- Spec drawer ---------- */
+.ind-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 60;
+}
+.ind-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: min(440px, 92vw);
+  background: var(--surface-2);
+  border-left: 1px solid var(--hair-strong);
+  z-index: 61;
+  padding: 56px 40px 40px;
+  overflow-y: auto;
+}
+.ind-drawer__close {
+  position: absolute;
+  top: 28px;
+  right: 32px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 14px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.ind-drawer__close:hover {
+  color: var(--gold-bright);
+}
+.ind-drawer__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+}
+.ind-drawer h3 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 28px;
+  margin: 14px 0 30px;
+  line-height: 1.15;
+}
+.ind-drawer dl {
+  display: grid;
+  gap: 22px;
+}
+.ind-drawer dt {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.ind-drawer dd {
+  font-size: 15px;
+  line-height: 1.5;
+}
+.ind-drawer__specsheet {
+  margin-top: 36px;
+  display: inline-flex;
+}
+
+/* ---------- Ports & logistics ---------- */
+.ind-port-list {
+  display: grid;
+  gap: 0;
+  margin-top: 30px;
+}
+.ind-port-row {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--hair);
+}
+.ind-port-row__n {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--gold-bright);
+  opacity: 0.7;
+}
+.ind-port-row__name {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 18px;
+}
+.ind-ports-map {
+  border-radius: 4px;
+  border: 1px solid var(--hair);
+  min-height: 320px;
+  background:
+    radial-gradient(70% 60% at 70% 20%, rgba(201, 162, 74, 0.14), transparent 60%),
+    linear-gradient(200deg, #1a1610, #0c0b0a);
+  position: relative;
+  overflow: hidden;
+}
+.ind-ports-map svg {
+  width: 100%;
+  height: 100%;
+}
+.ind-ports-map .presence-geo {
+  fill: rgba(244, 243, 241, 0.06);
+  stroke: rgba(244, 243, 241, 0.12);
+  stroke-width: 0.5;
+  outline: none;
+}
+.ind-ports-map .port-dot {
+  fill: var(--gold-bright);
+  stroke: rgba(217, 179, 108, 0.35);
+  stroke-width: 6;
+}
+
+/* ---------- Markets We Serve — flag + name, no cards ---------- */
+.ind-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 28px;
+  margin-top: 30px;
+}
+.ind-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  color: var(--text);
+}
+.ind-chip__flag {
+  font-size: 20px;
+  line-height: 1;
+}
+
+/* ---------- Certifications ---------- */
+.ind-cert-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 36px;
+  margin-top: 34px;
+}
+.ind-cert {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 116px;
+  text-align: center;
+}
+.ind-cert__mark {
+  width: 64px;
+  height: 64px;
+}
+.ind-cert__mark circle {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1;
+}
+.ind-cert__mark text {
+  fill: var(--gold-bright);
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 600;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+.ind-cert__label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 991px) {
+  .ind-ports-map { min-height: 260px; }
+}
+@media (max-width: 640px) {
+  .ind-drawer { padding: 48px 24px 32px; }
+  .ind-cert-row { gap: 24px; }
+  .ind-cert { width: 92px; }
+}

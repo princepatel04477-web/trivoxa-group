@@ -1,0 +1,116 @@
+/* Shared section-pattern styles (components/patterns/*) — imported by any
+   page composing these patterns. Moved out of group-page.css when the
+   businesses page started reusing them. */
+
+/* ---------- Split-screen sticky (SplitScreenSticky) ---------- */
+.split-sticky {
+  display: grid;
+  grid-template-columns: 40% 60%;
+  column-gap: var(--space-xl);
+  padding: var(--space-3xl) 0;
+}
+
+.split-sticky__left {
+  position: sticky;
+  top: 30vh;
+  align-self: start;
+  padding-left: var(--space-md);
+}
+
+.split-sticky__left h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3.2vw, 2.75rem);
+  letter-spacing: -0.02em;
+  margin-top: var(--space-sm);
+}
+
+.split-sticky__right {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.split-sticky__p {
+  font-size: 1.25rem;
+  line-height: 1.7;
+  color: var(--color-ink-2);
+  max-width: 38rem;
+}
+
+@media (max-width: 900px) {
+  .split-sticky {
+    grid-template-columns: 1fr;
+  }
+  .split-sticky__left {
+    position: static;
+    margin-bottom: var(--space-lg);
+    padding-left: 0;
+  }
+}
+
+/* ---------- Numbered vertical list (NumberedList) ---------- */
+.numbered-list {
+  margin-top: var(--space-xl);
+}
+
+.numbered-list__row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  min-height: 100px;
+  width: 100%;
+  padding: var(--space-md) 0;
+  border-top: 1px solid var(--color-rule);
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: default;
+  transition: opacity 0.35s ease;
+}
+
+.numbered-list__row:last-child {
+  border-bottom: 1px solid var(--color-rule);
+}
+
+.numbered-list__row.is-dimmed {
+  opacity: 0.2;
+}
+
+.numbered-list__index {
+  font-family: var(--font-mono);
+  font-size: 0.9375rem;
+  letter-spacing: 0.06em;
+  color: var(--color-accent);
+  flex-shrink: 0;
+}
+
+.numbered-list__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 4vw, 3.5rem);
+  letter-spacing: -0.02em;
+}
+
+.numbered-list__desc {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--color-ink-2);
+  max-width: 26rem;
+  margin-left: auto;
+}
+
+@media (max-width: 780px) {
+  .numbered-list__row {
+    flex-wrap: wrap;
+    min-height: 0;
+  }
+  .numbered-list__desc {
+    margin-left: 0;
+    max-width: 100%;
+  }
+}

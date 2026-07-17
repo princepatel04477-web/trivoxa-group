@@ -1,0 +1,91 @@
+/* ============================================================
+   Product Exports — Industries manifest strip
+   Bespoke shipping-manifest / export-ledger treatment for the
+   "Industries We Serve" section. Replaces CardGrid on this page
+   only — no icons, no card surface, no border-radius.
+   ============================================================ */
+
+.pxp-manifest {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  margin-top: var(--space-xl, 52px);
+  padding-top: var(--space-md, 24px);
+  border-top: 1px solid var(--hair);
+}
+
+.pxp-manifest__item {
+  display: flex;
+  align-items: flex-start;
+}
+
+.pxp-manifest__entry {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3xs, 6px);
+  padding-bottom: var(--space-md, 24px);
+  text-decoration: none;
+  color: inherit;
+}
+
+.pxp-manifest__title {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text);
+  transition: color 0.25s ease;
+}
+
+a.pxp-manifest__entry:hover .pxp-manifest__title {
+  color: var(--gold-bright);
+}
+
+a.pxp-manifest__entry:hover .pxp-manifest__arrow {
+  opacity: 1;
+  transform: translateX(3px);
+}
+
+.pxp-manifest__arrow {
+  display: inline-block;
+  margin-left: var(--space-3xs, 6px);
+  opacity: 0;
+  transform: translateX(0);
+  color: var(--gold-bright);
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.pxp-manifest__desc {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 24ch;
+}
+
+.pxp-manifest__divider {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--gold-bright);
+  padding: 1px var(--space-md, 24px) 0 var(--space-md, 24px);
+  user-select: none;
+}
+
+@media (max-width: 860px) {
+  .pxp-manifest {
+    flex-direction: column;
+  }
+  .pxp-manifest__item {
+    width: 100%;
+    border-bottom: 1px solid var(--hair);
+  }
+  .pxp-manifest__item:last-child {
+    border-bottom: none;
+  }
+  .pxp-manifest__entry {
+    padding: var(--space-sm, 16px) 0;
+  }
+  .pxp-manifest__divider {
+    display: none;
+  }
+}

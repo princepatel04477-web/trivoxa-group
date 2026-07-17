@@ -1,0 +1,196 @@
+/* Businesses page — cinematic division panels + pinned process timeline.
+   Panel base styles (.arm-panel*) live in flagship-sections.css; this file
+   adds the businesses-page variants. */
+
+/* ---------- Cinematic panels: right-aligned variant, video bg, corner chips ---------- */
+.business-arms .arm-panel + .arm-panel {
+  margin-top: 0; /* panels butt directly against each other */
+}
+
+.arm-panel--right .arm-panel__content {
+  margin-left: auto;
+  text-align: right;
+}
+
+.arm-panel--right .arm-panel__thesis {
+  margin-left: auto;
+}
+
+.arm-panel--right .arm-panel__cats--corner {
+  right: auto;
+  left: var(--space-lg);
+}
+
+.arm-panel__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.arm-panel__link {
+  display: inline-block;
+  margin-top: var(--space-md);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  letter-spacing: 0.04em;
+  color: var(--color-ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-rule);
+  transition: color 0.25s var(--ease-out), border-color 0.25s var(--ease-out);
+}
+
+.arm-panel__link:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.arm-panel__cats--corner {
+  position: absolute;
+  z-index: 1;
+  right: var(--space-lg);
+  bottom: var(--space-lg);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2xs);
+  max-width: 60%;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--color-ink-2);
+}
+
+@media (max-width: 900px) {
+  .arm-panel--right .arm-panel__content {
+    margin-left: 0;
+    text-align: left;
+  }
+  .arm-panel--right .arm-panel__thesis {
+    margin-left: 0;
+  }
+  .arm-panel__cats--corner,
+  .arm-panel--right .arm-panel__cats--corner {
+    position: static;
+    justify-content: flex-start;
+    max-width: none;
+    margin: var(--space-md) var(--space-lg) var(--space-lg);
+  }
+}
+
+/* ---------- How We Work: pinned horizontal timeline ---------- */
+.h-timeline {
+  margin-top: var(--space-xl);
+  overflow: hidden;
+}
+
+.h-timeline__rail {
+  display: flex;
+  align-items: flex-start;
+  list-style: none;
+  margin: 0;
+  padding: var(--space-lg) 0;
+  will-change: transform;
+}
+
+.h-timeline__step {
+  position: relative;
+  flex: 0 0 clamp(300px, 32vw, 440px);
+  padding: 0 var(--space-lg) 0 0;
+  opacity: 0.4;
+  transition: opacity 0.35s ease;
+}
+
+/* hairline connector between nodes */
+.h-timeline__step::before {
+  content: "";
+  position: absolute;
+  top: 5px;
+  left: 18px;
+  right: 0;
+  height: 1px;
+  background: var(--color-rule);
+}
+
+.h-timeline__step:last-child::before {
+  display: none;
+}
+
+.h-timeline__dot {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  transition: transform 0.35s var(--ease-out);
+}
+
+.h-timeline__num {
+  display: block;
+  margin-top: var(--space-sm);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  letter-spacing: 0.06em;
+  color: var(--color-accent);
+}
+
+.h-timeline__title {
+  margin-top: var(--space-2xs);
+  font-family: var(--font-display);
+  font-size: 2rem;
+  letter-spacing: -0.01em;
+  transition: color 0.35s ease;
+}
+
+.h-timeline__desc {
+  margin-top: var(--space-2xs);
+  max-width: 22rem;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--color-ink-2);
+}
+
+.h-timeline__step.is-active {
+  opacity: 1;
+}
+
+.h-timeline__step.is-active .h-timeline__dot {
+  transform: scale(1.5);
+}
+
+.h-timeline__step.is-active .h-timeline__title {
+  color: var(--color-accent);
+}
+
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+  /* vertical fallback — no pin, all steps fully visible */
+  .h-timeline__rail {
+    flex-direction: column;
+    gap: var(--space-lg);
+    transform: none !important;
+  }
+  .h-timeline__step {
+    flex-basis: auto;
+    opacity: 1;
+    padding-right: 0;
+    padding-left: var(--space-md);
+  }
+  .h-timeline__step::before {
+    top: 16px;
+    left: 5px;
+    right: auto;
+    bottom: calc(-1 * var(--space-lg));
+    width: 1px;
+    height: auto;
+  }
+  .h-timeline__dot {
+    position: absolute;
+    top: 5px;
+    left: 0;
+  }
+  .h-timeline__num {
+    margin-top: 0;
+  }
+}

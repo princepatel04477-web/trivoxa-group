@@ -1,0 +1,163 @@
+
+
+.hp-sec-3 {
+  margin-bottom: 280px; }
+
+  .hp-sec-3 .container {
+    position: relative;
+    align-items: center; }
+
+  .hp-sec-3 .statistics {
+    flex-direction: column;
+    margin-left: 200px; }
+
+    .hp-sec-3 .statistics h2 {
+      margin-bottom: 50px;
+      max-width: 585px;
+      -webkit-transform: scale(0.94);
+      -moz-transform: scale(0.94);
+      -ms-transform: scale(0.94);
+      -o-transform: scale(0.94);
+      transform: scale(0.94); }
+
+    .hp-sec-3 .statistics .line {
+      height: 1px;
+      background-color: #fff;
+      opacity: 0.5;
+      width: 179px;
+      margin-bottom: 32px; }
+
+    .hp-sec-3 .statistics .numbers .statistic {
+      flex-direction: column; }
+
+      .hp-sec-3 .statistics .numbers .statistic:not(:last-child) {
+        margin-right: 60px; }
+
+      .hp-sec-3 .statistics .numbers .statistic .number {
+        margin-bottom: 8.5px;
+        font-family: "Lufga-SemiBold";
+        font-size: 70px;
+        line-height: 70px;
+        color: transparent;
+        -webkit-text-stroke: 1px #FFFFFF; }
+
+      .hp-sec-3 .statistics .numbers .statistic .text {
+        text-transform: uppercase;
+        font-size: 14px;
+        line-height: 28px;
+        letter-spacing: 2.1px; }
+
+
+.odometer.odometer-auto-theme,
+.odometer.odometer-auto-theme .odometer-digit,
+.odometer.odometer-theme-minimal,
+.odometer.odometer-theme-minimal .odometer-digit,
+.odometer.odometer-auto-theme .odometer-digit .odometer-digit-spacer,
+.odometer.odometer-theme-minimal .odometer-digit .odometer-digit-spacer {
+  vertical-align: unset !important; }
+
+
+.odometer.odometer-auto-theme.odometer-animating-up .odometer-ribbon-inner,
+.odometer.odometer-theme-minimal.odometer-animating-up .odometer-ribbon-inner,
+.odometer.odometer-auto-theme.odometer-animating-down.odometer-animating .odometer-ribbon-inner,
+.odometer.odometer-theme-minimal.odometer-animating-down.odometer-animating .odometer-ribbon-inner {
+  -webkit-transition-duration: 4s !important;
+  -moz-transition-duration: 4s !important;
+  -ms-transition-duration: 4s !important;
+  -o-transition-duration: 4s !important;
+  transition-duration: 4s !important; }
+@media (max-width: 1599px) {
+
+
+  .hp-sec-3 {
+    margin-bottom: 150px; }
+}
+@media (max-width: 1399px) {
+
+
+  .hp-sec-3 .statistics,
+  .hp-sec-4 .container .row-wrapper,
+  .hp-contact-section .container .contact .row {
+    margin-left: 160px; }
+
+
+  .hp-sec-3 {
+    margin-bottom: 130px; }
+
+    .hp-sec-3 .statistics .numbers .statistic:not(:last-child) {
+      margin-right: 45px; }
+}
+@media (max-width: 1199px) {
+
+
+  .hp-sec-3 .statistics,
+  .hp-sec-4 .container .row-wrapper,
+  .hp-contact-section .container .contact .row {
+    margin-left: 120px; }
+
+
+  .hp-sec-3 {
+    margin-bottom: 50px; }
+
+    .hp-sec-3 .statistics .numbers .statistic .number {
+      font-size: 50px;
+      line-height: 60px; }
+}
+@media (max-width: 991px) {
+
+
+  .hp-sec-3 .statistics,
+  .hp-sec-4 .container .row-wrapper,
+  .hp-contact-section .container .contact .row {
+    margin-left: 80px; }
+
+
+  .hp-sec-3 .statistics .numbers .statistic:not(:last-child) {
+    margin-right: 19px; }
+
+  .hp-sec-3 .statistics .numbers .statistic .number {
+    font-size: 45px;
+    line-height: 55px; }
+}
+@media (max-width: 767px) {
+
+
+  .hp-sec-3,
+  .hp-sec-4 {
+    margin-bottom: 0; }
+
+
+  .hp-sec-3 .statistics,
+  .hp-sec-4 .container .row-wrapper,
+  .hp-contact-section .container .contact .row {
+    margin-left: 0; }
+
+
+  .hp-sec-3 .statistics .numbers .statistic:not(:last-child) {
+    margin-right: 12px; }
+
+  .hp-sec-3 .statistics .numbers .statistic .number {
+    font-size: 40px;
+    line-height: 50px; }
+
+  .hp-sec-3 .statistics .numbers .statistic .text {
+    line-height: 24px; }
+}
+@media (max-width: 575px) {
+
+
+  .hp-sec-3 .statistics .numbers .statistic .number {
+    font-size: 32px;
+    line-height: 42px; }
+}
+@media (max-width: 399px) {
+
+
+  .hp-sec-3 .statistics .numbers .statistic .number {
+    font-size: 27px;
+    line-height: 37px; }
+
+
+  .hp-sec-3 .statistics .numbers .statistic:not(:last-child) {
+    margin-right: 6px; }
+}

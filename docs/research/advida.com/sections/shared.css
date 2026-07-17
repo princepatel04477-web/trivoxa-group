@@ -1,0 +1,132 @@
+
+
+.left-text-wrapper {
+  position: absolute;
+  left: 0; }
+
+  .left-text-wrapper .left-text {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+    flex-direction: column;
+    position: relative;
+    left: -50%;
+    align-items: center; }
+
+    .left-text-wrapper .left-text .top {
+      display: -webkit-box;
+      display: -moz-box;
+      display: -ms-flexbox;
+      display: -webkit-flex;
+      display: flex;
+      align-items: center;
+      -webkit-transform: translateX(80px);
+      -moz-transform: translateX(80px);
+      -ms-transform: translateX(80px);
+      -o-transform: translateX(80px);
+      transform: translateX(80px); }
+
+      .left-text-wrapper .left-text .top .line {
+        width: 156px;
+        height: 1px;
+        background-color: #fff;
+        margin-right: 18.5px; }
+
+    .left-text-wrapper .left-text > .left-side-title {
+      -webkit-transform: translateX(-80px);
+      -moz-transform: translateX(-80px);
+      -ms-transform: translateX(-80px);
+      -o-transform: translateX(-80px);
+      transform: translateX(-80px); }
+
+
+.scroll-to {
+  position: absolute;
+  left: 125px;
+  bottom: 80px;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  align-items: center; }
+
+  .scroll-to .line {
+    width: 368px;
+    margin-right: 25.8px; }
+
+    .scroll-to .line > div {
+      width: 46px;
+      height: 1px;
+      background-color: #fff;
+      opacity: 0.4; }
+
+  .scroll-to .text {
+    text-transform: uppercase;
+    font-size: 12px;
+    line-height: 12px;
+    letter-spacing: 0.6px;
+    opacity: 0; }
+
+    .hp-sec-4 .container .left-text-wrapper {
+      position: absolute;
+      top: 100px;
+      left: unset; }
+
+  .tech-services-entry-section .scroll-to {
+    bottom: 100px; }
+
+    .creative-studio-service-section .container .left-text-wrapper {
+      position: absolute;
+      top: 300px;
+      left: unset; }
+
+  .creative-studio-create-section .container .left-text-wrapper {
+    top: 200px; }
+@media (max-width: 1199px) {
+
+
+  .ss-single-entry-section .scroll-to {
+    bottom: 38px; }
+
+
+  .left-text-wrapper .left-text .top .line {
+    width: 120px; }
+}
+@media (max-width: 991px) {
+
+
+  .scroll-to .line {
+    width: 250px; }
+
+
+  .hp-sec-1 .scroll-to {
+    bottom: 50px; }
+}
+@media (max-width: 767px) {
+
+
+  .tech-services-entry-section .scroll-to, .creative-studio-entry-section .scroll-to {
+    left: 70px; }
+
+
+  .hp-sec-1 .scroll-to .line {
+    width: 200px; }
+
+
+  .left-text-wrapper {
+    display: none; }
+}
+@media (max-width: 575px) {
+
+
+  .scroll-to {
+    display: none; }
+}

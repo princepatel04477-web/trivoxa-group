@@ -1,0 +1,147 @@
+/* ---------- Industries We Serve: editorial full-bleed row list ---------- */
+.industry-list {
+  margin-top: var(--space-2xl);
+  border-bottom: 1px solid var(--color-rule);
+}
+
+.industry-row {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1.4fr) minmax(0, 1fr);
+  align-items: center;
+  column-gap: var(--space-lg);
+  padding: var(--space-lg) var(--space-xs);
+  margin: 0 calc(var(--space-xs) * -1);
+  border-top: 1px solid var(--color-rule);
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 0.35s ease, opacity 0.35s ease;
+}
+
+.industry-row__index {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  letter-spacing: 0.04em;
+  color: var(--color-accent);
+  opacity: 0.55;
+  transition: opacity 0.35s ease;
+}
+
+.industry-row__name {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.375rem, 2.4vw, 2rem);
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+  line-height: 1.15;
+}
+
+.industry-row__desc {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--color-ink-2);
+  text-align: right;
+  justify-self: end;
+  max-width: 34ch;
+}
+
+.industry-row:hover {
+  background: var(--color-paper-2);
+}
+
+.industry-row:hover .industry-row__index {
+  opacity: 1;
+}
+
+/* Sibling-dimming: when the list is hovered, un-hovered rows fade back */
+.industry-list:hover .industry-row:not(:hover) {
+  opacity: 0.4;
+}
+
+@media (max-width: 780px) {
+  .industry-row {
+    grid-template-columns: 2.5rem 1fr;
+    row-gap: var(--space-2xs);
+    padding: var(--space-md) var(--space-xs);
+  }
+  .industry-row__desc {
+    grid-column: 2 / -1;
+    text-align: left;
+    justify-self: start;
+    max-width: none;
+  }
+}
+
+/* ---------- Why Trivoxa: manifesto stack ---------- */
+.strengths-stack {
+  margin-top: var(--space-2xl);
+  display: flex;
+  flex-direction: column;
+}
+
+.strengths-block {
+  position: relative;
+  padding: var(--space-2xl) 0;
+  overflow: hidden;
+}
+
+.strengths-block + .strengths-block {
+  border-top: 1px solid var(--color-rule);
+}
+
+.strengths-block__num {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(5rem, 13vw, 7.5rem);
+  line-height: 1;
+  color: var(--color-accent);
+  opacity: 0.08;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+.strengths-block--left .strengths-block__num {
+  left: -0.25rem;
+}
+
+.strengths-block--right .strengths-block__num {
+  right: -0.25rem;
+}
+
+.strengths-block__content {
+  position: relative;
+  z-index: 1;
+  max-width: 42rem;
+}
+
+.strengths-block--right .strengths-block__content {
+  margin-left: auto;
+  text-align: right;
+}
+
+.strengths-block__title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.375rem, 2.2vw, 1.75rem);
+  color: var(--color-ink);
+  margin-bottom: var(--space-2xs);
+}
+
+.strengths-block__desc {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--color-ink-2);
+}
+
+@media (max-width: 780px) {
+  .strengths-block__num {
+    font-size: clamp(3.5rem, 22vw, 5rem);
+  }
+  .strengths-block--right .strengths-block__content {
+    margin-left: 0;
+    text-align: left;
+  }
+}

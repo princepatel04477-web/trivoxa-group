@@ -1,0 +1,80 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import Link from "next/link";
+import { gsap } from "@/lib/gsap";
+import { initSectionReveals } from "@/hooks/useScrollAnimations";
+
+const ARTICLES = [
+  {
+    tag: "Export Guide",
+    title: "A Practical Guide to Sourcing from India with Confidence",
+    dek: "What international buyers should know before their first shipment leaves an Indian port.",
+  },
+  {
+    tag: "Market Intelligence",
+    title: "Reading Global Demand: Where Opportunity Is Moving Next",
+    dek: "A look at the trade corridors and categories seeing the fastest growth this year.",
+  },
+  {
+    tag: "Industry Insights",
+    title: "Building Supply Chains That Endure Beyond a Single Order",
+    dek: "Why long-term sourcing relationships outperform one-off transactional deals.",
+  },
+];
+
+export default function InsightsMagazine() {
+  const ref = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const ctx = gsap.context(() => {
+      initSectionReveals(ref.current!);
+    }, ref);
+    return () => ctx.revert();
+  }, []);
+
+  const [featured, ...rest] = ARTICLES;
+
+  return (
+    <section className="hp-insights insights-magazine" ref={ref}>
+      <div className="container">
+        <div className="insights-head">
+          <div>
+            <div className="home-eyebrow" data-reveal-body>Insights</div>
+            <h2 className="home-heading" data-reveal-heading>Perspectives That Drive Global Business</h2>
+          </div>
+          <p className="home-lead" data-reveal-body>
+            Markets evolve. Industries transform. Our insights explore global trade, sourcing
+            strategies, emerging industries, and business innovation to help organizations make
+            informed decisions.
+          </p>
+        </div>
+
+        <div className="magazine-grid" data-reveal-body>
+          <Link href="/insights/" className="magazine-feature">
+            <div className="magazine-feature__image" data-reveal-image />
+            <span className="magazine-feature__tag">{featured.tag}</span>
+            <h3 className="magazine-feature__title">{featured.title}</h3>
+            <p className="magazine-feature__dek">{featured.dek}</p>
+          </Link>
+          <div className="magazine-secondary">
+            {rest.map((a) => (
+              <Link href="/insights/" className="magazine-secondary__item" key={a.tag}>
+                <span className="magazine-secondary__tag">{a.tag}</span>
+                <h4 className="magazine-secondary__title">{a.title}</h4>
+                <p className="magazine-secondary__dek">{a.dek}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        <div className="magazine-more" data-reveal-body>
+          <Link className="btn-ghost" href="/insights/">
+            Read All Articles →
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
