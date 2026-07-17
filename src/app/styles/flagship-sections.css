@@ -166,176 +166,123 @@
 }
 
 /* ---------- Business Arms — cinematic panels ---------- */
-.business-arms {
-  display: flex;
-  flex-direction: column;
+/* ---------- Business Arms — matched premium cards (Product Exports + Trivoxa Digital) ---------- */
+.biz-arms {
+  padding: clamp(72px, 9vw, 132px) 0;
 }
-.arm-panel {
+.biz-arms__inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 4vw, 48px);
+  display: grid;
+  gap: clamp(20px, 2.6vw, 36px);
+}
+.biz-arm {
   position: relative;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   overflow: hidden;
-  color: var(--color-ink);
+  padding: clamp(30px, 4vw, 60px);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background:
+    radial-gradient(120% 140% at 100% 0%, color-mix(in srgb, var(--gold) 6%, transparent), transparent 55%),
+    linear-gradient(160deg, color-mix(in srgb, var(--bg-card) 94%, transparent), color-mix(in srgb, var(--bg-elev) 82%, transparent));
+  transition: border-color 0.4s var(--ease-out), transform 0.4s var(--ease-out);
 }
-.arm-panel__bg {
+.biz-arm::before {
+  content: "";
   position: absolute;
-  inset: -10% 0;
-  background-size: cover;
-  background-position: center;
-  will-change: transform;
-}
-.arm-panel__overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(120deg, color-mix(in srgb, var(--bg) 82%, transparent), color-mix(in srgb, var(--bg) 45%, transparent));
-}
-.arm-panel__content {
-  position: relative;
-  z-index: 1;
-  max-width: 900px;
-  padding: 0 var(--space-lg);
-}
-.arm-panel__eyebrow {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-accent);
-}
-.arm-panel__title {
-  font-family: var(--font-display);
-  font-weight: 100;
-  font-size: clamp(2.75rem, 10vw, 9rem);
-  line-height: 0.95;
-  letter-spacing: -0.02em;
-  margin: var(--space-sm) 0;
-}
-.arm-panel__thesis {
-  font-size: clamp(1rem, 1.6vw, 1.5rem);
-  color: var(--color-ink-2);
-  max-width: 620px;
-}
-.arm-panel__cats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2xs);
-  margin-top: var(--space-md);
-}
-.arm-panel__cat a {
-  color: var(--color-ink);
-  text-decoration: none;
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.25s var(--ease-out), color 0.25s var(--ease-out);
-}
-.arm-panel__cat a:hover {
-  color: var(--color-accent);
-  border-color: var(--color-accent);
-}
-.arm-panel__pipe {
-  margin-right: var(--space-2xs);
-  color: var(--color-rule);
-}
-.arm-panel__more {
-  position: absolute;
-  z-index: 1;
-  right: var(--space-lg);
-  bottom: var(--space-lg);
-  font-size: 0.875rem;
-  color: var(--color-ink);
-  text-decoration: none;
-  border-bottom: 1px solid var(--color-rule);
-  transition: color 0.25s var(--ease-out), border-color 0.25s var(--ease-out);
-}
-.arm-panel__more:hover {
-  color: var(--color-accent);
-  border-color: var(--color-accent);
-}
-
-/* ---------- Trivoxa Digital — deprioritized callout (demoted vs. cinematic Product Exports panel) ---------- */
-.digital-callout {
-  display: flex;
-  align-items: stretch;
-  gap: var(--space-xl);
-  padding: var(--space-xl) var(--space-lg);
-  border-top: 1px solid var(--color-rule);
-  background: var(--color-paper-2);
-}
-.digital-callout__media {
-  flex: 0 0 220px;
-  border-radius: 4px;
-  overflow: hidden;
+  left: 0;
+  top: clamp(30px, 4vw, 60px);
+  bottom: clamp(30px, 4vw, 60px);
+  width: 2px;
+  background: linear-gradient(var(--gold), transparent);
   opacity: 0.75;
 }
-.digital-callout__media img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: grayscale(0.4);
+.biz-arm:hover {
+  transform: translateY(-4px);
+  border-color: color-mix(in srgb, var(--gold) 45%, var(--line));
 }
-.digital-callout__content {
-  flex: 1;
-  max-width: 640px;
-  padding: var(--space-2xs) 0;
+.biz-arm__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
 }
-.digital-callout__eyebrow {
+.biz-arm__eyebrow {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--color-ink-2);
+  color: var(--gold);
+  padding-top: 0.6rem;
 }
-.digital-callout__title {
+.biz-arm__index {
   font-family: var(--font-display);
-  font-weight: 300;
-  font-size: clamp(1.5rem, 2.6vw, 2.25rem);
-  letter-spacing: -0.01em;
-  margin: var(--space-3xs) 0 var(--space-2xs);
+  font-weight: 100;
+  font-size: clamp(3rem, 8vw, 6.5rem);
+  line-height: 0.85;
+  letter-spacing: -0.03em;
+  color: color-mix(in srgb, var(--text) 9%, transparent);
+  user-select: none;
 }
-.digital-callout__thesis {
-  font-size: 0.95rem;
-  line-height: 1.6;
-  color: var(--color-ink-2);
+.biz-arm__title {
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: clamp(2rem, 5vw, 3.75rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  margin: 0.25rem 0 var(--space-md);
+  max-width: 18ch;
 }
-.digital-callout__cats {
+.biz-arm__thesis {
+  font-size: clamp(1rem, 1.25vw, 1.2rem);
+  line-height: 1.7;
+  color: var(--text-2);
+  max-width: 56ch;
+}
+.biz-arm__cats {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2xs);
-  margin-top: var(--space-sm);
-  font-size: 0.8rem;
-  color: var(--color-ink-2);
+  gap: 10px;
+  margin: var(--space-lg) 0 var(--space-xl);
+  padding: 0;
+  list-style: none;
 }
-.digital-callout__pipe {
-  margin-right: var(--space-2xs);
-  color: var(--color-rule);
-}
-.digital-callout__note {
-  margin-top: var(--space-sm);
+.biz-arm__cat {
   font-family: var(--font-mono);
-  font-size: 0.78rem;
-  color: var(--color-accent);
+  font-size: 0.76rem;
+  letter-spacing: 0.02em;
+  color: var(--text-2);
+  padding: 8px 15px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg) 45%, transparent);
+  transition: border-color 0.25s var(--ease-out), color 0.25s var(--ease-out);
 }
-.digital-callout__more {
-  display: inline-block;
-  margin-top: var(--space-xs);
-  font-size: 0.8rem;
-  color: var(--color-ink);
+.biz-arm:hover .biz-arm__cat {
+  border-color: color-mix(in srgb, var(--gold) 28%, var(--line));
+  color: var(--text);
+}
+.biz-arm__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95rem;
+  color: var(--gold);
   text-decoration: none;
-  border-bottom: 1px solid var(--color-rule);
-  transition: color 0.25s var(--ease-out), border-color 0.25s var(--ease-out);
+  border-bottom: 1px solid color-mix(in srgb, var(--gold) 40%, transparent);
+  padding-bottom: 4px;
+  transition: gap 0.25s var(--ease-out), border-color 0.25s var(--ease-out);
 }
-.digital-callout__more:hover {
-  color: var(--color-accent);
-  border-color: var(--color-accent);
+.biz-arm__cta span {
+  transition: transform 0.25s var(--ease-out);
 }
-@media (max-width: 720px) {
-  .digital-callout {
-    flex-direction: column;
-  }
-  .digital-callout__media {
-    flex-basis: 160px;
-  }
+.biz-arm__cta:hover {
+  gap: 16px;
+  border-color: var(--gold);
+}
+.biz-arm__cta:hover span {
+  transform: translateX(4px);
 }
 
 /* ---------- Certifications strip — trust/compliance marks ---------- */

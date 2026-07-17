@@ -163,7 +163,9 @@ export default function GroupPage() {
             <div className="foundation-split__photos">
               {foundationPhotos.map((photo) => (
                 <figure key={photo.src} className="foundation-photo">
-                  <div className="foundation-photo__frame" />
+                  <div className="foundation-photo__frame">
+                    <img src={photo.src} alt={`Shiveshwar Textiles — ${photo.caption}`} loading="lazy" />
+                  </div>
                   <figcaption className="foundation-photo__caption">Shiveshwar Textiles — {photo.caption}</figcaption>
                 </figure>
               ))}
