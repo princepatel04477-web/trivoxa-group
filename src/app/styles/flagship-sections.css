@@ -110,7 +110,9 @@
   /* % height collapses here — the grid rows are auto-sized, so 60% resolved
      against an indefinite track and rendered as a ~20px strip. */
   align-self: center;
-  height: clamp(300px, 52vh, 520px);
+  justify-self: end;
+  width: min(100%, 42rem);
+  height: clamp(260px, 39vh, 410px);
   border-radius: 4px;
   background-size: cover;
   background-position: center;
