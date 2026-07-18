@@ -87,8 +87,8 @@
   /* Lowered ceiling from 8rem: at 8rem the longest names ("Healthcare &
      Pharmaceuticals") wrapped to 4 lines and blew past the panel height.
      Capped so even that name stays to 2 lines within the text column. */
-  font-size: clamp(2.2rem, 4.4vw + 1rem, 4.75rem);
-  line-height: 1.02;
+  font-size: clamp(1.9rem, 3.6vw + 0.9rem, 4rem);
+  line-height: 1.04;
   text-transform: uppercase;
   letter-spacing: -0.02em;
   margin-top: var(--space-sm);
