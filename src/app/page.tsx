@@ -23,11 +23,12 @@ import { AboutPreview, CareersPreview, FinalCta } from "@/components/home/previe
 import SiteFooter from "@/components/SiteFooter";
 import ContactModal from "@/components/ContactModal";
 import ParticleCanvasWrapper from "@/components/ParticleCanvasWrapper";
+import WhyBuyersTrust from "@/components/sections/WhyBuyersTrust";
 
 export const metadata: Metadata = {
-  title: "Trivoxa Group | Building the Future of Global Commerce",
+  title: "Trivoxa Group | Source Verified Indian Products. Export With Confidence.",
   description:
-    "Trivoxa Group is a diversified export house connecting Indian manufacturing to global markets across textiles, healthcare, building materials, and more.",
+    "Trivoxa connects international buyers with vetted Indian manufacturing partners across textiles, food, building materials, healthcare, and industrial goods — managed from sourcing to shipment.",
 };
 
 export default function Home() {
@@ -43,6 +44,10 @@ export default function Home() {
 
       {/* 1 · Hero — particle eagle */}
       <HeroSection />
+      <div className="section-divider" />
+
+      {/* 1b · Why Buyers Trust — trust layer immediately after hero (audit fix #5) */}
+      <WhyBuyersTrust />
       <div className="section-divider" />
 
       {/* 2 · About Preview */}

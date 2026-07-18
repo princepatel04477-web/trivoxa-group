@@ -74,22 +74,29 @@ export default function HeroSection() {
       <div className="container">
         <div className="hero-tagline p-anim">
           <span>
-            <PChars text="Connecting Markets. Creating Value. Inspiring Progress." />
+            <PChars text="India's Buyer-Side Sourcing & Export-Management Partner" />
           </span>
         </div>
         <h1 className="title-anim">
-          <TitleChars text="Building the Future of Global Commerce." />
+          <TitleChars text="Source Verified Indian Products. Export With Confidence." />
         </h1>
         <div className="subtitle p-anim">
-          <PChars text="Trivoxa Group is an international business group delivering trusted products, strategic sourcing solutions, and professional services across global markets. We connect businesses with opportunities, simplify international trade, and build partnerships designed for long-term success." />
+          <PChars text="Trivoxa connects international buyers with vetted Indian manufacturing partners across textiles, food, building materials, healthcare, and industrial goods—managed from sourcing to shipment." />
         </div>
         <div className="hero-cta d-flex">
           <button className="primary-button" type="button" onClick={() => emit("modal:open")}>
-            <span>Request a Quote</span>
+            <span>Request a Sourcing Quote</span>
           </button>
           <Link className="ghost-button" href="/businesses/">
-            <span>Explore Businesses</span>
+            <span>Download Export Capability Profile</span>
           </Link>
+        </div>
+        <div className="hero-proof-ribbon" role="list" aria-label="Trading facts">
+          <span role="listitem">Surat, India</span>
+          <span role="listitem">Global Sourcing &amp; Export Management</span>
+          <span role="listitem">Reply within 1 business day</span>
+          <span role="listitem">Samples available</span>
+          <span role="listitem">FOB / CIF / CFR support</span>
         </div>
       </div>
       <div className="scroll-to">

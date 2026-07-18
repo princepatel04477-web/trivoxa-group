@@ -114,6 +114,18 @@
   font-family: var(--font-mono);
 }
 
+.footer-legal-link {
+  color: var(--advida-accent, var(--gold));
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--gold) 40%, transparent);
+}
+.footer-legal-link:hover {
+  border-bottom-color: var(--gold);
+}
+.footer-legal-row--hours {
+  opacity: 0.85;
+}
+
 /* Column titles */
 .footer .footer-content .title {
   font-family: var(--font-lufga);

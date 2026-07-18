@@ -4,29 +4,40 @@ import { useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
 import { ScrollTrigger } from "@/lib/gsap";
 
+type CertState = "active" | "in-application" | "target";
+
 interface CertMark {
   code: string;
   name: string;
-  status: "in-process" | "held";
-  registration?: string;
+  state: CertState;
+  detail: string;
 }
 
+// Honest maturity model. Operational licensing is ACTIVE; sector certs are
+// being secured with target dates. Verified credentials will later link to
+// PDFs (registration number, authority, legal entity, validity period).
+// No "In process" tiles are shown on the homepage — per audit fix #1.
 const MARKS: CertMark[] = [
-  { code: "IEC", name: "Import Export Code", status: "in-process" },
-  { code: "GST", name: "Goods & Services Tax Registration", status: "in-process" },
-  { code: "FIEO", name: "Federation of Indian Export Organisations", status: "in-process" },
-  { code: "APEDA", name: "Agricultural & Processed Food Products Export Development Authority", status: "in-process" },
-  { code: "FSSAI", name: "Food Safety & Standards Authority of India", status: "in-process" },
-  { code: "ISO 9001", name: "Quality Management System", status: "in-process" },
-  { code: "Spice Board", name: "Spices Board of India", status: "in-process" },
-  { code: "CE", name: "CE Marking (EU Conformity)", status: "in-process" },
-  { code: "WHO-GMP", name: "WHO Good Manufacturing Practice", status: "in-process" },
+  { code: "IEC", name: "Import Export Code", state: "active", detail: "Active" },
+  { code: "GST", name: "Goods & Services Tax Registration", state: "active", detail: "Active" },
+  { code: "FIEO", name: "Federation of Indian Export Organisations", state: "in-application", detail: "In application — target Q4 2026" },
+  { code: "APEDA", name: "Agricultural & Processed Food Products Export Development Authority", state: "in-application", detail: "In application — target Q4 2026" },
+  { code: "FSSAI", name: "Food Safety & Standards Authority of India", state: "in-application", detail: "In application — target Q1 2027" },
+  { code: "ISO 9001", name: "Quality Management System", state: "in-application", detail: "In application — target Q1 2027" },
+  { code: "Spice Board", name: "Spices Board of India", state: "in-application", detail: "In application — target Q4 2026" },
+  { code: "CE", name: "CE Marking (EU Conformity)", state: "target", detail: "Targeted for EU-bound lines" },
+  { code: "WHO-GMP", name: "WHO Good Manufacturing Practice", state: "target", detail: "Targeted for pharma lines" },
 ];
 
 function CertBadge({ mark }: { mark: CertMark }) {
-  const dashed = mark.status === "in-process";
+  const stateClass =
+    mark.state === "active"
+      ? " cert-mark--active"
+      : mark.state === "in-application"
+        ? " cert-mark--application"
+        : " cert-mark--target";
   return (
-    <div className={`cert-mark${dashed ? " cert-mark--pending" : ""}`}>
+    <div className={`cert-mark${stateClass}`}>
       <svg
         className="cert-mark__badge"
         width="72"
@@ -34,23 +45,14 @@ function CertBadge({ mark }: { mark: CertMark }) {
         viewBox="0 0 72 72"
         aria-hidden="true"
       >
-        <circle
-          cx="36"
-          cy="36"
-          r="33"
-          fill="none"
-          strokeWidth="1.25"
-          strokeDasharray={dashed ? "4 4" : undefined}
-        />
+        <circle cx="36" cy="36" r="33" fill="none" strokeWidth="1.5" />
         <text x="36" y="41" textAnchor="middle" className="cert-mark__code-text">
           {mark.code.length > 6 ? mark.code.slice(0, 2).toUpperCase() : mark.code}
         </text>
       </svg>
       <span className="cert-mark__code">{mark.code}</span>
       <span className="cert-mark__name">{mark.name}</span>
-      <span className="cert-mark__status">
-        {mark.status === "held" && mark.registration ? mark.registration : "In process"}
-      </span>
+      <span className="cert-mark__status">{mark.detail}</span>
     </div>
   );
 }
@@ -81,13 +83,21 @@ export default function CertificationsStrip() {
   return (
     <section className="certifications-strip" ref={sectionRef}>
       <div className="container">
-        <span className="certifications-strip__eyebrow">COMPLIANCE &amp; MEMBERSHIPS</span>
+        <span className="certifications-strip__eyebrow">COMPLIANCE APPROACH</span>
+        <h2 className="certifications-strip__title">
+          Verified where we are. Transparent where we are going.
+        </h2>
         <div className="certifications-strip__row">
           {MARKS.map((mark) => (
             <CertBadge key={mark.code} mark={mark} />
           ))}
         </div>
-        <p className="certifications-strip__footnote">All certifications verifiable on request.</p>
+        <p className="certifications-strip__footnote">
+          Operational licensing (IEC, GST) is active. Sector certifications are being
+          secured with the target dates shown above. When each credential is finalized,
+          it will be published here with its registration number, issuing authority,
+          legal entity name, and validity period — linked to a verifiable document.
+        </p>
       </div>
     </section>
   );

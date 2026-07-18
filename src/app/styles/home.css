@@ -380,3 +380,52 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ---------- Why Buyers Trust (audit fix #5) ---------- */
+.hp-trust .head-col {
+  margin-bottom: clamp(40px, 5vw, 72px);
+}
+.hp-trust .trust-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(20px, 2.4vw, 36px);
+}
+.hp-trust .trust-card {
+  padding: clamp(24px, 2.4vw, 38px);
+  border: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--bg) 40%, transparent);
+  transition: border-color 0.4s var(--ease-out, ease),
+    transform 0.3s var(--ease-out, ease);
+}
+.hp-trust .trust-card:hover {
+  border-color: var(--advida-accent, var(--gold));
+  transform: translateY(-3px);
+}
+.hp-trust .trust-card__title {
+  font-family: var(--font-lufga);
+  font-weight: 500;
+  font-size: clamp(18px, 1.5vw, 22px);
+  letter-spacing: -0.01em;
+  color: var(--text);
+  margin: 0 0 12px;
+}
+.hp-trust .trust-card__body {
+  font-size: clamp(14px, 1.1vw, 16px);
+  line-height: 1.7;
+  font-weight: 300;
+  color: color-mix(in srgb, var(--text) 68%, transparent);
+  margin: 0;
+}
+.hp-trust .trust-note {
+  margin-top: clamp(28px, 3vw, 44px);
+  max-width: 64ch;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: color-mix(in srgb, var(--text) 50%, transparent);
+}
+@media (max-width: 768px) {
+  .hp-trust .trust-grid {
+    grid-template-columns: 1fr;
+  }
+}

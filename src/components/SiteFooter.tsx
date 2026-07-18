@@ -59,19 +59,31 @@ export default function SiteFooter() {
             <div className="footer-legal-block">
               <div className="footer-legal-row">
                 <span className="footer-legal-label">Registered Office</span>
-                <span>Surat, Gujarat, India — full address available on request</span>
+                <span>[PLACEHOLDER — full registered address, Surat, Gujarat, India]</span>
               </div>
               <div className="footer-legal-row">
                 <span className="footer-legal-label">IEC</span>
-                <span className="mono">Available on request</span>
+                <span className="mono">[PLACEHOLDER — IEC number]</span>
               </div>
               <div className="footer-legal-row">
                 <span className="footer-legal-label">GST</span>
-                <span className="mono">Available on request</span>
+                <span className="mono">[PLACEHOLDER — GST registration number]</span>
               </div>
               <div className="footer-legal-row">
                 <span className="footer-legal-label">CIN</span>
-                <span className="mono">Available on request</span>
+                <span className="mono">[PLACEHOLDER — CIN / company registration]</span>
+              </div>
+              <div className="footer-legal-row">
+                <span className="footer-legal-label">Trade Contact</span>
+                <span>
+                  <a href="https://wa.me/[PLACEHOLDER]" className="footer-legal-link">WhatsApp</a>
+                  {" · "}
+                  <a href="mailto:export@trivoxa.example" className="footer-legal-link">export@trivoxa.example</a>
+                </span>
+              </div>
+              <div className="footer-legal-row footer-legal-row--hours">
+                <span className="footer-legal-label">Hours</span>
+                <span>Mon–Sat, 10:00–19:00 IST (UTC+5:30)</span>
               </div>
             </div>
           </div>

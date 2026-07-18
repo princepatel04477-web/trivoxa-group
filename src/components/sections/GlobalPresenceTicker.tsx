@@ -5,15 +5,15 @@ import Link from "next/link";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { revealHeadings, revealBody } from "@/hooks/useScrollAnimations";
 
-const MANIFEST = [
-  { lane: "MUMBAI → ROTTERDAM", cargo: "COTTON 12MT", status: "IN TRANSIT" as const },
-  { lane: "MUNDRA → JEBEL ALI", cargo: "SPICES 4MT", status: "DELIVERED" as const },
-  { lane: "KANDLA → HAMBURG", cargo: "MARBLE 22MT", status: "CONFIRMED" as const },
-  { lane: "NHAVA SHEVA → SINGAPORE", cargo: "TEXTILES 9MT", status: "IN TRANSIT" as const },
-  { lane: "MUMBAI → NEW YORK", cargo: "PHARMA 3MT", status: "DELIVERED" as const },
-  { lane: "MUNDRA → ROTTERDAM", cargo: "ENGINEERING GOODS 15MT", status: "CONFIRMED" as const },
-  { lane: "KANDLA → JEBEL ALI", cargo: "AGRI PRODUCE 18MT", status: "IN TRANSIT" as const },
-  { lane: "NHAVA SHEVA → HAMBURG", cargo: "BUILDING MATERIALS 30MT", status: "CONFIRMED" as const },
+const CORRIDORS = [
+  { lane: "Mumbai → Rotterdam", cargo: "Cotton & Textiles" },
+  { lane: "Mundra → Jebel Ali", cargo: "Spices & Agri" },
+  { lane: "Kandla → Hamburg", cargo: "Marble & Granite" },
+  { lane: "Nhava Sheva → Singapore", cargo: "Textiles" },
+  { lane: "Mumbai → New York", cargo: "Pharmaceuticals" },
+  { lane: "Mundra → Rotterdam", cargo: "Engineering Goods" },
+  { lane: "Kandla → Jebel Ali", cargo: "Agri Produce" },
+  { lane: "Nhava Sheva → Hamburg", cargo: "Building Materials" },
 ];
 
 export default function GlobalPresenceTicker() {
@@ -35,7 +35,7 @@ export default function GlobalPresenceTicker() {
     return () => ctx.revert();
   }, []);
 
-  const doubled = [...MANIFEST, ...MANIFEST];
+  const doubled = [...CORRIDORS, ...CORRIDORS];
 
   return (
     <section className="hp-global presence" ref={sectionRef}>
@@ -53,12 +53,17 @@ export default function GlobalPresenceTicker() {
       <div className="ticker">
         <div className="ticker-track">
           {doubled.map((row, i) => (
-            <span className={`ticker-row status-${row.status.replace(" ", "-").toLowerCase()}`} key={i}>
-              {row.lane} · {row.cargo} · {row.status}
+            <span className="ticker-row" key={i}>
+              {row.lane} · {row.cargo}
             </span>
           ))}
         </div>
       </div>
+
+      <p className="ticker-disclaimer" data-reveal-body>
+        Illustrative trade corridors — representative of the lanes Trivoxa operates, not live
+        shipment tracking.
+      </p>
 
       {/* Stage the particle cargo-ship morph (see particle-scene.ts, .hp-global). */}
       <div className="presence-map" aria-hidden />
