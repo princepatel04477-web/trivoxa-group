@@ -19,8 +19,10 @@
   flex-shrink: 0;
   /* Clear the fixed navbar (~127px incl. its scrim): the section pins at
      top:top, so the head sits at viewport top and would otherwise collide with
-     the logo/nav. Padding keeps the title ~80-100px clear of the nav. */
-  padding-top: clamp(160px, 24vh, 200px);
+     the logo/nav. Trimmed from 160-200px so the panel below gets more of the
+     viewport (the head was eating ~280px of a 900px screen). */
+  padding-top: clamp(120px, 15vh, 152px);
+  padding-bottom: var(--space-sm);
 }
 .industries-folio__eyebrow,
 .industries-folio__title {
@@ -59,17 +61,17 @@
      (Was a grid whose auto rows let the image drift out of line with the text.) */
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   column-gap: clamp(var(--space-xl), 5vw, var(--space-3xl));
   width: 100vw;
   height: 100%;
   flex-shrink: 0;
-  padding: 0 clamp(var(--space-xl), 6vw, var(--space-3xl));
+  padding: 0 clamp(var(--space-lg), 5vw, var(--space-3xl));
 }
 .industries-folio__text {
-  flex: 1 1 0;
+  flex: 1 1 auto;
   min-width: 0;
-  max-width: 42ch;
+  max-width: 46ch;
 }
 .industries-folio__index {
   display: block;
@@ -85,8 +87,8 @@
   /* Lowered ceiling from 8rem: at 8rem the longest names ("Healthcare &
      Pharmaceuticals") wrapped to 4 lines and blew past the panel height.
      Capped so even that name stays to 2 lines within the text column. */
-  font-size: clamp(1.9rem, 3.6vw + 1rem, 3.4rem);
-  line-height: 1.05;
+  font-size: clamp(2.2rem, 4.4vw + 1rem, 4.75rem);
+  line-height: 1.02;
   text-transform: uppercase;
   letter-spacing: -0.02em;
   margin-top: var(--space-sm);
@@ -104,10 +106,10 @@
      photo beside the text, not a full-height panel. flex:0 0 auto keeps it
      from stretching; align-items:center on the panel keeps it in line. */
   flex: 0 0 auto;
-  width: min(44%, 30rem);
+  width: min(50%, 40rem);
   aspect-ratio: 4 / 3;
   height: auto;
-  max-height: 60vh;
+  max-height: 72vh;
   border-radius: 6px;
   background-size: cover;
   background-position: center;
