@@ -3,7 +3,7 @@ import Link from "next/link";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, CtaBand } from "@/components/trivoxa/ui";
 import SplitScreenSticky from "@/components/patterns/SplitScreenSticky";
-import HorizontalTimeline from "@/components/patterns/HorizontalTimeline";
+import ProcessLoader from "@/components/patterns/ProcessLoader";
 import NumberedList from "@/components/patterns/NumberedList";
 import { serviceCategories } from "@/lib/data/services";
 import "@/app/styles/patterns.css";
@@ -75,9 +75,9 @@ export default function ServiceExportsPage() {
         </div>
       </Section>
 
-      {/* 4. DELIVERY PROCESS — horizontal timeline */}
+      {/* 4. DELIVERY PROCESS — step-by-step process loader */}
       <Section eyebrow="Delivery Process" title="How We Deliver, Reliably.">
-        <HorizontalTimeline steps={delivery} />
+        <ProcessLoader steps={delivery} />
       </Section>
 
       {/* 5. WHY CHOOSE TRIVOXA — numbered list */}
