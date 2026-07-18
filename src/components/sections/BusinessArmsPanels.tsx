@@ -14,6 +14,8 @@ interface Arm {
   categories: string[];
   href: string;
   cta: string;
+  image: string;
+  imageAlt: string;
 }
 
 const ARMS: Arm[] = [
@@ -27,6 +29,8 @@ const ARMS: Arm[] = [
     categories: ["Textiles", "Healthcare & Pharma", "Building Materials", "Agriculture & Food", "Engineering & Jewellery"],
     href: "/businesses/product-exports/",
     cta: "See sourcing capabilities",
+    image: "/images/businesses/product-exports-editorial.png",
+    imageAlt: "Cargo containers and export logistics at a port terminal",
   },
   {
     id: "trivoxa-digital",
@@ -38,6 +42,8 @@ const ARMS: Arm[] = [
     categories: ["Technology Solutions", "AI Solutions", "Branding & Design", "Digital Marketing"],
     href: "/businesses/service-exports/",
     cta: "See service capabilities",
+    image: "/images/businesses/service-exports-editorial.png",
+    imageAlt: "Technology team collaborating in a modern studio",
   },
 ];
 
@@ -71,6 +77,10 @@ export default function BusinessArmsPanels() {
       <div className="biz-arms__inner">
         {ARMS.map((arm) => (
           <article className="biz-arm" key={arm.id}>
+            <div className="biz-arm__media">
+              <img src={arm.image} alt={arm.imageAlt} loading="lazy" />
+              <span className="biz-arm__media-label">{arm.index} / 02</span>
+            </div>
             <div className="biz-arm__head">
               <span className="biz-arm__eyebrow">{arm.eyebrow}</span>
               <span className="biz-arm__index" aria-hidden="true">
@@ -83,7 +93,7 @@ export default function BusinessArmsPanels() {
             <div className="biz-arm__thesis p-anim">
               <PChars text={arm.thesis} />
             </div>
-            <ul className="biz-arm__cats">
+            <ul className="biz-arm__cats" aria-label={`${arm.title} capabilities`}>
               {arm.categories.map((cat) => (
                 <li className="biz-arm__cat" key={cat}>
                   {cat}
