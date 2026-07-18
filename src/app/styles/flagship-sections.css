@@ -17,7 +17,10 @@
   /* Was position:absolute over the track — that's the overlap bug. Normal
      flow + flex-shrink:0 reserves real space for it instead. */
   flex-shrink: 0;
-  padding-top: var(--space-xl);
+  /* Clear the fixed navbar (~127px incl. its scrim): the section pins at
+     top:top, so the head sits at viewport top and would otherwise collide with
+     the logo/nav. Padding keeps the title ~80-100px clear of the nav. */
+  padding-top: clamp(160px, 24vh, 200px);
 }
 .industries-folio__eyebrow,
 .industries-folio__title {
@@ -51,49 +54,44 @@
 }
 .industries-folio__panel {
   position: relative;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* Flex row: text block and image are two items centered on the SAME vertical
+     line, so they always share alignment regardless of how tall either is.
+     (Was a grid whose auto rows let the image drift out of line with the text.) */
+  display: flex;
   align-items: center;
-  /* align-content centers the index/name/desc row-stack as a whole inside
-     the panel's available height, instead of pinning it to the top. */
-  align-content: center;
-  column-gap: var(--space-xl);
+  justify-content: center;
+  column-gap: clamp(var(--space-xl), 5vw, var(--space-3xl));
   width: 100vw;
   height: 100%;
   flex-shrink: 0;
-  padding: 0 var(--space-2xl);
+  padding: 0 clamp(var(--space-xl), 6vw, var(--space-3xl));
+}
+.industries-folio__text {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 42ch;
 }
 .industries-folio__index {
-  /* Explicit grid placement (was position:absolute) so it stacks in flow
-     above the name instead of floating independently of it. */
-  grid-column: 1;
-  grid-row: 1;
+  display: block;
   font-family: var(--font-mono);
   font-size: clamp(1rem, 0.3vw + 0.95rem, 1.25rem);
   color: var(--color-accent);
   opacity: 0.6;
 }
 .industries-folio__name {
-  grid-column: 1;
-  grid-row: 2;
   min-width: 0;
   overflow-wrap: break-word;
   font-family: var(--font-display);
   /* Lowered ceiling from 8rem: at 8rem the longest names ("Healthcare &
      Pharmaceuticals") wrapped to 4 lines and blew past the panel height.
-     4rem keeps even that name to 2 lines within the text column's width. */
-  font-size: clamp(2rem, 4.5vw + 1rem, 4rem);
-  line-height: 1;
+     Capped so even that name stays to 2 lines within the text column. */
+  font-size: clamp(1.9rem, 3.6vw + 1rem, 3.4rem);
+  line-height: 1.05;
   text-transform: uppercase;
   letter-spacing: -0.02em;
   margin-top: var(--space-sm);
 }
 .industries-folio__desc {
-  /* Dropped the 3rem margin-left both here and on __name — it was compensating
-     for the old absolutely-positioned index; now index shares this grid column,
-     so flush-left keeps index/name/desc aligned instead of zig-zagging. */
-  grid-column: 1;
-  grid-row: 3;
   min-width: 0;
   margin-top: var(--space-sm);
   max-width: 40ch;
@@ -102,26 +100,32 @@
   color: var(--color-ink-2);
 }
 .industries-folio__image {
-  /* Explicit column 2 spanning all three text rows — previously unplaced,
-     it fell into implicit auto-flow below the description instead of
-     beside the text. */
-  grid-column: 2;
-  grid-row: 1 / -1;
-  /* % height collapses here — the grid rows are auto-sized, so 60% resolved
-     against an indefinite track and rendered as a ~20px strip. */
-  align-self: center;
-  justify-self: end;
-  width: min(100%, 42rem);
-  height: clamp(260px, 39vh, 410px);
-  border-radius: 4px;
+  /* Scaled down and locked to a fixed aspect box so it reads as a framed
+     photo beside the text, not a full-height panel. flex:0 0 auto keeps it
+     from stretching; align-items:center on the panel keeps it in line. */
+  flex: 0 0 auto;
+  width: min(44%, 30rem);
+  aspect-ratio: 4 / 3;
+  height: auto;
+  max-height: 60vh;
+  border-radius: 6px;
   background-size: cover;
   background-position: center;
 }
 .industries-folio__progress {
+  /* Anchored bottom-right of the carousel section. Given as a pill with a
+     subtle backdrop so it reads as an intentional progress marker instead of
+     text floating over the panel image. */
   position: absolute;
   bottom: var(--space-xl);
   right: var(--space-2xl);
-  z-index: 2;
+  z-index: 3;
+  padding: 6px 13px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg) 62%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   font-family: var(--font-mono);
   font-size: clamp(0.75rem, 0.2vw + 0.7rem, 0.85rem);
   letter-spacing: 0.05em;
@@ -142,25 +146,25 @@
     transform: none !important;
   }
   .industries-folio__panel {
-    grid-template-columns: 1fr;
-    align-content: start;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
     width: 100%;
     height: auto;
     padding: var(--space-lg) var(--space-md);
-    row-gap: var(--space-sm);
+    row-gap: var(--space-md);
   }
-  .industries-folio__index,
-  .industries-folio__name,
-  .industries-folio__desc {
-    grid-column: 1;
+  .industries-folio__text {
+    flex: 0 0 auto;
+    max-width: 100%;
   }
   .industries-folio__name {
     font-size: clamp(1.75rem, 6vw + 0.5rem, 2.5rem);
   }
   .industries-folio__image {
-    grid-column: 1;
-    grid-row: auto;
-    height: clamp(160px, 45vw, 240px);
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    max-height: none;
   }
   .industries-folio__progress {
     display: none;

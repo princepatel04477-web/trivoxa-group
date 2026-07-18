@@ -77,9 +77,11 @@ export default function IndustriesManifest() {
       <div className="industries-folio__track" ref={trackRef}>
         {INDUSTRIES.map((ind, i) => (
           <div className="industries-folio__panel" key={ind.name}>
-            <span className="industries-folio__index">{String(i + 1).padStart(2, "0")}</span>
-            <h3 className="industries-folio__name">{ind.name}</h3>
-            <p className="industries-folio__desc">{ind.desc}</p>
+            <div className="industries-folio__text">
+              <span className="industries-folio__index">{String(i + 1).padStart(2, "0")}</span>
+              <h3 className="industries-folio__name">{ind.name}</h3>
+              <p className="industries-folio__desc">{ind.desc}</p>
+            </div>
             <div className="industries-folio__image" style={{ backgroundImage: `url(${ind.image})` }} />
           </div>
         ))}
