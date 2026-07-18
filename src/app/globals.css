@@ -401,6 +401,23 @@ a, button {
   pointer-events: none;
   z-index: 9999;
   will-change: transform;
+  /* Hidden by default. Only revealed for non-touch pointers once JS adds
+     .has-custom-cursor to <html> — prevents a frozen dot/ring in the
+     top-left corner on touch devices (mobile). */
+  display: none;
+}
+.has-custom-cursor .custom-cursor-dot,
+.has-custom-cursor .custom-cursor-ring {
+  display: block;
+}
+/* Belt-and-suspenders: never show the custom cursor on devices that cannot
+   hover (true touch devices, and some emulation modes). display:none here
+   overrides the .has-custom-cursor rule above. */
+@media (hover: none) {
+  .custom-cursor-dot,
+  .custom-cursor-ring {
+    display: none !important;
+  }
 }
 .custom-cursor-dot {
   width: 8px;
