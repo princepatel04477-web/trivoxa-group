@@ -59,7 +59,7 @@ export const exportCategories: ExportCategory[] = [
     name: "Textile & Apparel",
     description:
       "Supporting manufacturers, brands, wholesalers, and sourcing companies with fabrics, home textiles, apparel accessories, and customized sourcing solutions.",
-    image: "/images/industries/textile.jpg",
+    image: "/images/industries/textile-editorial.png",
     subCategories: [
       {
         slug: "fabrics",
@@ -119,21 +119,21 @@ export const exportCategories: ExportCategory[] = [
     name: "Healthcare & Pharmaceuticals",
     description:
       "Providing access to trusted pharmaceutical products and healthcare solutions through responsible sourcing and quality-focused manufacturing partnerships.",
-    image: "/images/industries/healthcare.jpg",
+    image: "/images/industries/healthcare-editorial.png",
   },
   {
     slug: "building-materials",
     name: "Building Materials",
     description:
       "Supplying natural stone, marble, granite, ceramic products, and construction materials for residential, commercial, and infrastructure projects.",
-    image: "/images/industries/building.jpg",
+    image: "/images/industries/building-editorial.png",
   },
   {
     slug: "furniture-interiors",
     name: "Furniture & Interiors",
     description:
       "Connecting businesses with quality furniture and interior solutions for residential, commercial, and hospitality environments.",
-    image: "/images/industries/building.jpg",
+    image: "/images/industries/furniture-editorial.png",
   },
   {
     slug: "agriculture-food",
@@ -147,7 +147,7 @@ export const exportCategories: ExportCategory[] = [
     name: "Engineering & Industrial",
     description:
       "Delivering industrial products, engineering components, and manufacturing solutions that support industrial growth and infrastructure development.",
-    image: "/images/industries/engineering.jpg",
+    image: "/images/industries/jewellery-editorial.png",
   },
   {
     slug: "jewellery-precious-products",

@@ -33,7 +33,7 @@ export const industries: Industry[] = [
     name: "Textile & Apparel",
     description:
       "Supporting manufacturers, brands, wholesalers, and sourcing companies with fabrics, home textiles, apparel accessories, and customized sourcing solutions.",
-    image: "/images/industries/textile.jpg",
+    image: "/images/industries/textile-editorial.png",
     productCategorySlug: "textile-apparel",
     categories: [
       { name: "Cotton Yarn", hsCode: "5205.11", moq: "5 MT", incoterms: ["FOB", "CIF"], leadTime: "15–20 days", packaging: "50kg cones on pallets" },
@@ -48,7 +48,7 @@ export const industries: Industry[] = [
     name: "Healthcare & Pharmaceuticals",
     description:
       "Providing access to trusted pharmaceutical products and healthcare solutions through responsible sourcing and quality-focused manufacturing partnerships.",
-    image: "/images/industries/healthcare.jpg",
+    image: "/images/industries/healthcare-editorial.png",
     productCategorySlug: "healthcare-pharmaceuticals",
     categories: [
       { name: "Generic Formulations", hsCode: "3004.90", moq: "10,000 units", incoterms: ["FOB", "CIF", "DDP"], leadTime: "30–35 days", packaging: "Blister strips, export cartons, cold-chain optional" },
@@ -63,7 +63,7 @@ export const industries: Industry[] = [
     name: "Building Materials",
     description:
       "Supplying natural stone, marble, granite, ceramic products, and construction materials for residential, commercial, and infrastructure projects.",
-    image: "/images/industries/building.jpg",
+    image: "/images/industries/building-editorial.png",
     productCategorySlug: "building-materials",
     categories: [
       { name: "Vitrified & Ceramic Tiles", hsCode: "6907.21", moq: "1 FCL (18,000 sqft)", incoterms: ["FOB", "CIF"], leadTime: "20–25 days", packaging: "Wooden pallets, edge-protected cartons" },
@@ -78,7 +78,7 @@ export const industries: Industry[] = [
     name: "Furniture & Interiors",
     description:
       "Connecting businesses with quality furniture and interior solutions for residential, commercial, and hospitality environments.",
-    image: "/images/industries/building.jpg",
+    image: "/images/industries/furniture-editorial.png",
     productCategorySlug: "furniture-interiors",
     categories: [],
   },
@@ -126,7 +126,7 @@ export const industries: Industry[] = [
     name: "Retail & Consumer Goods",
     description:
       "Helping retailers, distributors, and consumer brands strengthen their supply chains with scalable sourcing and business solutions.",
-    image: "/images/industries/textile.jpg",
+    image: "/images/industries/retail-editorial.png",
     categories: [],
   },
 ];

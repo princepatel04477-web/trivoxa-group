@@ -4,9 +4,9 @@ import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 
 const INDUSTRIES = [
-  { name: "Textile & Apparel", desc: "Fabrics, home textiles, apparel accessories.", image: "/images/industries/textile.jpg" },
-  { name: "Healthcare & Pharmaceuticals", desc: "Trusted pharmaceutical products & healthcare solutions.", image: "/images/industries/healthcare.jpg" },
-  { name: "Building Materials", desc: "Natural stone, marble, granite & construction materials.", image: "/images/industries/building.jpg" },
+  { name: "Textile & Apparel", desc: "Fabrics, home textiles, apparel accessories.", image: "/images/industries/textile-editorial.png" },
+  { name: "Healthcare & Pharmaceuticals", desc: "Trusted pharmaceutical products & healthcare solutions.", image: "/images/industries/healthcare-editorial.png" },
+  { name: "Building Materials", desc: "Natural stone, marble, granite & construction materials.", image: "/images/industries/building-editorial.png" },
   { name: "Agriculture & Food", desc: "Sourced produce, spices, dry fruits & processed foods.", image: "/images/industries/agriculture.jpg" },
   { name: "Engineering & Industrial", desc: "Industrial products, components & manufacturing solutions.", image: "/images/industries/engineering.jpg" },
   { name: "Technology", desc: "Software, AI & digital transformation for modern business.", image: "/images/industries/technology.jpg" },
@@ -46,6 +46,14 @@ export default function IndustriesManifest() {
             scrub: 1,
             pin: true,
             invalidateOnRefresh: true,
+            // Settle on whole panels so the carousel never comes to rest
+            // mid-transition (which clips the active title on the left and
+            // lets the next panel peek in on the right).
+            snap: {
+              snapTo: 1 / (panels.length - 1),
+              duration: { min: 0.15, max: 0.4 },
+              ease: "power1.inOut",
+            },
             onUpdate: (self) => {
               const idx = Math.min(panels.length - 1, Math.floor(self.progress * panels.length));
               if (progressRef.current) progressRef.current.textContent = String(idx + 1).padStart(2, "0");
