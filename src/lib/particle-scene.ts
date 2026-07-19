@@ -274,6 +274,9 @@ export async function createParticleScene(): Promise<ParticleScene> {
     return THREE.MathUtils.clamp(vpMin / 1200, 0.5, 0.82);
   };
   holder.scale.setScalar(fitScale());
+  // Start at the formation size so the hero globe doesn't visibly grow in from
+  // 1× on load (the render loop only eases toward this target).
+  points.scale.setScalar(FORMATION_SCALE);
 
   // Horizontal offset for the globe / formations. Placed at a consistent
   // fraction of the visible half-width (so the composition reads the same on
@@ -287,13 +290,13 @@ export async function createParticleScene(): Promise<ParticleScene> {
     if (w <= 575) return 0; // mobile: centred, no side offset
     // Visible half-width in world units at the globe's depth.
     const halfW = Math.tan((35 * Math.PI) / 180 / 2) * camera.position.z * (w / h);
-    // Globe's on-screen radius (incl. the outer shell), so we can guarantee it
-    // stays inside the frustum with margin.
-    const onscreenR = globeRadius * fitScale() * 1.08;
+    // Globe's on-screen radius (incl. the outer shell) at the LARGEST formation
+    // size, so we can guarantee it stays inside the frustum with margin. Uses
+    // FORMATION_SCALE because that's the biggest the field ever gets — the ports
+    // globe (PORTS_SCALE) is smaller, so it clears comfortably too.
+    const onscreenR = globeRadius * fitScale() * FORMATION_SCALE * 1.08;
     const frac = w <= 1024 ? 0.34 : 0.42; // how far right of centre it sits
-    // Reserve enough room that even the enlarged ports globe (scaled 1.22× in
-    // the render loop) stays fully on-screen when parked on the right.
-    const maxRight = Math.max(0, halfW - onscreenR * 1.32);
+    const maxRight = Math.max(0, halfW - onscreenR * 1.12); // fully-visible cap
     return Math.min(halfW * frac, maxRight);
   };
   let side = computeSide();
@@ -355,8 +358,6 @@ export async function createParticleScene(): Promise<ParticleScene> {
     // relocates and reshapes as the user scrolls (see morphTo/sweep below),
     // it just doesn't move on its own between scroll events.
     if (!reducedMotion) {
-      const scaleTo1 = () =>
-        points.scale.setScalar(points.scale.x + (1 - points.scale.x) * kSettle);
       if (currentIsGlobe) {
         // Idle rotation: single Y-axis, constant velocity, 26s/rev (Phase 3.2.1).
         // Tilt lives on the holder (23.4°); no secondary-axis wobble on points.
@@ -367,10 +368,6 @@ export async function createParticleScene(): Promise<ParticleScene> {
         holder.rotation.z += (AXIAL_TILT - holder.rotation.z) * kSettle;
         holder.rotation.x += (pointer.y * PARALLAX_MAX - holder.rotation.x) * kParallax;
         holder.rotation.y += (pointer.x * PARALLAX_MAX - holder.rotation.y) * kParallax;
-        // Enlarge the globe while the ports overlay is up so the world map and
-        // its named hubs get more room; eases back to 1 for the hero globe.
-        const globeScale = portsMode ? 1.22 : 1;
-        points.scale.setScalar(points.scale.x + (globeScale - points.scale.x) * kSettle);
       } else if (currentFlat) {
         // LOCKED formation (trade map / eagle logo / cargo plane). The centroid
         // must not drift, rotate, or breathe — ease all residual motion to zero.
@@ -379,7 +376,6 @@ export async function createParticleScene(): Promise<ParticleScene> {
         holder.rotation.z += (0 - holder.rotation.z) * kSettle;
         holder.rotation.x += (0 - holder.rotation.x) * kSettle;
         holder.rotation.y += (0 - holder.rotation.y) * kSettle;
-        scaleTo1();
       } else {
         // Ambient footer drift — slow single-axis wander, no tilt or parallax.
         points.rotation.y += IDLE_OMEGA * 0.35 * delta;
@@ -387,9 +383,16 @@ export async function createParticleScene(): Promise<ParticleScene> {
         holder.rotation.z += (0 - holder.rotation.z) * kSettle;
         holder.rotation.x += (0 - holder.rotation.x) * kSettle;
         holder.rotation.y += (0 - holder.rotation.y) * kSettle;
-        scaleTo1();
       }
     }
+
+    // Formation size (kept outside the motion branches so it also applies under
+    // prefers-reduced-motion, just without the easing). The hero globe and the
+    // flat shapes render at FORMATION_SCALE; the ports globe holds at the
+    // smaller PORTS_SCALE so it stays clear of the global-presence copy.
+    const targetScale = currentIsGlobe && portsMode ? PORTS_SCALE : FORMATION_SCALE;
+    if (reducedMotion) points.scale.setScalar(targetScale);
+    else points.scale.setScalar(points.scale.x + (targetScale - points.scale.x) * kSettle);
 
     if (needsUpdate) {
       const posArr = geometry.attributes.position.array as Float32Array;
