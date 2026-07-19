@@ -76,6 +76,28 @@
       "ctaQuote": "Demander un devis",
       "ctaPartner": "Devenir partenaire",
       "ctaContact": "Contactez-nous"
+    },
+    "trust": {
+      "eyebrow": "Pourquoi les acheteurs font confiance à Trivoxa",
+      "heading": "Un partenaire de sourcing, pas un simple annuaire de fournisseurs.",
+      "p1Title": "Réseau de fournisseurs vérifiés",
+      "p1Body": "Chaque partenaire industriel est évalué avant son intégration — capacités, conformité et antécédents — afin que les acheteurs ne traitent qu'avec des fournisseurs indiens préqualifiés.",
+      "p2Title": "Contrôle qualité documenté",
+      "p2Body": "Points de contrôle de l'atelier au chargement du conteneur. Rapports qualité et photographies d'emballage disponibles sur demande pour chaque expédition.",
+      "p3Title": "Exécution prête à l'expédition",
+      "p3Body": "Nous gérons les documents d'exportation, les Incoterms (FOB / CIF / CFR) et la logistique portuaire via Mundra, Kandla et Nhava Sheva — pour les primo-importateurs comme pour les clients réguliers.",
+      "p4Title": "Identité juridique transparente",
+      "p4Body": "Siège social, IEC, GST et CIN sont publiés ouvertement. Aucune entité dissimulée, aucune information juridique réservée aux demandes.",
+      "cta": "Découvrir nos capacités d'exportation"
+    },
+    "globalPresence": {
+      "eyebrow": "Présence mondiale",
+      "heading": "Relier les opportunités au-delà des frontières",
+      "lead": "Le commerce international repose sur la confiance, la collaboration et des relations solides. Grâce à un réseau croissant de fournisseurs, de partenaires et de clients, Trivoxa Group tisse des liens durables qui permettent aux organisations de se développer sereinement sur les marchés internationaux.",
+      "disclaimer": "Corridors commerciaux illustratifs — représentatifs des lignes exploitées par Trivoxa, et non un suivi d'expédition en temps réel.",
+      "quote": "Quel que soit le port de départ — Mundra, Kandla, Nhava Sheva — l'expédition porte la même exigence fixée à l'atelier de Surat. La destination n'y change rien.",
+      "cite": "— Trivoxa Group",
+      "cta": "Voir notre présence mondiale"
     }
   }
 }

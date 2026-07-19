@@ -76,6 +76,28 @@
       "ctaQuote": "Request a Quote",
       "ctaPartner": "Become a Partner",
       "ctaContact": "Contact Us"
+    },
+    "trust": {
+      "eyebrow": "Why Buyers Trust Trivoxa",
+      "heading": "A sourcing partner, not just a supplier directory.",
+      "p1Title": "Vetted Supplier Network",
+      "p1Body": "Every manufacturing partner is screened before onboarding — capability, compliance, and track record — so buyers engage only pre-qualified Indian suppliers.",
+      "p2Title": "Documented Quality Control",
+      "p2Body": "Inspection checkpoints from factory floor to container loading. QC reports and packaging photographs are available on request for every shipment.",
+      "p3Title": "Shipment-Ready Execution",
+      "p3Body": "We manage export documentation, Incoterms (FOB / CIF / CFR), and port logistics across Mundra, Kandla, and Nhava Sheva — built for first-time and repeat importers alike.",
+      "p4Title": "Transparent Legal Identity",
+      "p4Body": "Registered office, IEC, GST, and CIN are published openly. No hidden entities, no inquiry-gated legal details.",
+      "cta": "Explore Export Capabilities"
+    },
+    "globalPresence": {
+      "eyebrow": "Global Presence",
+      "heading": "Connecting Opportunities Across Borders",
+      "lead": "International business is built on trust, collaboration, and strong relationships. Through an expanding network of suppliers, partners, and clients, Trivoxa Group is building meaningful connections that enable organizations to grow confidently across international markets.",
+      "disclaimer": "Illustrative trade corridors — representative of the lanes Trivoxa operates, not live shipment tracking.",
+      "quote": "Whichever port a shipment leaves from — Mundra, Kandla, Nhava Sheva — it carries the same standard set on the manufacturing floor in Surat. That doesn't change with the destination.",
+      "cite": "— Trivoxa Group",
+      "cta": "View Global Presence"
     }
   }
 }

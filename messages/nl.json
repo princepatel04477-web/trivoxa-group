@@ -76,6 +76,28 @@
       "ctaQuote": "Offerte aanvragen",
       "ctaPartner": "Partner worden",
       "ctaContact": "Neem contact op"
+    },
+    "trust": {
+      "eyebrow": "Waarom kopers Trivoxa vertrouwen",
+      "heading": "Een sourcingpartner, niet zomaar een leveranciersgids.",
+      "p1Title": "Geverifieerd leveranciersnetwerk",
+      "p1Body": "Elke productiepartner wordt vóór toelating doorgelicht — capaciteit, compliance en staat van dienst — zodat kopers uitsluitend met voorgekwalificeerde Indiase leveranciers werken.",
+      "p2Title": "Gedocumenteerde kwaliteitscontrole",
+      "p2Body": "Inspectiepunten van de fabrieksvloer tot het laden van de container. Kwaliteitsrapporten en verpakkingsfoto's zijn op verzoek beschikbaar voor elke zending.",
+      "p3Title": "Verzendklare uitvoering",
+      "p3Body": "Wij verzorgen exportdocumentatie, Incoterms (FOB / CIF / CFR) en havenlogistiek via Mundra, Kandla en Nhava Sheva — geschikt voor zowel eerste als terugkerende importeurs.",
+      "p4Title": "Transparante juridische identiteit",
+      "p4Body": "Statutaire zetel, IEC, GST en CIN zijn openbaar gepubliceerd. Geen verborgen entiteiten, geen juridische gegevens die pas op aanvraag beschikbaar zijn.",
+      "cta": "Bekijk exportmogelijkheden"
+    },
+    "globalPresence": {
+      "eyebrow": "Wereldwijde aanwezigheid",
+      "heading": "Kansen verbinden over grenzen heen",
+      "lead": "Internationaal zakendoen berust op vertrouwen, samenwerking en sterke relaties. Via een groeiend netwerk van leveranciers, partners en klanten bouwt Trivoxa Group betekenisvolle verbindingen waarmee organisaties met vertrouwen kunnen groeien op internationale markten.",
+      "disclaimer": "Illustratieve handelscorridors — representatief voor de routes die Trivoxa bedient, geen realtime zendingvolging.",
+      "quote": "Uit welke haven een zending ook vertrekt — Mundra, Kandla, Nhava Sheva — ze draagt dezelfde standaard die op de productievloer in Surat is gezet. Dat verandert niet met de bestemming.",
+      "cite": "— Trivoxa Group",
+      "cta": "Bekijk wereldwijde aanwezigheid"
     }
   }
 }

@@ -76,6 +76,28 @@
       "ctaQuote": "Poproś o wycenę",
       "ctaPartner": "Zostań partnerem",
       "ctaContact": "Skontaktuj się"
+    },
+    "trust": {
+      "eyebrow": "Dlaczego kupujący ufają Trivoxa",
+      "heading": "Partner zakupowy, a nie zwykły katalog dostawców.",
+      "p1Title": "Zweryfikowana sieć dostawców",
+      "p1Body": "Każdy partner produkcyjny jest sprawdzany przed nawiązaniem współpracy — pod kątem możliwości, zgodności i dotychczasowych realizacji — dzięki czemu kupujący współpracują wyłącznie ze wstępnie zakwalifikowanymi dostawcami z Indii.",
+      "p2Title": "Udokumentowana kontrola jakości",
+      "p2Body": "Punkty kontrolne od hali produkcyjnej po załadunek kontenera. Raporty jakości i zdjęcia opakowań są dostępne na życzenie dla każdej wysyłki.",
+      "p3Title": "Realizacja gotowa do wysyłki",
+      "p3Body": "Prowadzimy dokumentację eksportową, reguły Incoterms (FOB / CIF / CFR) oraz logistykę portową w Mundrze, Kandli i Nhava Sheva — zarówno dla importerów początkujących, jak i stałych.",
+      "p4Title": "Przejrzysta tożsamość prawna",
+      "p4Body": "Siedziba, numery IEC, GST i CIN są publikowane jawnie. Żadnych ukrytych podmiotów ani danych prawnych udostępnianych dopiero na zapytanie.",
+      "cta": "Poznaj możliwości eksportowe"
+    },
+    "globalPresence": {
+      "eyebrow": "Obecność globalna",
+      "heading": "Łączymy możliwości ponad granicami",
+      "lead": "Handel międzynarodowy opiera się na zaufaniu, współpracy i trwałych relacjach. Dzięki rosnącej sieci dostawców, partnerów i klientów Trivoxa Group buduje wartościowe połączenia, które pozwalają organizacjom pewnie rozwijać się na rynkach międzynarodowych.",
+      "disclaimer": "Poglądowe korytarze handlowe — reprezentują trasy obsługiwane przez Trivoxa, nie są śledzeniem przesyłek w czasie rzeczywistym.",
+      "quote": "Z któregokolwiek portu wyrusza przesyłka — Mundra, Kandla, Nhava Sheva — niesie ten sam standard ustalony na hali produkcyjnej w Suracie. Cel podróży tego nie zmienia.",
+      "cite": "— Trivoxa Group",
+      "cta": "Zobacz obecność globalną"
     }
   }
 }

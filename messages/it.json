@@ -76,6 +76,28 @@
       "ctaQuote": "Richiedi un preventivo",
       "ctaPartner": "Diventa partner",
       "ctaContact": "Contattaci"
+    },
+    "trust": {
+      "eyebrow": "Perché gli acquirenti scelgono Trivoxa",
+      "heading": "Un partner di sourcing, non un semplice elenco di fornitori.",
+      "p1Title": "Rete di fornitori verificati",
+      "p1Body": "Ogni partner produttivo è valutato prima dell'inserimento — capacità, conformità e storico — così gli acquirenti trattano solo con fornitori indiani prequalificati.",
+      "p2Title": "Controllo qualità documentato",
+      "p2Body": "Punti di ispezione dallo stabilimento al carico del container. Report qualità e fotografie dell'imballaggio disponibili su richiesta per ogni spedizione.",
+      "p3Title": "Esecuzione pronta alla spedizione",
+      "p3Body": "Gestiamo documentazione export, Incoterms (FOB / CIF / CFR) e logistica portuale su Mundra, Kandla e Nhava Sheva — pensata sia per chi importa la prima volta sia per i clienti abituali.",
+      "p4Title": "Identità legale trasparente",
+      "p4Body": "Sede legale, IEC, GST e CIN sono pubblicati apertamente. Nessuna entità nascosta, nessun dato legale riservato alle richieste.",
+      "cta": "Scopri le capacità di export"
+    },
+    "globalPresence": {
+      "eyebrow": "Presenza globale",
+      "heading": "Colleghiamo opportunità oltre i confini",
+      "lead": "Il commercio internazionale si fonda su fiducia, collaborazione e relazioni solide. Attraverso una rete in crescita di fornitori, partner e clienti, Trivoxa Group costruisce connessioni significative che permettono alle organizzazioni di crescere con sicurezza sui mercati internazionali.",
+      "disclaimer": "Corridoi commerciali illustrativi — rappresentativi delle rotte operate da Trivoxa, non tracciamento spedizioni in tempo reale.",
+      "quote": "Da qualunque porto parta una spedizione — Mundra, Kandla, Nhava Sheva — porta con sé lo stesso standard fissato nello stabilimento di Surat. E questo non cambia con la destinazione.",
+      "cite": "— Trivoxa Group",
+      "cta": "Vedi la presenza globale"
     }
   }
 }

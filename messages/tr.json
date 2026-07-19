@@ -76,6 +76,28 @@
       "ctaQuote": "Teklif isteyin",
       "ctaPartner": "Ortak olun",
       "ctaContact": "Bize ulaşın"
+    },
+    "trust": {
+      "eyebrow": "Alıcılar neden Trivoxa'ya güveniyor",
+      "heading": "Bir tedarik ortağı; sıradan bir tedarikçi rehberi değil.",
+      "p1Title": "Doğrulanmış tedarikçi ağı",
+      "p1Body": "Her üretim ortağı sisteme alınmadan önce kapasite, uyumluluk ve geçmiş performans açısından incelenir; böylece alıcılar yalnızca ön yeterliliği onaylanmış Hint tedarikçilerle çalışır.",
+      "p2Title": "Belgelenmiş kalite kontrolü",
+      "p2Body": "Üretim alanından konteyner yüklemesine kadar denetim noktaları. Her sevkiyat için kalite raporları ve ambalaj fotoğrafları talep üzerine sunulur.",
+      "p3Title": "Sevkiyata hazır yürütme",
+      "p3Body": "İhracat belgelerini, Incoterms kurallarını (FOB / CIF / CFR) ve Mundra, Kandla ile Nhava Sheva limanlarındaki lojistiği biz yönetiriz — ilk kez ithalat yapanlar için de, düzenli müşteriler için de.",
+      "p4Title": "Şeffaf yasal kimlik",
+      "p4Body": "Kayıtlı merkez, IEC, GST ve CIN bilgileri açıkça yayımlanır. Gizli şirket yapısı yok; talebe bağlı tutulan yasal bilgi yok.",
+      "cta": "İhracat yetkinliklerini inceleyin"
+    },
+    "globalPresence": {
+      "eyebrow": "Küresel varlık",
+      "heading": "Fırsatları sınırların ötesinde birleştiriyoruz",
+      "lead": "Uluslararası ticaret güven, iş birliği ve sağlam ilişkiler üzerine kuruludur. Genişleyen tedarikçi, ortak ve müşteri ağı sayesinde Trivoxa Group, kurumların uluslararası pazarlarda güvenle büyümesini sağlayan anlamlı bağlantılar kuruyor.",
+      "disclaimer": "Örnek ticaret koridorları — Trivoxa'nın hizmet verdiği hatları temsil eder, canlı sevkiyat takibi değildir.",
+      "quote": "Sevkiyat hangi limandan çıkarsa çıksın — Mundra, Kandla, Nhava Sheva — Surat'taki üretim alanında belirlenen aynı standardı taşır. Bu, varış noktasına göre değişmez.",
+      "cite": "— Trivoxa Group",
+      "cta": "Küresel varlığı görüntüle"
     }
   }
 }

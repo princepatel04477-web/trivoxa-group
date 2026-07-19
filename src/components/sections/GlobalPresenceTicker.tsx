@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { Link } from "@/i18n/navigation";
 import { revealHeadings, revealBody } from "@/hooks/useScrollAnimations";
 
 const CORRIDORS = [
@@ -17,6 +18,7 @@ const CORRIDORS = [
 ];
 
 export default function GlobalPresenceTicker() {
+  const t = useTranslations("home.globalPresence");
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -40,14 +42,9 @@ export default function GlobalPresenceTicker() {
   return (
     <section className="hp-global presence" ref={sectionRef}>
       <div className="container">
-        <div className="home-eyebrow" data-reveal-body>Global Presence</div>
-        <h2 className="home-heading" data-reveal-heading>Connecting Opportunities Across Borders</h2>
-        <p className="home-lead" data-reveal-body>
-          International business is built on trust, collaboration, and strong relationships. Through
-          an expanding network of suppliers, partners, and clients, Trivoxa Group is building
-          meaningful connections that enable organizations to grow confidently across international
-          markets.
-        </p>
+        <div className="home-eyebrow" data-reveal-body>{t("eyebrow")}</div>
+        <h2 className="home-heading" data-reveal-heading>{t("heading")}</h2>
+        <p className="home-lead" data-reveal-body>{t("lead")}</p>
       </div>
 
       <div className="ticker">
@@ -60,26 +57,19 @@ export default function GlobalPresenceTicker() {
         </div>
       </div>
 
-      <p className="ticker-disclaimer" data-reveal-body>
-        Illustrative trade corridors — representative of the lanes Trivoxa operates, not live
-        shipment tracking.
-      </p>
+      <p className="ticker-disclaimer" data-reveal-body>{t("disclaimer")}</p>
 
       {/* Stage the particle cargo-ship morph (see particle-scene.ts, .hp-global). */}
       <div className="presence-map" aria-hidden />
 
       <div className="container">
         <blockquote className="presence-vision" data-reveal-body>
-          <p>
-            Whichever port a shipment leaves from — Mundra, Kandla, Nhava Sheva — it carries the
-            same standard set on the manufacturing floor in Surat. That doesn&apos;t change with the
-            destination.
-          </p>
-          <cite>— Trivoxa Group</cite>
+          <p>{t("quote")}</p>
+          <cite>{t("cite")}</cite>
         </blockquote>
-        <div className="home-cta" data-reveal-body style={{ justifyContent: "center" }}>
+        <div className="home-cta" data-reveal-body>
           <Link className="btn-ghost" href="/global-presence/">
-            View Global Presence
+            {t("cta")}
           </Link>
         </div>
       </div>
