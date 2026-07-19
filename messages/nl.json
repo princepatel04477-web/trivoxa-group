@@ -30,5 +30,52 @@
   "language": {
     "label": "Taal",
     "select": "Taal selecteren"
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "India's partner voor inkoopgedreven sourcing en exportmanagement",
+      "title": "Koop geverifieerde Indiase producten in. Exporteer met vertrouwen.",
+      "subtitle": "Trivoxa verbindt internationale kopers met geverifieerde Indiase productiepartners in textiel, voeding, bouwmaterialen, gezondheidszorg en industriële goederen — begeleid van sourcing tot verscheping.",
+      "ctaQuote": "Vraag een sourcingofferte aan",
+      "ctaProfile": "Exportprofiel downloaden",
+      "ribbonLocation": "Surat, India",
+      "ribbonScope": "Wereldwijde sourcing & exportmanagement",
+      "ribbonReply": "Antwoord binnen 1 werkdag",
+      "ribbonSamples": "Monsters beschikbaar",
+      "ribbonTerms": "FOB / CIF / CFR ondersteuning"
+    },
+    "about": {
+      "eyebrow": "Wie wij zijn",
+      "heading": "Een visie die verder gaat dan zaken.",
+      "p1": "Trivoxa Group is opgericht met een langetermijnvisie: een organisatie bouwen die blijvende waarde creëert via internationale handel, innovatie en strategische partnerschappen.",
+      "p2": "Vandaag zijn we actief in wereldwijde sourcing, productexport en professionele dienstverlening. Morgen breiden we verder uit naar nieuwe sectoren, nieuwe markten en nieuwe kansen, met blijvende toewijding aan vertrouwen, kwaliteit en topprestaties.",
+      "p3": "Wij geloven dat betekenisvolle bedrijven niet alleen worden afgemeten aan omzet, maar aan de waarde die ze creëren, de relaties die ze opbouwen en de impact die ze achterlaten.",
+      "cta": "Ontdek Trivoxa"
+    },
+    "values": {
+      "curiosityTitle": "Nieuwsgierigheid",
+      "curiosityDesc": "We blijven nieuwsgierig naar markten, sectoren en betere manieren om te bouwen.",
+      "integrityTitle": "Integriteit",
+      "integrityDesc": "Vertrouwen verdien je met eerlijkheid, transparantie en consistentie.",
+      "innovationTitle": "Innovatie",
+      "innovationDesc": "We omarmen nieuwe ideeën, technologie en voortdurende verbetering.",
+      "growthTitle": "Groei",
+      "growthDesc": "We maken ruimte voor ambitieuze mensen om mee te groeien met het bedrijf."
+    },
+    "careers": {
+      "eyebrow": "Werken bij",
+      "heading": "Bouw met ons aan wat komt",
+      "p1": "Elke grote organisatie wordt gebouwd door mensen die geloven in het creëren van iets dat groter is dan zijzelf.",
+      "p2": "Bij Trivoxa bouwen we aan een cultuur gedreven door nieuwsgierigheid, integriteit, innovatie en voortdurende groei — waar ambitieuze mensen samenkomen om echte impact te maken in wereldwijde sectoren.",
+      "cta": "Bekijk vacatures"
+    },
+    "finalCta": {
+      "eyebrow": "Laten we samenwerken",
+      "heading": "Het volgende grote partnerschap begint hier.",
+      "lead": "Of u nu producten wilt inkopen, wilt uitbreiden naar nieuwe markten of wilt samenwerken aan innovatieve oplossingen — Trivoxa Group helpt u met vertrouwen vooruit.",
+      "ctaQuote": "Offerte aanvragen",
+      "ctaPartner": "Partner worden",
+      "ctaContact": "Neem contact op"
+    }
   }
 }

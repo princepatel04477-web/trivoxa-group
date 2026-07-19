@@ -30,5 +30,52 @@
   "language": {
     "label": "Sprache",
     "select": "Sprache auswählen"
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "Indiens Partner für einkaufsseitiges Sourcing und Exportmanagement",
+      "title": "Geprüfte indische Produkte beschaffen. Mit Sicherheit exportieren.",
+      "subtitle": "Trivoxa verbindet internationale Käufer mit geprüften indischen Fertigungspartnern in den Bereichen Textilien, Lebensmittel, Baustoffe, Gesundheit und Industriegüter – begleitet von der Beschaffung bis zum Versand.",
+      "ctaQuote": "Beschaffungsangebot anfordern",
+      "ctaProfile": "Exportprofil herunterladen",
+      "ribbonLocation": "Surat, Indien",
+      "ribbonScope": "Globale Beschaffung & Exportmanagement",
+      "ribbonReply": "Antwort innerhalb von 1 Werktag",
+      "ribbonSamples": "Muster verfügbar",
+      "ribbonTerms": "FOB / CIF / CFR Unterstützung"
+    },
+    "about": {
+      "eyebrow": "Wer wir sind",
+      "heading": "Eine Vision über das Geschäft hinaus.",
+      "p1": "Die Trivoxa Group wurde mit einer langfristigen Vision gegründet: eine Organisation aufzubauen, die durch internationalen Handel, Innovation und strategische Partnerschaften dauerhaften Wert schafft.",
+      "p2": "Heute sind wir in globaler Beschaffung, Produktexport und professionellen Dienstleistungen tätig. Morgen werden wir weiter in neue Branchen, neue Märkte und neue Chancen expandieren – und dabei Vertrauen, Qualität und Exzellenz verpflichtet bleiben.",
+      "p3": "Wir glauben, dass bedeutende Unternehmen nicht allein am Umsatz gemessen werden, sondern am Wert, den sie schaffen, an den Beziehungen, die sie aufbauen, und an der Wirkung, die sie hinterlassen.",
+      "cta": "Trivoxa entdecken"
+    },
+    "values": {
+      "curiosityTitle": "Neugier",
+      "curiosityDesc": "Wir bleiben neugierig auf Märkte, Branchen und bessere Wege, Dinge aufzubauen.",
+      "integrityTitle": "Integrität",
+      "integrityDesc": "Vertrauen entsteht durch Ehrlichkeit, Transparenz und Beständigkeit.",
+      "innovationTitle": "Innovation",
+      "innovationDesc": "Wir setzen auf neue Ideen, Technologie und kontinuierliche Verbesserung.",
+      "growthTitle": "Wachstum",
+      "growthDesc": "Wir schaffen Raum, damit ambitionierte Menschen mit dem Unternehmen wachsen."
+    },
+    "careers": {
+      "eyebrow": "Karriere",
+      "heading": "Gestalten Sie mit uns, was als Nächstes kommt",
+      "p1": "Jede großartige Organisation wird von Menschen aufgebaut, die daran glauben, etwas Größeres als sich selbst zu schaffen.",
+      "p2": "Bei Trivoxa entwickeln wir eine Kultur, die von Neugier, Integrität, Innovation und stetigem Wachstum geprägt ist – in der ambitionierte Menschen zusammenkommen, um in globalen Branchen echte Wirkung zu erzielen.",
+      "cta": "Karriere entdecken"
+    },
+    "finalCta": {
+      "eyebrow": "Arbeiten wir zusammen",
+      "heading": "Die nächste große Partnerschaft beginnt hier.",
+      "lead": "Ob Sie Produkte beschaffen, in neue Märkte expandieren oder an innovativen Lösungen mitarbeiten möchten – die Trivoxa Group unterstützt Sie dabei, sicher voranzugehen.",
+      "ctaQuote": "Angebot anfordern",
+      "ctaPartner": "Partner werden",
+      "ctaContact": "Kontakt"
+    }
   }
 }

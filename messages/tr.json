@@ -30,5 +30,52 @@
   "language": {
     "label": "Dil",
     "select": "Dil seçin"
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "Hindistan'da alıcı tarafı tedarik ve ihracat yönetimi ortağınız",
+      "title": "Doğrulanmış Hint ürünleri tedarik edin. Güvenle ihraç edin.",
+      "subtitle": "Trivoxa, uluslararası alıcıları tekstil, gıda, yapı malzemeleri, sağlık ve sanayi ürünleri alanlarında doğrulanmış Hint üretim ortaklarıyla buluşturur; tedarikten sevkiyata kadar tüm süreci yönetir.",
+      "ctaQuote": "Tedarik teklifi isteyin",
+      "ctaProfile": "İhracat yetkinlik profilini indirin",
+      "ribbonLocation": "Surat, Hindistan",
+      "ribbonScope": "Küresel tedarik ve ihracat yönetimi",
+      "ribbonReply": "1 iş günü içinde yanıt",
+      "ribbonSamples": "Numune mevcut",
+      "ribbonTerms": "FOB / CIF / CFR desteği"
+    },
+    "about": {
+      "eyebrow": "Biz kimiz",
+      "heading": "Ticaretin ötesinde bir vizyon.",
+      "p1": "Trivoxa Group, uzun vadeli bir vizyonla kuruldu: uluslararası ticaret, inovasyon ve stratejik ortaklıklar yoluyla kalıcı değer yaratan bir kurum inşa etmek.",
+      "p2": "Bugün küresel tedarik, ürün ihracatı ve profesyonel hizmetler alanlarında faaliyet gösteriyoruz. Yarın yeni sektörlere, yeni pazarlara ve yeni fırsatlara açılmayı sürdürürken güven, kalite ve mükemmelliğe bağlı kalacağız.",
+      "p3": "Anlamlı şirketlerin yalnızca ciroyla değil; yarattıkları değerle, kurdukları ilişkilerle ve bıraktıkları etkiyle ölçüldüğüne inanıyoruz.",
+      "cta": "Trivoxa'yı keşfedin"
+    },
+    "values": {
+      "curiosityTitle": "Merak",
+      "curiosityDesc": "Pazarlara, sektörlere ve daha iyi üretme yollarına karşı meraklı kalıyoruz.",
+      "integrityTitle": "Dürüstlük",
+      "integrityDesc": "Güven; dürüstlük, şeffaflık ve tutarlılıkla kazanılır.",
+      "innovationTitle": "İnovasyon",
+      "innovationDesc": "Yeni fikirleri, teknolojiyi ve sürekli iyileştirmeyi benimsiyoruz.",
+      "growthTitle": "Büyüme",
+      "growthDesc": "Hırslı insanların şirketle birlikte büyümesi için alan açıyoruz."
+    },
+    "careers": {
+      "eyebrow": "Kariyer",
+      "heading": "Sıradakini bizimle inşa edin",
+      "p1": "Her büyük kurum, kendisinden daha büyük bir şey yaratmaya inanan insanlar tarafından kurulur.",
+      "p2": "Trivoxa'da merak, dürüstlük, inovasyon ve sürekli büyümeyle şekillenen bir kültür kuruyoruz; hırslı insanların küresel sektörlerde gerçek etki yaratmak için bir araya geldiği bir kültür.",
+      "cta": "Kariyer fırsatları"
+    },
+    "finalCta": {
+      "eyebrow": "Birlikte çalışalım",
+      "heading": "Bir sonraki büyük ortaklık burada başlıyor.",
+      "lead": "İster ürün tedarik etmek, ister yeni pazarlara açılmak, ister yenilikçi çözümlerde iş birliği yapmak isteyin; Trivoxa Group güvenle ilerlemeniz için hazır.",
+      "ctaQuote": "Teklif isteyin",
+      "ctaPartner": "Ortak olun",
+      "ctaContact": "Bize ulaşın"
+    }
   }
 }

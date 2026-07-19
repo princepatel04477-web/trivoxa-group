@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect } from "react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { Link } from "@/i18n/navigation";
 import { onPreloaderDone, emit } from "@/lib/site-events";
 import { TitleChars, PChars } from "@/lib/split-text";
 import GrainGlobe from "@/components/hero/GrainGlobe";
 
 export default function HeroSection() {
+  const t = useTranslations("home.hero");
   useEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ paused: true });
@@ -74,29 +76,29 @@ export default function HeroSection() {
       <div className="container">
         <div className="hero-tagline p-anim">
           <span>
-            <PChars text="India's Buyer-Side Sourcing & Export-Management Partner" />
+            <PChars text={t("eyebrow")} />
           </span>
         </div>
         <h1 className="title-anim">
-          <TitleChars text="Source Verified Indian Products. Export With Confidence." />
+          <TitleChars text={t("title")} />
         </h1>
         <div className="subtitle p-anim">
-          <PChars text="Trivoxa connects international buyers with vetted Indian manufacturing partners across textiles, food, building materials, healthcare, and industrial goods—managed from sourcing to shipment." />
+          <PChars text={t("subtitle")} />
         </div>
         <div className="hero-cta d-flex">
           <button className="primary-button" type="button" onClick={() => emit("modal:open")}>
-            <span>Request a Sourcing Quote</span>
+            <span>{t("ctaQuote")}</span>
           </button>
           <Link className="ghost-button" href="/businesses/">
-            <span>Download Export Capability Profile</span>
+            <span>{t("ctaProfile")}</span>
           </Link>
         </div>
         <div className="hero-proof-ribbon" role="list" aria-label="Trading facts">
-          <span role="listitem">Surat, India</span>
-          <span role="listitem">Global Sourcing &amp; Export Management</span>
-          <span role="listitem">Reply within 1 business day</span>
-          <span role="listitem">Samples available</span>
-          <span role="listitem">FOB / CIF / CFR support</span>
+          <span role="listitem">{t("ribbonLocation")}</span>
+          <span role="listitem">{t("ribbonScope")}</span>
+          <span role="listitem">{t("ribbonReply")}</span>
+          <span role="listitem">{t("ribbonSamples")}</span>
+          <span role="listitem">{t("ribbonTerms")}</span>
         </div>
       </div>
       <div className="scroll-to">

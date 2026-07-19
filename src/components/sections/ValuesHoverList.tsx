@@ -2,17 +2,18 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { gsap } from "@/lib/gsap";
 import { revealBody } from "@/hooks/useScrollAnimations";
 
-const VALUES = [
-  { t: "Curiosity", d: "We stay curious about markets, industries, and better ways to build." },
-  { t: "Integrity", d: "Trust is earned through honesty, transparency, and consistency." },
-  { t: "Innovation", d: "We embrace new ideas, technology, and continuous improvement." },
-  { t: "Growth", d: "We create space for ambitious people to grow with the company." },
-];
+const VALUE_KEYS = ["curiosity", "integrity", "innovation", "growth"] as const;
 
 export default function ValuesHoverList() {
+  const tr = useTranslations("home.values");
+  const VALUES = VALUE_KEYS.map((k) => ({
+    t: tr(`${k}Title`),
+    d: tr(`${k}Desc`),
+  }));
   const [hovered, setHovered] = useState<number | null>(null);
   const ref = useRef<HTMLElement>(null);
 

@@ -30,5 +30,52 @@
   "language": {
     "label": "Język",
     "select": "Wybierz język"
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "Indyjski partner w zakresie zakupów i zarządzania eksportem po stronie kupującego",
+      "title": "Kupuj zweryfikowane indyjskie produkty. Eksportuj z pewnością.",
+      "subtitle": "Trivoxa łączy międzynarodowych nabywców ze zweryfikowanymi indyjskimi producentami w branżach tekstylnej, spożywczej, materiałów budowlanych, ochrony zdrowia i towarów przemysłowych — z obsługą od zakupu po wysyłkę.",
+      "ctaQuote": "Poproś o ofertę zakupową",
+      "ctaProfile": "Pobierz profil eksportowy",
+      "ribbonLocation": "Surat, Indie",
+      "ribbonScope": "Globalne zakupy i zarządzanie eksportem",
+      "ribbonReply": "Odpowiedź w 1 dzień roboczy",
+      "ribbonSamples": "Próbki dostępne",
+      "ribbonTerms": "Obsługa FOB / CIF / CFR"
+    },
+    "about": {
+      "eyebrow": "Kim jesteśmy",
+      "heading": "Wizja wykraczająca poza biznes.",
+      "p1": "Trivoxa Group powstała z długofalową wizją: zbudować organizację tworzącą trwałą wartość poprzez handel międzynarodowy, innowacje i partnerstwa strategiczne.",
+      "p2": "Dziś działamy w obszarze globalnych zakupów, eksportu produktów i usług profesjonalnych. Jutro będziemy dalej wchodzić w nowe branże, nowe rynki i nowe możliwości, pozostając wierni zaufaniu, jakości i doskonałości.",
+      "p3": "Wierzymy, że wartościowych firm nie mierzy się wyłącznie przychodem, lecz wartością, którą tworzą, relacjami, które budują, i śladem, który zostawiają.",
+      "cta": "Poznaj Trivoxa"
+    },
+    "values": {
+      "curiosityTitle": "Ciekawość",
+      "curiosityDesc": "Zachowujemy ciekawość rynków, branż i lepszych sposobów budowania.",
+      "integrityTitle": "Uczciwość",
+      "integrityDesc": "Zaufanie zdobywa się uczciwością, przejrzystością i konsekwencją.",
+      "innovationTitle": "Innowacyjność",
+      "innovationDesc": "Otwieramy się na nowe pomysły, technologie i ciągłe doskonalenie.",
+      "growthTitle": "Rozwój",
+      "growthDesc": "Tworzymy przestrzeń, by ambitni ludzie rośli razem z firmą."
+    },
+    "careers": {
+      "eyebrow": "Kariera",
+      "heading": "Twórz z nami to, co nadchodzi",
+      "p1": "Każdą wielką organizację budują ludzie, którzy wierzą w tworzenie czegoś większego niż oni sami.",
+      "p2": "W Trivoxa budujemy kulturę opartą na ciekawości, uczciwości, innowacyjności i ciągłym rozwoju — w której ambitni ludzie łączą siły, by realnie oddziaływać na globalne branże.",
+      "cta": "Zobacz oferty pracy"
+    },
+    "finalCta": {
+      "eyebrow": "Działajmy razem",
+      "heading": "Kolejne wielkie partnerstwo zaczyna się tutaj.",
+      "lead": "Niezależnie od tego, czy chcesz pozyskiwać produkty, wejść na nowe rynki, czy współtworzyć innowacyjne rozwiązania — Trivoxa Group pomoże Ci iść naprzód z pewnością.",
+      "ctaQuote": "Poproś o wycenę",
+      "ctaPartner": "Zostań partnerem",
+      "ctaContact": "Skontaktuj się"
+    }
   }
 }
