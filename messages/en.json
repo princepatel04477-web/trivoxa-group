@@ -98,6 +98,38 @@
       "quote": "Whichever port a shipment leaves from — Mundra, Kandla, Nhava Sheva — it carries the same standard set on the manufacturing floor in Surat. That doesn't change with the destination.",
       "cite": "— Trivoxa Group",
       "cta": "View Global Presence"
+    },
+    "industries": {
+      "eyebrow": "Industries",
+      "heading": "Supporting the Industries That Shape Tomorrow",
+      "nameTechnology": "Technology",
+      "descTextile": "Fabrics, home textiles, apparel accessories.",
+      "descHealthcare": "Trusted pharmaceutical products & healthcare solutions.",
+      "descBuilding": "Natural stone, marble, granite & construction materials.",
+      "descAgri": "Sourced produce, spices, dry fruits & processed foods.",
+      "descEngineering": "Industrial products, components & manufacturing solutions.",
+      "descTechnology": "Software, AI & digital transformation for modern business."
+    },
+    "businessArms": {
+      "arm1Eyebrow": "Business Arm 01",
+      "arm2Eyebrow": "Business Arm 02",
+      "arm1Thesis": "We connect international buyers with carefully selected manufacturing partners across India to deliver quality products through dependable sourcing and export solutions.",
+      "arm2Thesis": "A dedicated technology services arm delivering software, AI, branding, and digital marketing — helping businesses build, grow, and modernize.",
+      "arm1Cta": "See sourcing capabilities",
+      "arm2Cta": "See service capabilities",
+      "cat1": "Textiles",
+      "cat2": "Healthcare & Pharma",
+      "cat3": "Building Materials",
+      "cat4": "Agriculture & Food",
+      "cat5": "Engineering & Jewellery",
+      "cat6": "Technology Solutions",
+      "cat7": "AI Solutions",
+      "cat8": "Branding & Design",
+      "cat9": "Digital Marketing"
+    },
+    "insights": {
+      "eyebrow": "Insights",
+      "heading": "Perspectives That Drive Global Business"
     }
   }
 }

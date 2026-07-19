@@ -98,6 +98,38 @@
       "quote": "Quel que soit le port de départ — Mundra, Kandla, Nhava Sheva — l'expédition porte la même exigence fixée à l'atelier de Surat. La destination n'y change rien.",
       "cite": "— Trivoxa Group",
       "cta": "Voir notre présence mondiale"
+    },
+    "industries": {
+      "eyebrow": "Secteurs",
+      "heading": "Au service des secteurs qui façonnent demain",
+      "nameTechnology": "Technologie",
+      "descTextile": "Tissus, textiles de maison, accessoires d'habillement.",
+      "descHealthcare": "Produits pharmaceutiques et solutions de santé fiables.",
+      "descBuilding": "Pierre naturelle, marbre, granit et matériaux de construction.",
+      "descAgri": "Produits agricoles, épices, fruits secs et aliments transformés.",
+      "descEngineering": "Produits industriels, composants et solutions de fabrication.",
+      "descTechnology": "Logiciels, IA et transformation numérique pour l'entreprise moderne."
+    },
+    "businessArms": {
+      "arm1Eyebrow": "Pôle d'activité 01",
+      "arm2Eyebrow": "Pôle d'activité 02",
+      "arm1Thesis": "Nous mettons en relation les acheteurs internationaux avec des partenaires industriels soigneusement sélectionnés partout en Inde, pour livrer des produits de qualité via des solutions fiables de sourcing et d'exportation.",
+      "arm2Thesis": "Un pôle technologique dédié : logiciels, IA, branding et marketing digital — pour aider les entreprises à bâtir, croître et se moderniser.",
+      "arm1Cta": "Voir les capacités de sourcing",
+      "arm2Cta": "Voir les capacités de service",
+      "cat1": "Textiles",
+      "cat2": "Santé & Pharmacie",
+      "cat3": "Matériaux de construction",
+      "cat4": "Agriculture & Alimentation",
+      "cat5": "Ingénierie & Bijoux",
+      "cat6": "Solutions technologiques",
+      "cat7": "Solutions IA",
+      "cat8": "Branding & Design",
+      "cat9": "Marketing digital"
+    },
+    "insights": {
+      "eyebrow": "Analyses",
+      "heading": "Des perspectives qui font avancer le commerce mondial"
     }
   }
 }

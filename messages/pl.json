@@ -98,6 +98,38 @@
       "quote": "Z któregokolwiek portu wyrusza przesyłka — Mundra, Kandla, Nhava Sheva — niesie ten sam standard ustalony na hali produkcyjnej w Suracie. Cel podróży tego nie zmienia.",
       "cite": "— Trivoxa Group",
       "cta": "Zobacz obecność globalną"
+    },
+    "industries": {
+      "eyebrow": "Branże",
+      "heading": "Wspieramy branże, które tworzą jutro",
+      "nameTechnology": "Technologia",
+      "descTextile": "Tkaniny, tekstylia domowe i akcesoria odzieżowe.",
+      "descHealthcare": "Sprawdzone produkty farmaceutyczne i rozwiązania dla ochrony zdrowia.",
+      "descBuilding": "Kamień naturalny, marmur, granit i materiały budowlane.",
+      "descAgri": "Produkty rolne, przyprawy, bakalie i żywność przetworzona.",
+      "descEngineering": "Produkty przemysłowe, komponenty i rozwiązania produkcyjne.",
+      "descTechnology": "Oprogramowanie, SI i transformacja cyfrowa dla nowoczesnego biznesu."
+    },
+    "businessArms": {
+      "arm1Eyebrow": "Obszar działalności 01",
+      "arm2Eyebrow": "Obszar działalności 02",
+      "arm1Thesis": "Łączymy międzynarodowych nabywców ze starannie wybranymi partnerami produkcyjnymi w całych Indiach, dostarczając produkty wysokiej jakości dzięki niezawodnym rozwiązaniom zakupowym i eksportowym.",
+      "arm2Thesis": "Wydzielony pion usług technologicznych: oprogramowanie, SI, branding i marketing cyfrowy — wspiera firmy w budowaniu, wzroście i modernizacji.",
+      "arm1Cta": "Zobacz możliwości zakupowe",
+      "arm2Cta": "Zobacz zakres usług",
+      "cat1": "Tekstylia",
+      "cat2": "Ochrona zdrowia i farmacja",
+      "cat3": "Materiały budowlane",
+      "cat4": "Rolnictwo i żywność",
+      "cat5": "Inżynieria i biżuteria",
+      "cat6": "Rozwiązania technologiczne",
+      "cat7": "Rozwiązania SI",
+      "cat8": "Branding i design",
+      "cat9": "Marketing cyfrowy"
+    },
+    "insights": {
+      "eyebrow": "Analizy",
+      "heading": "Spojrzenia, które napędzają globalny biznes"
     }
   }
 }

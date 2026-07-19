@@ -98,6 +98,38 @@
       "quote": "Da qualunque porto parta una spedizione — Mundra, Kandla, Nhava Sheva — porta con sé lo stesso standard fissato nello stabilimento di Surat. E questo non cambia con la destinazione.",
       "cite": "— Trivoxa Group",
       "cta": "Vedi la presenza globale"
+    },
+    "industries": {
+      "eyebrow": "Settori",
+      "heading": "Al servizio dei settori che costruiscono il domani",
+      "nameTechnology": "Tecnologia",
+      "descTextile": "Tessuti, tessili per la casa e accessori per l'abbigliamento.",
+      "descHealthcare": "Prodotti farmaceutici e soluzioni sanitarie affidabili.",
+      "descBuilding": "Pietra naturale, marmo, granito e materiali da costruzione.",
+      "descAgri": "Prodotti agricoli, spezie, frutta secca e alimenti trasformati.",
+      "descEngineering": "Prodotti industriali, componenti e soluzioni produttive.",
+      "descTechnology": "Software, IA e trasformazione digitale per l'impresa moderna."
+    },
+    "businessArms": {
+      "arm1Eyebrow": "Divisione 01",
+      "arm2Eyebrow": "Divisione 02",
+      "arm1Thesis": "Colleghiamo gli acquirenti internazionali a partner produttivi accuratamente selezionati in tutta l'India, per fornire prodotti di qualità con soluzioni affidabili di sourcing ed export.",
+      "arm2Thesis": "Una divisione tecnologica dedicata a software, IA, branding e marketing digitale, per aiutare le imprese a costruire, crescere e modernizzarsi.",
+      "arm1Cta": "Vedi le capacità di sourcing",
+      "arm2Cta": "Vedi le capacità di servizio",
+      "cat1": "Tessile",
+      "cat2": "Sanità e farmaceutica",
+      "cat3": "Materiali da costruzione",
+      "cat4": "Agricoltura e alimentare",
+      "cat5": "Ingegneria e gioielleria",
+      "cat6": "Soluzioni tecnologiche",
+      "cat7": "Soluzioni IA",
+      "cat8": "Branding e design",
+      "cat9": "Marketing digitale"
+    },
+    "insights": {
+      "eyebrow": "Approfondimenti",
+      "heading": "Prospettive che guidano il business globale"
     }
   }
 }

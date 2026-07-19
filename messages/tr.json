@@ -98,6 +98,38 @@
       "quote": "Sevkiyat hangi limandan çıkarsa çıksın — Mundra, Kandla, Nhava Sheva — Surat'taki üretim alanında belirlenen aynı standardı taşır. Bu, varış noktasına göre değişmez.",
       "cite": "— Trivoxa Group",
       "cta": "Küresel varlığı görüntüle"
+    },
+    "industries": {
+      "eyebrow": "Sektörler",
+      "heading": "Yarını şekillendiren sektörlere destek",
+      "nameTechnology": "Teknoloji",
+      "descTextile": "Kumaşlar, ev tekstili ve giyim aksesuarları.",
+      "descHealthcare": "Güvenilir ilaç ürünleri ve sağlık çözümleri.",
+      "descBuilding": "Doğal taş, mermer, granit ve yapı malzemeleri.",
+      "descAgri": "Tarım ürünleri, baharatlar, kuru meyveler ve işlenmiş gıdalar.",
+      "descEngineering": "Endüstriyel ürünler, bileşenler ve üretim çözümleri.",
+      "descTechnology": "Modern işletmeler için yazılım, yapay zekâ ve dijital dönüşüm."
+    },
+    "businessArms": {
+      "arm1Eyebrow": "İş Kolu 01",
+      "arm2Eyebrow": "İş Kolu 02",
+      "arm1Thesis": "Uluslararası alıcıları Hindistan genelinde özenle seçilmiş üretim ortaklarıyla buluşturuyor; güvenilir tedarik ve ihracat çözümleriyle kaliteli ürünler sunuyoruz.",
+      "arm2Thesis": "Yazılım, yapay zekâ, marka ve dijital pazarlama sunan özel bir teknoloji hizmetleri kolu — işletmelerin kurmasına, büyümesine ve modernleşmesine yardımcı olur.",
+      "arm1Cta": "Tedarik yetkinliklerini görün",
+      "arm2Cta": "Hizmet yetkinliklerini görün",
+      "cat1": "Tekstil",
+      "cat2": "Sağlık ve İlaç",
+      "cat3": "Yapı Malzemeleri",
+      "cat4": "Tarım ve Gıda",
+      "cat5": "Mühendislik ve Mücevher",
+      "cat6": "Teknoloji Çözümleri",
+      "cat7": "Yapay Zekâ Çözümleri",
+      "cat8": "Marka ve Tasarım",
+      "cat9": "Dijital Pazarlama"
+    },
+    "insights": {
+      "eyebrow": "Görüşler",
+      "heading": "Küresel ticareti yönlendiren bakış açıları"
     }
   }
 }

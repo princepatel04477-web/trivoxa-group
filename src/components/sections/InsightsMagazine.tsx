@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { gsap } from "@/lib/gsap";
 import { initSectionReveals } from "@/hooks/useScrollAnimations";
 
@@ -24,6 +25,7 @@ const ARTICLES = [
 ];
 
 export default function InsightsMagazine() {
+  const t = useTranslations("home.insights");
   const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -41,8 +43,8 @@ export default function InsightsMagazine() {
       <div className="container">
         <div className="insights-head">
           <div>
-            <div className="home-eyebrow" data-reveal-body>Insights</div>
-            <h2 className="home-heading" data-reveal-heading>Perspectives That Drive Global Business</h2>
+            <div className="home-eyebrow" data-reveal-body>{t("eyebrow")}</div>
+            <h2 className="home-heading" data-reveal-heading>{t("heading")}</h2>
           </div>
           <p className="home-lead" data-reveal-body>
             Markets evolve. Industries transform. Our insights explore global trade, sourcing

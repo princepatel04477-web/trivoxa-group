@@ -98,6 +98,38 @@
       "quote": "Salga del puerto que salga — Mundra, Kandla, Nhava Sheva — el envío lleva el mismo estándar fijado en la planta de Surat. Eso no cambia con el destino.",
       "cite": "— Trivoxa Group",
       "cta": "Ver presencia global"
+    },
+    "industries": {
+      "eyebrow": "Sectores",
+      "heading": "Apoyamos a los sectores que construyen el mañana",
+      "nameTechnology": "Tecnología",
+      "descTextile": "Tejidos, textiles para el hogar y accesorios de confección.",
+      "descHealthcare": "Productos farmacéuticos y soluciones sanitarias de confianza.",
+      "descBuilding": "Piedra natural, mármol, granito y materiales de construcción.",
+      "descAgri": "Productos agrícolas, especias, frutos secos y alimentos procesados.",
+      "descEngineering": "Productos industriales, componentes y soluciones de fabricación.",
+      "descTechnology": "Software, IA y transformación digital para la empresa moderna."
+    },
+    "businessArms": {
+      "arm1Eyebrow": "División 01",
+      "arm2Eyebrow": "División 02",
+      "arm1Thesis": "Conectamos a compradores internacionales con socios fabricantes cuidadosamente seleccionados en toda la India, entregando productos de calidad mediante soluciones fiables de abastecimiento y exportación.",
+      "arm2Thesis": "Una división tecnológica dedicada a software, IA, branding y marketing digital, que ayuda a las empresas a construir, crecer y modernizarse.",
+      "arm1Cta": "Ver capacidades de abastecimiento",
+      "arm2Cta": "Ver capacidades de servicio",
+      "cat1": "Textiles",
+      "cat2": "Salud y farmacia",
+      "cat3": "Materiales de construcción",
+      "cat4": "Agricultura y alimentación",
+      "cat5": "Ingeniería y joyería",
+      "cat6": "Soluciones tecnológicas",
+      "cat7": "Soluciones de IA",
+      "cat8": "Branding y diseño",
+      "cat9": "Marketing digital"
+    },
+    "insights": {
+      "eyebrow": "Perspectivas",
+      "heading": "Ideas que impulsan los negocios globales"
     }
   }
 }

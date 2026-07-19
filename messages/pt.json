@@ -98,6 +98,38 @@
       "quote": "Seja qual for o porto de partida — Mundra, Kandla, Nhava Sheva — a expedição leva o mesmo padrão definido na fábrica de Surat. Isso não muda com o destino.",
       "cite": "— Trivoxa Group",
       "cta": "Ver presença global"
+    },
+    "industries": {
+      "eyebrow": "Setores",
+      "heading": "Apoiamos os setores que constroem o amanhã",
+      "nameTechnology": "Tecnologia",
+      "descTextile": "Tecidos, têxteis-lar e acessórios de vestuário.",
+      "descHealthcare": "Produtos farmacêuticos e soluções de saúde de confiança.",
+      "descBuilding": "Pedra natural, mármore, granito e materiais de construção.",
+      "descAgri": "Produtos agrícolas, especiarias, frutos secos e alimentos processados.",
+      "descEngineering": "Produtos industriais, componentes e soluções de fabrico.",
+      "descTechnology": "Software, IA e transformação digital para a empresa moderna."
+    },
+    "businessArms": {
+      "arm1Eyebrow": "Divisão 01",
+      "arm2Eyebrow": "Divisão 02",
+      "arm1Thesis": "Ligamos compradores internacionais a parceiros industriais cuidadosamente selecionados em toda a Índia, entregando produtos de qualidade através de soluções fiáveis de sourcing e exportação.",
+      "arm2Thesis": "Uma divisão tecnológica dedicada a software, IA, branding e marketing digital, ajudando as empresas a construir, crescer e modernizar-se.",
+      "arm1Cta": "Ver capacidades de sourcing",
+      "arm2Cta": "Ver capacidades de serviço",
+      "cat1": "Têxteis",
+      "cat2": "Saúde e farmacêutica",
+      "cat3": "Materiais de construção",
+      "cat4": "Agricultura e alimentação",
+      "cat5": "Engenharia e joalharia",
+      "cat6": "Soluções tecnológicas",
+      "cat7": "Soluções de IA",
+      "cat8": "Branding e design",
+      "cat9": "Marketing digital"
+    },
+    "insights": {
+      "eyebrow": "Perspetivas",
+      "heading": "Perspetivas que impulsionam os negócios globais"
     }
   }
 }

@@ -1,20 +1,30 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 
-const INDUSTRIES = [
-  { name: "Textile & Apparel", desc: "Fabrics, home textiles, apparel accessories.", image: "/images/industries/textile-editorial.png" },
-  { name: "Healthcare & Pharmaceuticals", desc: "Trusted pharmaceutical products & healthcare solutions.", image: "/images/industries/healthcare-editorial.png" },
-  { name: "Building Materials", desc: "Natural stone, marble, granite & construction materials.", image: "/images/industries/building-editorial.png" },
-  { name: "Agriculture & Food", desc: "Sourced produce, spices, dry fruits & processed foods.", image: "/images/industries/agriculture.jpg" },
-  { name: "Engineering & Industrial", desc: "Industrial products, components & manufacturing solutions.", image: "/images/industries/engineering.jpg" },
-  { name: "Technology", desc: "Software, AI & digital transformation for modern business.", image: "/images/industries/technology.jpg" },
-];
+// Industry names reuse the megaMenu keys so the nav and this section always
+// agree; only the descriptions are unique to the home page.
+const INDUSTRY_DEFS = [
+  { nameKey: "textileApparel", descKey: "descTextile", image: "/images/industries/textile-editorial.png" },
+  { nameKey: "healthcarePharma", descKey: "descHealthcare", image: "/images/industries/healthcare-editorial.png" },
+  { nameKey: "buildingMaterials", descKey: "descBuilding", image: "/images/industries/building-editorial.png" },
+  { nameKey: "agricultureFood", descKey: "descAgri", image: "/images/industries/agriculture.jpg" },
+  { nameKey: "engineeringIndustrial", descKey: "descEngineering", image: "/images/industries/engineering.jpg" },
+  { nameKey: null, descKey: "descTechnology", image: "/images/industries/technology.jpg" },
+] as const;
 
-const TOTAL = String(INDUSTRIES.length).padStart(2, "0");
+const TOTAL = String(INDUSTRY_DEFS.length).padStart(2, "0");
 
 export default function IndustriesManifest() {
+  const t = useTranslations("home.industries");
+  const tm = useTranslations("megaMenu");
+  const INDUSTRIES = INDUSTRY_DEFS.map((d) => ({
+    name: d.nameKey ? tm(d.nameKey) : t("nameTechnology"),
+    desc: t(d.descKey),
+    image: d.image,
+  }));
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLSpanElement>(null);
@@ -71,8 +81,8 @@ export default function IndustriesManifest() {
   return (
     <section className="hp-sec-2 industries-folio" ref={sectionRef}>
       <div className="industries-folio__head container">
-        <span className="industries-folio__eyebrow">Industries</span>
-        <h2 className="industries-folio__title">Supporting the Industries That Shape Tomorrow</h2>
+        <span className="industries-folio__eyebrow">{t("eyebrow")}</span>
+        <h2 className="industries-folio__title">{t("heading")}</h2>
       </div>
       <div className="industries-folio__track" ref={trackRef}>
         {INDUSTRIES.map((ind, i) => (

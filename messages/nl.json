@@ -98,6 +98,38 @@
       "quote": "Uit welke haven een zending ook vertrekt — Mundra, Kandla, Nhava Sheva — ze draagt dezelfde standaard die op de productievloer in Surat is gezet. Dat verandert niet met de bestemming.",
       "cite": "— Trivoxa Group",
       "cta": "Bekijk wereldwijde aanwezigheid"
+    },
+    "industries": {
+      "eyebrow": "Sectoren",
+      "heading": "Wij ondersteunen de sectoren van morgen",
+      "nameTechnology": "Technologie",
+      "descTextile": "Stoffen, huishoudtextiel en kledingaccessoires.",
+      "descHealthcare": "Betrouwbare farmaceutische producten en zorgoplossingen.",
+      "descBuilding": "Natuursteen, marmer, graniet en bouwmaterialen.",
+      "descAgri": "Landbouwproducten, specerijen, gedroogd fruit en verwerkte levensmiddelen.",
+      "descEngineering": "Industriële producten, componenten en productieoplossingen.",
+      "descTechnology": "Software, AI en digitale transformatie voor de moderne onderneming."
+    },
+    "businessArms": {
+      "arm1Eyebrow": "Bedrijfsonderdeel 01",
+      "arm2Eyebrow": "Bedrijfsonderdeel 02",
+      "arm1Thesis": "Wij verbinden internationale kopers met zorgvuldig geselecteerde productiepartners in heel India en leveren kwaliteitsproducten via betrouwbare sourcing- en exportoplossingen.",
+      "arm2Thesis": "Een eigen technologietak voor software, AI, branding en digitale marketing — zodat bedrijven kunnen bouwen, groeien en moderniseren.",
+      "arm1Cta": "Bekijk sourcingmogelijkheden",
+      "arm2Cta": "Bekijk dienstverlening",
+      "cat1": "Textiel",
+      "cat2": "Gezondheidszorg & farmacie",
+      "cat3": "Bouwmaterialen",
+      "cat4": "Landbouw & voeding",
+      "cat5": "Techniek & sieraden",
+      "cat6": "Technologieoplossingen",
+      "cat7": "AI-oplossingen",
+      "cat8": "Branding & design",
+      "cat9": "Digitale marketing"
+    },
+    "insights": {
+      "eyebrow": "Inzichten",
+      "heading": "Perspectieven die wereldwijd zakendoen sturen"
     }
   }
 }

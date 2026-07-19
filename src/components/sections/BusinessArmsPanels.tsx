@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { TitleChars, PChars } from "@/lib/split-text";
+import { Link } from "@/i18n/navigation";
 
 interface Arm {
   id: string;
@@ -18,36 +19,37 @@ interface Arm {
   imageAlt: string;
 }
 
-const ARMS: Arm[] = [
-  {
-    id: "product-exports",
-    index: "01",
-    eyebrow: "Business Arm 01",
-    title: "Product Exports",
-    thesis:
-      "We connect international buyers with carefully selected manufacturing partners across India to deliver quality products through dependable sourcing and export solutions.",
-    categories: ["Textiles", "Healthcare & Pharma", "Building Materials", "Agriculture & Food", "Engineering & Jewellery"],
-    href: "/businesses/product-exports/",
-    cta: "See sourcing capabilities",
-    image: "/images/businesses/product-exports-editorial.png",
-    imageAlt: "Cargo containers and export logistics at a port terminal",
-  },
-  {
-    id: "trivoxa-digital",
-    index: "02",
-    eyebrow: "Business Arm 02",
-    title: "Trivoxa Digital",
-    thesis:
-      "A dedicated technology services arm delivering software, AI, branding, and digital marketing — helping businesses build, grow, and modernize.",
-    categories: ["Technology Solutions", "AI Solutions", "Branding & Design", "Digital Marketing"],
-    href: "/businesses/service-exports/",
-    cta: "See service capabilities",
-    image: "/images/businesses/service-exports-editorial.png",
-    imageAlt: "Technology team collaborating in a modern studio",
-  },
-];
-
 export default function BusinessArmsPanels() {
+  const t = useTranslations("home.businessArms");
+  const tm = useTranslations("megaMenu");
+
+  const ARMS: Arm[] = [
+    {
+      id: "product-exports",
+      index: "01",
+      eyebrow: t("arm1Eyebrow"),
+      title: tm("productExports"),
+      thesis: t("arm1Thesis"),
+      categories: [t("cat1"), t("cat2"), t("cat3"), t("cat4"), t("cat5")],
+      href: "/businesses/product-exports/",
+      cta: t("arm1Cta"),
+      image: "/images/businesses/product-exports-editorial.png",
+      imageAlt: "Cargo containers and export logistics at a port terminal",
+    },
+    {
+      id: "trivoxa-digital",
+      index: "02",
+      eyebrow: t("arm2Eyebrow"),
+      title: tm("trivoxaDigital"),
+      thesis: t("arm2Thesis"),
+      categories: [t("cat6"), t("cat7"), t("cat8"), t("cat9")],
+      href: "/businesses/service-exports/",
+      cta: t("arm2Cta"),
+      image: "/images/businesses/service-exports-editorial.png",
+      imageAlt: "Technology team collaborating in a modern studio",
+    },
+  ];
+
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.utils.toArray<HTMLElement>(".biz-arm").forEach((panel) => {

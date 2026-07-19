@@ -98,6 +98,38 @@
       "quote": "Aus welchem Hafen eine Sendung auch ausläuft – Mundra, Kandla oder Nhava Sheva –, sie trägt denselben Standard, der in der Fertigung in Surat gesetzt wurde. Daran ändert das Ziel nichts.",
       "cite": "— Trivoxa Group",
       "cta": "Globale Präsenz ansehen"
+    },
+    "industries": {
+      "eyebrow": "Branchen",
+      "heading": "Wir unterstützen die Branchen von morgen",
+      "nameTechnology": "Technologie",
+      "descTextile": "Stoffe, Heimtextilien, Bekleidungszubehör.",
+      "descHealthcare": "Verlässliche Pharmaprodukte und Gesundheitslösungen.",
+      "descBuilding": "Naturstein, Marmor, Granit und Baumaterialien.",
+      "descAgri": "Ausgewählte Erzeugnisse, Gewürze, Trockenfrüchte und verarbeitete Lebensmittel.",
+      "descEngineering": "Industrieprodukte, Komponenten und Fertigungslösungen.",
+      "descTechnology": "Software, KI und digitale Transformation für moderne Unternehmen."
+    },
+    "businessArms": {
+      "arm1Eyebrow": "Geschäftsbereich 01",
+      "arm2Eyebrow": "Geschäftsbereich 02",
+      "arm1Thesis": "Wir verbinden internationale Käufer mit sorgfältig ausgewählten Fertigungspartnern in ganz Indien und liefern Qualitätsprodukte über verlässliche Beschaffungs- und Exportlösungen.",
+      "arm2Thesis": "Ein eigener Technologiebereich für Software, KI, Branding und digitales Marketing – damit Unternehmen aufbauen, wachsen und modernisieren können.",
+      "arm1Cta": "Beschaffungsleistungen ansehen",
+      "arm2Cta": "Serviceleistungen ansehen",
+      "cat1": "Textilien",
+      "cat2": "Gesundheit & Pharma",
+      "cat3": "Baustoffe",
+      "cat4": "Landwirtschaft & Lebensmittel",
+      "cat5": "Technik & Schmuck",
+      "cat6": "Technologielösungen",
+      "cat7": "KI-Lösungen",
+      "cat8": "Branding & Design",
+      "cat9": "Digitales Marketing"
+    },
+    "insights": {
+      "eyebrow": "Einblicke",
+      "heading": "Perspektiven, die globales Geschäft prägen"
     }
   }
 }
