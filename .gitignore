@@ -46,6 +46,8 @@ next-env.d.ts
 
 # AI/Agent configuration and cache directories
 /.aider*
+/.agents
+/CLAUDE_TASK.md
 /.augment
 /.claude
 /.codex

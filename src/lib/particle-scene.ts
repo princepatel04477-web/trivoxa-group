@@ -4,6 +4,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { MeshSurfaceSampler } from "three/examples/jsm/math/MeshSurfaceSampler.js";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { buildGlobeGeometry } from "./globe-geometry";
+import { latLonToVec3 } from "./geo-sphere";
 import {
   EffectComposer,
   RenderPass,
@@ -27,6 +28,13 @@ const IDLE_OMEGA = (2 * Math.PI) / 26; // rad/s — single-axis idle spin, 26s/r
 const AXIAL_TILT = (23.4 * Math.PI) / 180; // Earth-accurate axial tilt
 const PARALLAX_MAX = (4 * Math.PI) / 180; // max ±4° mouse parallax offset
 
+// Overall formation size. FORMATION_SCALE enlarges the hero globe and the flat
+// shapes (ship / container / eagle) 1.6×. The ports globe holds at PORTS_SCALE
+// (its prior size) so it stays beside the global-presence copy rather than
+// overrunning it. Both are applied via points.scale in the render loop.
+const FORMATION_SCALE = 1.6;
+const PORTS_SCALE = 1.22;
+
 interface ProxyVertex {
   x: number;
   y: number;
@@ -39,6 +47,16 @@ interface Shape {
   color: number;
   /** Flat silhouettes (the eagle) breathe + follow the cursor instead of spinning. */
   flat?: boolean;
+}
+
+/** One trade lane on the ports globe: a bulging arc from Surat to a hub plus a
+ * light "packet" sprite that travels along it, looping. */
+interface ArcAnim {
+  line: THREE.Line;
+  packet: THREE.Sprite;
+  curve: THREE.QuadraticBezierCurve3;
+  speed: number;
+  off: number;
 }
 
 export interface ParticleScene {
@@ -257,6 +275,30 @@ export async function createParticleScene(): Promise<ParticleScene> {
   };
   holder.scale.setScalar(fitScale());
 
+  // Horizontal offset for the globe / formations. Placed at a consistent
+  // fraction of the visible half-width (so the composition reads the same on
+  // every aspect ratio) AND clamped so the globe is always fully on-screen —
+  // never cut off on a narrow laptop, never stranded in dead space on an
+  // ultrawide. Recomputed on resize so opening the site at any window size (or
+  // resizing it) lands the field in the right place instead of a stale offset.
+  const computeSide = (): number => {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    if (w <= 575) return 0; // mobile: centred, no side offset
+    // Visible half-width in world units at the globe's depth.
+    const halfW = Math.tan((35 * Math.PI) / 180 / 2) * camera.position.z * (w / h);
+    // Globe's on-screen radius (incl. the outer shell), so we can guarantee it
+    // stays inside the frustum with margin.
+    const onscreenR = globeRadius * fitScale() * 1.08;
+    const frac = w <= 1024 ? 0.34 : 0.42; // how far right of centre it sits
+    // Reserve enough room that even the enlarged ports globe (scaled 1.22× in
+    // the render loop) stays fully on-screen when parked on the right.
+    const maxRight = Math.max(0, halfW - onscreenR * 1.32);
+    return Math.min(halfW * frac, maxRight);
+  };
+  let side = computeSide();
+  scene.position.x = side; // hero: globe sits opposite the left-aligned headline
+
   const proxy: ProxyVertex[] = Array.from({ length: count }, () => ({ x: 0, y: 0, z: 0 }));
   const sourceX = new Float32Array(count);
   const sourceY = new Float32Array(count);
@@ -268,6 +310,14 @@ export async function createParticleScene(): Promise<ParticleScene> {
   let needsUpdate = false;
   let currentFlat = false; // hero starts on the spinning globe
   let currentIsGlobe = true; // drives axial tilt, parallax and depth cueing
+  // Named-port overlay for the Global Presence globe. Declared before the render
+  // loop (which references them) but populated later once R/globeRadius exist.
+  let portGroup: THREE.Group | null = null;
+  let portsMode = false; // true only while the ports globe is the active field
+  const portSprites: THREE.Sprite[] = [];
+  const arcs: ArcAnim[] = []; // Surat → hub trade lanes on the ports globe
+  const _wp = new THREE.Vector3();
+  const _cp = new THREE.Vector3();
   // Pointer parallax — the globe subtly leans toward the cursor.
   const pointer = { x: 0, y: 0 };
   const pointerTarget = { x: 0, y: 0 };
@@ -310,12 +360,17 @@ export async function createParticleScene(): Promise<ParticleScene> {
       if (currentIsGlobe) {
         // Idle rotation: single Y-axis, constant velocity, 26s/rev (Phase 3.2.1).
         // Tilt lives on the holder (23.4°); no secondary-axis wobble on points.
-        points.rotation.y += IDLE_OMEGA * delta;
+        // Keeps rotating while ports are up so every city cycles into view; only
+        // gently eased below full speed so labels stay readable as they pass.
+        points.rotation.y += IDLE_OMEGA * (portsMode ? 0.75 : 1) * delta;
         points.rotation.x += (0 - points.rotation.x) * kSettle;
         holder.rotation.z += (AXIAL_TILT - holder.rotation.z) * kSettle;
         holder.rotation.x += (pointer.y * PARALLAX_MAX - holder.rotation.x) * kParallax;
         holder.rotation.y += (pointer.x * PARALLAX_MAX - holder.rotation.y) * kParallax;
-        scaleTo1();
+        // Enlarge the globe while the ports overlay is up so the world map and
+        // its named hubs get more room; eases back to 1 for the hero globe.
+        const globeScale = portsMode ? 1.22 : 1;
+        points.scale.setScalar(points.scale.x + (globeScale - points.scale.x) * kSettle);
       } else if (currentFlat) {
         // LOCKED formation (trade map / eagle logo / cargo plane). The centroid
         // must not drift, rotate, or breathe — ease all residual motion to zero.
@@ -347,6 +402,42 @@ export async function createParticleScene(): Promise<ParticleScene> {
       geometry.attributes.position.needsUpdate = true;
       needsUpdate = false;
     }
+    // Port labels: fade each toward its target only when it faces the camera
+    // (front hemisphere), so labels on the far side of the globe don't show
+    // through. Cheap — at most ~7 sprites. Hides the group once fully faded.
+    if (portGroup && portGroup.visible) {
+      points.getWorldPosition(_cp);
+      _cp.project(camera);
+      let anyVisible = false;
+      for (const s of portSprites) {
+        s.getWorldPosition(_wp);
+        _wp.project(camera);
+        const front = _wp.z < _cp.z; // nearer to camera than the globe centre
+        const want = portsMode && front ? 1 : 0;
+        const m = s.material as THREE.SpriteMaterial;
+        m.opacity += (want - m.opacity) * kSettle;
+        if (m.opacity > 0.01) anyVisible = true;
+      }
+      // Trade-lane arcs + travelling packets. Arcs fade in with the globe; each
+      // packet advances along its curve and fades by hemisphere so back-of-globe
+      // dots don't show through.
+      const arcTarget = portsMode ? 1 : 0;
+      for (const a of arcs) {
+        const lm = a.line.material as THREE.LineBasicMaterial;
+        lm.opacity += (arcTarget * 0.42 - lm.opacity) * kSettle;
+        a.off = (a.off + delta * a.speed) % 1;
+        a.curve.getPoint(a.off, _wp);
+        a.packet.position.copy(_wp);
+        a.packet.getWorldPosition(_wp);
+        _wp.project(camera);
+        const pFront = _wp.z < _cp.z;
+        const pm = a.packet.material as THREE.SpriteMaterial;
+        pm.opacity += ((arcTarget && pFront ? 1 : 0) - pm.opacity) * kSettle;
+        if (lm.opacity > 0.01 || pm.opacity > 0.01) anyVisible = true;
+      }
+      if (!portsMode && !anyVisible) portGroup.visible = false;
+    }
+
     if (composer) {
       composer.render();
     } else {
@@ -375,52 +466,18 @@ export async function createParticleScene(): Promise<ParticleScene> {
     renderer.setSize(w, h);
     composer?.setSize(w, h);
     holder.scale.setScalar(fitScale()); // keep the globe proportionate on resize
+    // Re-place the field for the new viewport. Only snap it while the hero is on
+    // screen (before the first scroll formation) so a mid-page resize doesn't
+    // yank the field sideways under the reader; deeper sections re-place on
+    // their next scroll trigger.
+    side = computeSide();
+    if (window.scrollY < window.innerHeight * 0.6) scene.position.x = side;
   }
   window.addEventListener("resize", handleResize);
 
   // scale multiplier per viewport (matches vpScale used for the globe radius)
   const S = width > 1024 ? 1 : width > 576 ? 0.82 : 0.66;
   const R = 7 * S; // nominal shape radius in world units (== globeRadius)
-
-  // Cargo plane (Services) — side-profile silhouette flying +X, with a subset
-  // of grains pulled into trailing streaks behind the tail to read as speed.
-  // flat:true so it holds a stable, readable profile facing the camera.
-  const cargoPlane = ((): Shape => {
-    const fuselage = new THREE.BoxGeometry(R * 3.4, R * 0.5, R * 0.2, 60, 8, 6);
-    const fin = new THREE.BoxGeometry(R * 0.5, R * 0.95, R * 0.18, 8, 16, 4);
-    fin.translate(-R * 1.3, R * 0.55, 0);
-    const stab = new THREE.BoxGeometry(R * 0.85, R * 0.14, R * 0.18, 12, 4, 4);
-    stab.translate(-R * 1.4, R * 0.12, 0);
-    const wing = new THREE.BoxGeometry(R * 1.9, R * 0.16, R * 0.95, 24, 4, 12);
-    wing.rotateZ(-0.3);
-    wing.translate(R * 0.05, -R * 0.05, 0);
-    const merged = mergeGeometries([fuselage, fin, stab, wing], false)!;
-    [fuselage, fin, stab, wing].forEach((g) => g.dispose());
-    const shape = sampleGeometry(merged, "cargo-plane", GOLD, count);
-    shape.flat = true;
-    for (let i = 0; i < count; i++) {
-      if (i % 7 === 0) {
-        const idx = i * 3;
-        shape.data[idx] = -R * 1.7 - Math.random() * R * 2.4; // trail behind tail
-        shape.data[idx + 1] = (Math.random() - 0.5) * R * 0.55;
-        shape.data[idx + 2] = (Math.random() - 0.5) * R * 0.25;
-      }
-    }
-    return shape;
-  })();
-
-  // Ambient footer drift — a wide, sparse cloud filling the viewport; combined
-  // with a low material opacity it reads as low-density wandering grains behind
-  // the footer copy without competing for legibility.
-  const driftCloud: Shape = ((): Shape => {
-    const data = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      data[i * 3] = (Math.random() * 2 - 1) * R * 3.7;
-      data[i * 3 + 1] = (Math.random() * 2 - 1) * R * 2.2;
-      data[i * 3 + 2] = (Math.random() * 2 - 1) * R * 0.9;
-    }
-    return { name: "drift", data, color: GOLD };
-  })();
 
   // globe is built procedurally above (buildGlobeGeometry). Only the eagle mark
   // still needs async decode of its PNG alpha.
@@ -457,6 +514,159 @@ export async function createParticleScene(): Promise<ParticleScene> {
     shape.flat = true;
     return shape;
   })();
+
+  // Small shipping container (About — "A Vision Beyond Business"): a single
+  // corrugated box, sampled and held as a flat profile. Deliberately smaller
+  // than the ship so the two maritime beats read as distinct moments.
+  const container = ((): Shape => {
+    const parts: THREE.BufferGeometry[] = [];
+    const body = new THREE.BoxGeometry(R * 1.7, R * 0.74, R * 0.74, 46, 16, 16);
+    parts.push(body);
+    const ribs = 10;
+    for (let i = 0; i < ribs; i++) {
+      const rib = new THREE.BoxGeometry(R * 0.028, R * 0.74, R * 0.78, 2, 12, 8);
+      rib.translate(-R * 0.82 + (i / (ribs - 1)) * R * 1.64, 0, 0);
+      parts.push(rib);
+    }
+    const merged = mergeGeometries(parts, false)!;
+    parts.forEach((g) => g.dispose());
+    const shape = sampleGeometry(merged, "container", GOLD, count);
+    shape.flat = true;
+    return shape;
+  })();
+
+  // Major world trade hubs for the "Connecting Opportunities Across Borders"
+  // globe. Surat is the single origin; shipment packets flow from it out to
+  // every hub along a connecting arc. Each pins to its real lat/lon on the same
+  // sphere the land particles use, so labels track the continents as it turns.
+  const CITIES: { name: string; lat: number; lon: number; origin?: boolean }[] = [
+    { name: "Surat", lat: 21.1702, lon: 72.8311, origin: true },
+    { name: "Dubai", lat: 25.2048, lon: 55.2708 },
+    { name: "Jeddah", lat: 21.4858, lon: 39.1925 },
+    { name: "Singapore", lat: 1.3521, lon: 103.8198 },
+    { name: "Shanghai", lat: 31.2304, lon: 121.4737 },
+    { name: "Hong Kong", lat: 22.3193, lon: 114.1694 },
+    { name: "Tokyo", lat: 35.6762, lon: 139.6503 },
+    { name: "Rotterdam", lat: 51.9244, lon: 4.4777 },
+    { name: "New York", lat: 40.7128, lon: -74.006 },
+    { name: "Los Angeles", lat: 34.0522, lon: -118.2437 },
+    { name: "Santos", lat: -23.9608, lon: -46.3336 },
+    { name: "Durban", lat: -29.8587, lon: 31.0218 },
+    { name: "Mombasa", lat: -4.0435, lon: 39.6682 },
+    { name: "Sydney", lat: -33.8688, lon: 151.2093 },
+  ];
+
+  const makePortSprite = (name: string, origin: boolean): THREE.Sprite => {
+    const dpr = 2;
+    // Surat (origin) is the standout — larger + warm gold. Destinations are
+    // small and muted (a soft slate, NOT bright white) so they don't read as
+    // neon and don't fight each other for attention.
+    const fontPx = origin ? 21 : 15;
+    const weight = origin ? 700 : 500;
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d")!;
+    const fontStack = `${weight} ${fontPx}px 'Lufga','Inter',system-ui,sans-serif`;
+    ctx.font = fontStack;
+    const textW = ctx.measureText(name).width;
+    const padX = 5;
+    const dotR = origin ? 6 : 4;
+    const gap = 8;
+    const w = Math.ceil(dotR * 2 + gap + textW + padX * 2);
+    const h = Math.ceil(fontPx + 12);
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    ctx.scale(dpr, dpr);
+    ctx.font = fontStack;
+    ctx.textBaseline = "middle";
+    // marker dot
+    ctx.fillStyle = origin ? "#F2C24A" : "#8894AC";
+    ctx.beginPath();
+    ctx.arc(padX + dotR, h / 2, dotR, 0, Math.PI * 2);
+    ctx.fill();
+    // city name — faint shadow so it reads over the grains without glowing
+    ctx.shadowColor = "rgba(6,12,26,0.9)";
+    ctx.shadowBlur = 4;
+    ctx.fillStyle = origin ? "#F3D488" : "#9BA6BC";
+    ctx.fillText(name, padX + dotR * 2 + gap, h / 2 + 1);
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.anisotropy = 4;
+    tex.needsUpdate = true;
+    const mat = new THREE.SpriteMaterial({
+      map: tex,
+      transparent: true,
+      depthTest: false,
+      depthWrite: false,
+      opacity: 0,
+    });
+    const sprite = new THREE.Sprite(mat);
+    // Local size (the whole globe scales up in ports mode — see render loop —
+    // so these stay small on screen even though the globe grows).
+    const worldH = origin ? R * 0.3 : R * 0.19;
+    sprite.scale.set(worldH * (w / h), worldH, 1);
+    sprite.center.set(0, 0.5); // anchor at the dot, so text reads to the right
+    return sprite;
+  };
+
+  portGroup = new THREE.Group();
+  portGroup.visible = false;
+  const cityVecs: Record<string, THREE.Vector3> = {};
+  for (const c of CITIES) {
+    const sprite = makePortSprite(c.name, !!c.origin);
+    const [x, y, z] = latLonToVec3(c.lat, c.lon, globeRadius * 1.045);
+    sprite.position.set(x, y, z);
+    sprite.renderOrder = c.origin ? 4 : 3; // labels over arcs; Surat over labels
+    portGroup.add(sprite);
+    portSprites.push(sprite);
+    cityVecs[c.name] = new THREE.Vector3(...latLonToVec3(c.lat, c.lon, globeRadius * 1.01));
+  }
+
+  // Connecting arcs + travelling packets: one lane from Surat to every hub. Each
+  // arc bulges off the sphere (higher for longer lanes) and a gold "packet"
+  // sprite runs Surat → hub along it, looping — the trade flowing outward.
+  const surat = cityVecs["Surat"];
+  for (const c of CITIES) {
+    if (c.origin) continue;
+    const dest = cityVecs[c.name];
+    const mid = surat.clone().add(dest).multiplyScalar(0.5);
+    const lift = globeRadius * (1.1 + surat.distanceTo(dest) / (globeRadius * 4.2));
+    mid.setLength(lift);
+    const curve = new THREE.QuadraticBezierCurve3(surat.clone(), mid, dest.clone());
+    const lineGeo = new THREE.BufferGeometry().setFromPoints(curve.getPoints(64));
+    const lineMat = new THREE.LineBasicMaterial({
+      color: 0xd4af5e,
+      transparent: true,
+      opacity: 0,
+      blending: THREE.AdditiveBlending,
+      depthTest: false,
+      depthWrite: false,
+    });
+    const line = new THREE.Line(lineGeo, lineMat);
+    line.renderOrder = 1;
+    portGroup.add(line);
+    const packetMat = new THREE.SpriteMaterial({
+      map: texture,
+      color: 0xffe3a6,
+      transparent: true,
+      opacity: 0,
+      blending: THREE.AdditiveBlending,
+      depthTest: false,
+      depthWrite: false,
+    });
+    const packet = new THREE.Sprite(packetMat);
+    packet.scale.setScalar(globeRadius * 0.05); // small flowing dots
+    packet.renderOrder = 2;
+    portGroup.add(packet);
+    arcs.push({ line, packet, curve, speed: 0.16 + Math.random() * 0.12, off: Math.random() });
+  }
+  points.add(portGroup);
+
+  const showPorts = () => {
+    if (portGroup) portGroup.visible = true;
+    portsMode = true;
+  };
+  const hidePorts = () => {
+    portsMode = false; // render loop fades the sprites out, then hides the group
+  };
 
   function morphTo(shape: Shape, onProgress?: (eased: number) => void) {
     currentFlat = !!shape.flat;
@@ -565,19 +775,14 @@ export async function createParticleScene(): Promise<ParticleScene> {
   // instance's promise resolves — see ParticleCanvas.tsx.)
   assembleGlobe();
 
-  // Scroll choreography — one calm, meaningful formation per zone, held across
-  // neighbouring sections so the field never reads as a per-section shape
-  // grab-bag: globe (hero) → cargo plane (exports) → flat trade map, locked
-  // (global) → globe again (why-choose-us hold) → eagle logo (CTA) → drift (footer).
-  const isTablet = width > 575 && width <= 1024;
-  // Horizontal offset scales with the visible world-width at the globe's depth
-  // so it sits at a consistent fraction of the screen on any aspect ratio,
-  // rather than a fixed world offset that shoves it off a narrower display.
-  const halfH = Math.tan((35 * Math.PI) / 180 / 2) * camera.position.z; // ~11.3
-  const halfW = halfH * (width / height);
-  const side = isMobile ? 0 : Math.min(isTablet ? 5 : 8, halfW * 0.34);
-
-  scene.position.x = side; // hero: globe sits opposite the left-aligned headline
+  // Scroll choreography — a deliberate, sparse sequence. The field only forms a
+  // shape at four narrative beats and is fully hidden everywhere else, so it
+  // never competes with content-heavy sections:
+  //   globe (hero) → vessel (trust) → container (about) → [hidden: business
+  //   arms + industries] → ports globe (global presence) → [hidden: values /
+  //   insights / careers] → eagle (CTA) → dimmed eagle (footer).
+  // (Globe horizontal placement `side` is computed above via computeSide() and
+  // kept current on resize — see handleResize.)
 
   // ScrollTriggers created by this scene instance, so dispose() can kill only
   // its own — a blanket ScrollTrigger.getAll() kill would also wipe out
@@ -595,72 +800,118 @@ export async function createParticleScene(): Promise<ParticleScene> {
       return tween;
     };
 
-    const morphAt = (trigger: string, shape: Shape) => {
-      const fire = () => morphTo(shape);
-      const st = ScrollTrigger.create({ trigger, start: "top center", onEnter: fire, onEnterBack: fire });
+    // Fade the whole field's opacity (used to fully hide it over content-heavy
+    // sections and bring it back for the next formation).
+    const fade = (opacity: number, dur = 0.7) => {
+      gsap.killTweensOf(material);
+      gsap.to(material, { opacity, duration: dur, ease: "power2.out" });
+    };
+
+    const on = (
+      trigger: string,
+      {
+        start = "top center",
+        ...handlers
+      }: {
+        start?: string;
+        onEnter?: () => void;
+        onEnterBack?: () => void;
+        onLeave?: () => void;
+        onLeaveBack?: () => void;
+      }
+    ) => {
+      const st = ScrollTrigger.create({ trigger, start, ...handlers });
       instanceScrollTriggers.push(st);
       return st;
     };
 
-    // Hero globe holds through About (only recentres — no re-form).
-    sweep(".hp-about", 0);
-    morphAt(".hp-about", globe);
-
-    // Exports → cargo plane, held through Industries. Sits to the right,
-    // opposite the left-aligned "PRODUCT EXPORTS" headline.
-    sweep(".hp-sec-4", side * 0.9);
-    morphAt(".hp-sec-4", cargoPlane);
-    sweep(".hp-sec-2", side * 0.9);
-    morphAt(".hp-sec-2", cargoPlane);
-
-    // Global Presence — a container ship (maritime trade "across borders"),
-    // centered behind the copy. Grains fly from the plane straight into the
-    // ship; re-forms to the globe on the way out.
-    sweep(".hp-global", 0);
-    morphAt(".hp-global", cargoShip);
-
-    const reGlobeTrigger = ScrollTrigger.create({
-      trigger: ".hp-global",
-      start: "bottom center",
-      onEnter: () => morphTo(globe),
-      onEnterBack: () => morphTo(cargoShip),
+    // 1 · Trust ("A sourcing partner, not just a supplier directory") — a cargo
+    //     vessel. The hero globe flies straight into the ship. Sits to the side.
+    sweep(".hp-trust", side);
+    on(".hp-trust", {
+      onEnter: () => { fade(1); morphTo(cargoShip); },
+      onEnterBack: () => { fade(1); morphTo(cargoShip); },
     });
-    instanceScrollTriggers.push(reGlobeTrigger);
 
-    // Why-Choose-Us hold zone (Values / Certifications / Insights / Careers):
-    // no new formation — the globe holds and drifts side to side.
-    sweep(".hp-insights", -side * 0.7);
-    morphAt(".hp-insights", globe);
-    sweep(".hp-careers", side * 0.7);
-    morphAt(".hp-careers", globe);
+    // 2 · About ("A Vision Beyond Business") — a single small container.
+    sweep(".hp-about", side * 0.7);
+    on(".hp-about", {
+      onEnter: () => { fade(1); morphTo(container); },
+      onEnterBack: () => { fade(1); morphTo(container); },
+    });
 
-    // Contact / CTA — the Trivoxa eagle logo, in grains, behind the copy.
+    // 3 · Business Arms + Industries carousel — NO animation. Fade the field
+    //     fully out and hold it hidden across both content-dense sections.
+    on(".hp-sec-4", {
+      onEnter: () => fade(0),
+      onEnterBack: () => fade(0),
+    });
+
+    // 4 · Global Presence ("Connecting Opportunities Across Borders") — the big
+    //     ports globe with named markers, parked on the RIGHT so the section's
+    //     copy (left-aligned in CSS) sits clear of it.
+    sweep(".hp-global", side);
+    on(".hp-global", {
+      onEnter: () => { fade(1); morphTo(globe); showPorts(); },
+      onEnterBack: () => { fade(1); morphTo(globe); showPorts(); },
+      onLeaveBack: () => { hidePorts(); fade(0); }, // scrolling up into carousel
+    });
+
+    // 5 · Values / Insights / Careers — NO animation. Keep the field hidden.
+    on(".hp-values", {
+      onEnter: () => { hidePorts(); fade(0); },
+      onEnterBack: () => { hidePorts(); fade(0); },
+    });
+
+    // 6 · Final CTA — the Trivoxa eagle, in grains, behind the copy.
     sweep(".hp-cta", 0);
-    morphAt(".hp-cta", eagle);
-
-    // Footer — merges with the CTA: the field drops to a sparse, dim ambient
-    // drift so footer copy stays fully legible. Scrolling back up restores the
-    // eagle logo at full opacity.
-    const footerTrigger = ScrollTrigger.create({
-      trigger: ".footer",
-      start: "top center",
-      onEnter: () => {
-        morphTo(driftCloud);
-        gsap.to(material, { opacity: 0.24, duration: 0.8, ease: "power2.out" });
-      },
-      onLeaveBack: () => {
-        gsap.to(material, { opacity: 1, duration: 0.5, ease: "power2.out" });
-        morphTo(eagle);
-      },
+    on(".hp-cta", {
+      onEnter: () => { hidePorts(); fade(1); morphTo(eagle); },
+      onEnterBack: () => { hidePorts(); fade(1); morphTo(eagle); },
     });
-    instanceScrollTriggers.push(footerTrigger);
+
+    // 7 · Footer — hold the eagle but drop it to a dim wash so footer copy stays
+    //     fully legible; scrolling back up restores full opacity.
+    on(".footer", {
+      onEnter: () => fade(0.18, 0.8),
+      onLeaveBack: () => fade(1, 0.5),
+    });
 
     ScrollTrigger.refresh();
   });
 
+  // ── Initial-load robustness ────────────────────────────────────────────────
+  // The canvas mounts asynchronously and the page keeps reflowing after first
+  // paint (web fonts swap in, images/hero pin resize, the preloader releases
+  // scroll). So the canvas size and every scroll-trigger position computed above
+  // are stale on load — which is exactly why a manual window resize "fixed" the
+  // globe. Replay that resize automatically at each moment the layout can still
+  // change, so it lands correct on load at any display size, no interaction.
+  let disposed = false;
+  const settleTimers: number[] = [];
+  const resync = () => {
+    if (disposed) return;
+    handleResize(); // camera aspect + renderer size + fitScale + re-place globe
+    ScrollTrigger.refresh(); // recompute every pin/scrub start–end position
+  };
+  if (document.readyState === "complete") {
+    settleTimers.push(window.setTimeout(resync, 0));
+  } else {
+    window.addEventListener("load", resync, { once: true });
+  }
+  // Web fonts reflow headings (which move the pinned sections) — refresh once
+  // they're ready.
+  document.fonts?.ready.then(resync).catch(() => {});
+  // Safety net for anything that settles slightly later (images, preloader).
+  settleTimers.push(window.setTimeout(resync, 400));
+  settleTimers.push(window.setTimeout(resync, 1200));
+
   return {
     domElement: canvas,
     dispose() {
+      disposed = true;
+      settleTimers.forEach((t) => clearTimeout(t));
+      window.removeEventListener("load", resync);
       cancelAnimationFrame(animId);
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("pointermove", handlePointer);
@@ -678,6 +929,18 @@ export async function createParticleScene(): Promise<ParticleScene> {
       renderer.dispose();
       geometry.dispose();
       material.dispose();
+      // Port-globe overlay: dispose each label/arc's own geometry + material
+      // (and its unique canvas texture — but not the shared particle `texture`,
+      // freed once below).
+      portGroup?.traverse((o) => {
+        const obj = o as THREE.Mesh & THREE.Line & THREE.Sprite;
+        obj.geometry?.dispose?.();
+        const m = obj.material as THREE.Material & { map?: THREE.Texture | null };
+        if (m) {
+          if (m.map && m.map !== texture) m.map.dispose();
+          m.dispose();
+        }
+      });
       texture.dispose();
       gsap.killTweensOf(morphProgress);
       instanceScrollTriggers.forEach((st) => st.kill());
