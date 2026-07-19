@@ -16,7 +16,7 @@ export function generateStaticParams() {
   return dynamicCategories.map((c) => ({ category: c.slug }));
 }
 
-export async function generateMetadata(props: PageProps<"/businesses/product-exports/[category]">): Promise<Metadata> {
+export async function generateMetadata(props: PageProps<"/[locale]/businesses/product-exports/[category]">): Promise<Metadata> {
   const { category } = await props.params;
   const cat = getExportCategory(category);
   if (!cat) return {};
@@ -26,7 +26,7 @@ export async function generateMetadata(props: PageProps<"/businesses/product-exp
   };
 }
 
-export default async function ExportCategoryPage(props: PageProps<"/businesses/product-exports/[category]">) {
+export default async function ExportCategoryPage(props: PageProps<"/[locale]/businesses/product-exports/[category]">) {
   const { category } = await props.params;
   const cat = getExportCategory(category);
   if (!cat || cat.slug === "textile-apparel") notFound();

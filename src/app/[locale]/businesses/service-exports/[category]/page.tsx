@@ -16,7 +16,7 @@ export function generateStaticParams() {
   return serviceCategories.map((c) => ({ category: c.slug }));
 }
 
-export async function generateMetadata(props: PageProps<"/businesses/service-exports/[category]">): Promise<Metadata> {
+export async function generateMetadata(props: PageProps<"/[locale]/businesses/service-exports/[category]">): Promise<Metadata> {
   const { category } = await props.params;
   const cat = getServiceCategory(category);
   if (!cat) return {};
@@ -33,7 +33,7 @@ const strengths = [
   { title: "Long-Term Partnership" },
 ];
 
-export default async function ServiceCategoryPage(props: PageProps<"/businesses/service-exports/[category]">) {
+export default async function ServiceCategoryPage(props: PageProps<"/[locale]/businesses/service-exports/[category]">) {
   const { category } = await props.params;
   const cat = getServiceCategory(category);
   if (!cat) notFound();

@@ -96,6 +96,37 @@
   --font-display: var(--font-lufga), sans-serif;
   --font-body: var(--font-sans), sans-serif;
   --font-emphasis: var(--font-calisto), serif;
+}
+
+/* ============================================================
+   Script coverage. Lufga (display) and Work Sans (body) are Latin-only, so
+   locales written in other scripts repoint the type tokens at the matching
+   self-hosted Noto face — otherwise ar / hi / ru render as tofu boxes.
+   Latin-script locales (de/fr/es/it/pt/nl/tr/pl) are covered by the
+   latin + latin-ext subsets and keep the brand faces.
+   ============================================================ */
+html[lang="ar"] {
+  --font-display: var(--font-noto-arabic), sans-serif;
+  --font-body: var(--font-noto-arabic), sans-serif;
+  --font-emphasis: var(--font-noto-arabic), sans-serif;
+  --font-mono: var(--font-noto-arabic), monospace;
+}
+
+html[lang="hi"] {
+  --font-display: var(--font-noto-devanagari), sans-serif;
+  --font-body: var(--font-noto-devanagari), sans-serif;
+  --font-emphasis: var(--font-noto-devanagari), sans-serif;
+  --font-mono: var(--font-noto-devanagari), monospace;
+}
+
+html[lang="ru"] {
+  --font-display: var(--font-noto-cyrillic), sans-serif;
+  --font-body: var(--font-noto-cyrillic), sans-serif;
+  --font-emphasis: var(--font-noto-cyrillic), sans-serif;
+  --font-mono: var(--font-noto-cyrillic), monospace;
+}
+
+:root {
 
   --space-3xs: 0.25rem;
   --space-2xs: 0.5rem;

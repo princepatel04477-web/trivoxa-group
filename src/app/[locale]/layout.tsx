@@ -1,0 +1,103 @@
+import type { Metadata } from "next";
+import { Work_Sans, Noto_Sans_Arabic, Noto_Sans_Devanagari, Noto_Sans } from "next/font/google";
+import localFont from "next/font/local";
+import { notFound } from "next/navigation";
+import { NextIntlClientProvider, hasLocale } from "next-intl";
+import { setRequestLocale } from "next-intl/server";
+import "../globals.css";
+import LenisProvider from "@/components/providers/LenisProvider";
+import CustomCursor from "@/components/CustomCursor";
+import { routing, isRtl } from "@/i18n/routing";
+
+// latin-ext carries the Polish/Turkish diacritics (ł, ş, ğ, ı) that plain
+// `latin` is missing.
+const workSans = Work_Sans({
+  variable: "--font-work-sans",
+  subsets: ["latin", "latin-ext"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+});
+
+// Lufga is the brand display face but is Latin-only — the three faces below
+// cover the scripts it can't, so ar / hi / ru don't render as tofu boxes.
+// next/font self-hosts all of these at build time; nothing is fetched from
+// Google at runtime.
+const notoArabic = Noto_Sans_Arabic({
+  variable: "--font-noto-arabic",
+  subsets: ["arabic"],
+  weight: ["300", "400", "500", "600", "700"],
+});
+
+const notoDevanagari = Noto_Sans_Devanagari({
+  variable: "--font-noto-devanagari",
+  subsets: ["devanagari"],
+  weight: ["300", "400", "500", "600", "700"],
+});
+
+const notoCyrillic = Noto_Sans({
+  variable: "--font-noto-cyrillic",
+  subsets: ["cyrillic", "cyrillic-ext"],
+  weight: ["300", "400", "500", "600", "700"],
+});
+
+const lufga = localFont({
+  variable: "--font-lufga",
+  src: [
+    { path: "../../fonts/lufga/Lufga-Thin.woff", weight: "100", style: "normal" },
+    { path: "../../fonts/lufga/Lufga-ExtraLight.woff", weight: "200", style: "normal" },
+    { path: "../../fonts/lufga/Lufga-Light.woff", weight: "300", style: "normal" },
+    { path: "../../fonts/lufga/Lufga-Light-Italic.woff", weight: "300", style: "italic" },
+    { path: "../../fonts/lufga/Lufga-Regular.woff", weight: "400", style: "normal" },
+    { path: "../../fonts/lufga/Lufga-Medium.woff", weight: "500", style: "normal" },
+    { path: "../../fonts/lufga/Lufga-SemiBold.woff", weight: "600", style: "normal" },
+    { path: "../../fonts/lufga/Lufga-Bold.woff", weight: "700", style: "normal" },
+  ],
+});
+
+const calisto = localFont({
+  variable: "--font-calisto",
+  src: [{ path: "../../fonts/calisto/Calisto-MT-Italic.woff", weight: "400", style: "italic" }],
+});
+
+export const metadata: Metadata = {
+  title: "Trivoxa Group | Building the Future of Global Commerce",
+  description:
+    "Trivoxa Group is an international business group delivering trusted products, strategic sourcing solutions, and professional services across global markets.",
+  icons: { icon: "/favicon.ico", shortcut: "/favicon.ico" },
+};
+
+/** Pre-render every locale at build time. */
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
+export default async function LocaleLayout({
+  children,
+  params,
+}: Readonly<{
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}>) {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) notFound();
+
+  // Opts this route tree into static rendering for the locale.
+  setRequestLocale(locale);
+
+  return (
+    <html
+      lang={locale}
+      dir={isRtl(locale) ? "rtl" : "ltr"}
+      className={`${workSans.variable} ${lufga.variable} ${calisto.variable} ${notoArabic.variable} ${notoDevanagari.variable} ${notoCyrillic.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
+      <body className="min-h-full" suppressHydrationWarning>
+        <NextIntlClientProvider>
+          <LenisProvider>
+            <CustomCursor />
+            {children}
+          </LenisProvider>
+        </NextIntlClientProvider>
+      </body>
+    </html>
+  );
+}

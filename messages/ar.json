@@ -1,0 +1,34 @@
+{
+  "nav": {
+    "group": "المجموعة",
+    "exports": "الصادرات",
+    "digital": "الرقمية",
+    "industries": "القطاعات",
+    "reach": "الانتشار",
+    "insights": "رؤى",
+    "careers": "الوظائف",
+    "contactUs": "اتصل بنا",
+    "menu": "القائمة",
+    "close": "إغلاق"
+  },
+  "megaMenu": {
+    "productExports": "صادرات المنتجات",
+    "theGroup": "المجموعة",
+    "textileApparel": "المنسوجات والملابس",
+    "healthcarePharma": "الرعاية الصحية والأدوية",
+    "buildingMaterials": "مواد البناء",
+    "furnitureInteriors": "الأثاث والديكور الداخلي",
+    "agricultureFood": "الزراعة والأغذية",
+    "engineeringIndustrial": "الهندسة والصناعة",
+    "jewellery": "المجوهرات والمنتجات الثمينة",
+    "allProductExports": "جميع صادرات المنتجات",
+    "trivoxaDigital": "Trivoxa Digital",
+    "industries": "القطاعات",
+    "ourStory": "قصتنا",
+    "contact": "اتصل بنا"
+  },
+  "language": {
+    "label": "اللغة",
+    "select": "اختر اللغة"
+  }
+}

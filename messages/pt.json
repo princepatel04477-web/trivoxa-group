@@ -1,0 +1,34 @@
+{
+  "nav": {
+    "group": "Grupo",
+    "exports": "Exportações",
+    "digital": "Digital",
+    "industries": "Setores",
+    "reach": "Alcance",
+    "insights": "Perspetivas",
+    "careers": "Carreiras",
+    "contactUs": "Contacte-nos",
+    "menu": "Menu",
+    "close": "Fechar"
+  },
+  "megaMenu": {
+    "productExports": "Exportação de produtos",
+    "theGroup": "O Grupo",
+    "textileApparel": "Têxtil e vestuário",
+    "healthcarePharma": "Saúde e farmacêutica",
+    "buildingMaterials": "Materiais de construção",
+    "furnitureInteriors": "Mobiliário e interiores",
+    "agricultureFood": "Agricultura e alimentação",
+    "engineeringIndustrial": "Engenharia e indústria",
+    "jewellery": "Joalharia e produtos preciosos",
+    "allProductExports": "Todas as exportações de produtos",
+    "trivoxaDigital": "Trivoxa Digital",
+    "industries": "Setores",
+    "ourStory": "A nossa história",
+    "contact": "Contacto"
+  },
+  "language": {
+    "label": "Idioma",
+    "select": "Selecionar idioma"
+  }
+}

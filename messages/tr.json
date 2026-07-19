@@ -1,0 +1,34 @@
+{
+  "nav": {
+    "group": "Grup",
+    "exports": "İhracat",
+    "digital": "Dijital",
+    "industries": "Sektörler",
+    "reach": "Erişim",
+    "insights": "Görüşler",
+    "careers": "Kariyer",
+    "contactUs": "Bize Ulaşın",
+    "menu": "Menü",
+    "close": "Kapat"
+  },
+  "megaMenu": {
+    "productExports": "Ürün İhracatı",
+    "theGroup": "Grup",
+    "textileApparel": "Tekstil ve Giyim",
+    "healthcarePharma": "Sağlık ve İlaç",
+    "buildingMaterials": "Yapı Malzemeleri",
+    "furnitureInteriors": "Mobilya ve İç Mekân",
+    "agricultureFood": "Tarım ve Gıda",
+    "engineeringIndustrial": "Mühendislik ve Sanayi",
+    "jewellery": "Mücevher ve Değerli Ürünler",
+    "allProductExports": "Tüm Ürün İhracatı",
+    "trivoxaDigital": "Trivoxa Digital",
+    "industries": "Sektörler",
+    "ourStory": "Hikâyemiz",
+    "contact": "İletişim"
+  },
+  "language": {
+    "label": "Dil",
+    "select": "Dil seçin"
+  }
+}

@@ -16,7 +16,7 @@ export function generateStaticParams() {
   return industries.map((i) => ({ slug: i.slug }));
 }
 
-export async function generateMetadata(props: PageProps<"/industries/[slug]">): Promise<Metadata> {
+export async function generateMetadata(props: PageProps<"/[locale]/industries/[slug]">): Promise<Metadata> {
   const { slug } = await props.params;
   const industry = getIndustryBySlug(slug);
   if (!industry) return {};
@@ -36,7 +36,7 @@ const strengths = [
   { title: "Long-Term Relationships", description: "Focused on building partnerships that continue creating value well beyond individual projects." },
 ];
 
-export default async function IndustryPage(props: PageProps<"/industries/[slug]">) {
+export default async function IndustryPage(props: PageProps<"/[locale]/industries/[slug]">) {
   const { slug } = await props.params;
   const industry = getIndustryBySlug(slug);
   if (!industry) notFound();

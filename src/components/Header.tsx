@@ -1,53 +1,59 @@
 "use client";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 import { gsap } from "@/lib/gsap";
 import { useCallback, useEffect, useRef } from "react";
 import { on, emit } from "@/lib/site-events";
 import { getLenis } from "@/components/providers/LenisProvider";
+import { Link } from "@/i18n/navigation";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
-const MEGA_TRIGGER = "Exports";
+// Identifies the nav item that opens the mega-menu. Keyed off the translation
+// key (not the visible label) so it keeps working in every language.
+const MEGA_TRIGGER = "exports";
 
 const navLinks = [
-  { id: "menu-item-51", label: "Group", href: "/group/" },
-  { id: "menu-item-53", label: "Exports", href: "/businesses/product-exports/" },
-  { id: "menu-item-88", label: "Digital", href: "/businesses/service-exports/" },
-  { id: "menu-item-67", label: "Industries", href: "/industries/" },
-  { id: "menu-item-68", label: "Reach", href: "/global-presence/" },
-  { id: "menu-item-69", label: "Insights", href: "/insights/" },
-  { id: "menu-item-70", label: "Careers", href: "/careers/" },
-];
+  { id: "menu-item-51", key: "group", href: "/group/" },
+  { id: "menu-item-53", key: "exports", href: "/businesses/product-exports/" },
+  { id: "menu-item-88", key: "digital", href: "/businesses/service-exports/" },
+  { id: "menu-item-67", key: "industries", href: "/industries/" },
+  { id: "menu-item-68", key: "reach", href: "/global-presence/" },
+  { id: "menu-item-69", key: "insights", href: "/insights/" },
+  { id: "menu-item-70", key: "careers", href: "/careers/" },
+] as const;
 
 const megaMenuColumns = [
   {
     id: "menu-item-71",
-    title: "Product Exports",
+    titleKey: "productExports",
     href: "/businesses/product-exports/",
     links: [
-      { id: "menu-item-72", label: "Textile & Apparel", href: "/businesses/product-exports/textile-apparel/" },
-      { id: "menu-item-73", label: "Healthcare & Pharmaceuticals", href: "/businesses/product-exports/healthcare-pharmaceuticals/" },
-      { id: "menu-item-74", label: "Building Materials", href: "/businesses/product-exports/building-materials/" },
-      { id: "menu-item-86", label: "Furniture & Interiors", href: "/businesses/product-exports/furniture-interiors/" },
-      { id: "menu-item-84", label: "Agriculture & Food", href: "/businesses/product-exports/agriculture-food/" },
-      { id: "menu-item-85", label: "Engineering & Industrial", href: "/businesses/product-exports/engineering-industrial/" },
-      { id: "menu-item-90", label: "Jewellery & Precious Products", href: "/businesses/product-exports/jewellery-precious-products/" },
+      { id: "menu-item-72", key: "textileApparel", href: "/businesses/product-exports/textile-apparel/" },
+      { id: "menu-item-73", key: "healthcarePharma", href: "/businesses/product-exports/healthcare-pharmaceuticals/" },
+      { id: "menu-item-74", key: "buildingMaterials", href: "/businesses/product-exports/building-materials/" },
+      { id: "menu-item-86", key: "furnitureInteriors", href: "/businesses/product-exports/furniture-interiors/" },
+      { id: "menu-item-84", key: "agricultureFood", href: "/businesses/product-exports/agriculture-food/" },
+      { id: "menu-item-85", key: "engineeringIndustrial", href: "/businesses/product-exports/engineering-industrial/" },
+      { id: "menu-item-90", key: "jewellery", href: "/businesses/product-exports/jewellery-precious-products/" },
     ],
   },
   {
     id: "menu-item-78",
-    title: "The Group",
+    titleKey: "theGroup",
     href: "/group/",
     links: [
-      { id: "menu-item-79", label: "All Product Exports", href: "/businesses/product-exports/" },
-      { id: "menu-item-89", label: "Trivoxa Digital", href: "/businesses/service-exports/" },
-      { id: "menu-item-81", label: "Industries", href: "/industries/" },
-      { id: "menu-item-82", label: "Our Story", href: "/group/" },
-      { id: "menu-item-83", label: "Contact", href: "/contact/" },
+      { id: "menu-item-79", key: "allProductExports", href: "/businesses/product-exports/" },
+      { id: "menu-item-89", key: "trivoxaDigital", href: "/businesses/service-exports/" },
+      { id: "menu-item-81", key: "industries", href: "/industries/" },
+      { id: "menu-item-82", key: "ourStory", href: "/group/" },
+      { id: "menu-item-83", key: "contact", href: "/contact/" },
     ],
   },
-];
+] as const;
 
 export default function Header() {
+  const t = useTranslations("nav");
+  const tm = useTranslations("megaMenu");
   const megaRef = useRef<HTMLDivElement>(null);
   const servicesRef = useRef<HTMLLIElement>(null);
 
@@ -157,16 +163,17 @@ export default function Header() {
           </div>
           <ul className="header-links d-flex">
             {navLinks.map((link) => (
-              <li key={link.id} id={link.id} ref={link.label === MEGA_TRIGGER ? servicesRef : undefined}>
-                <a href={link.href}>{link.label}</a>
+              <li key={link.id} id={link.id} ref={link.key === MEGA_TRIGGER ? servicesRef : undefined}>
+                <Link href={link.href}>{t(link.key)}</Link>
               </li>
             ))}
           </ul>
         </div>
         <div className="h-right d-flex">
+          <LanguageSwitcher />
           <button className="primary-button contact-open" onClick={openModal} type="button">
             <span className="d-flex">
-              <span>Contact Us</span>
+              <span>{t("contactUs")}</span>
               <div className="img d-flex">
                 <img src="/images/icons/envelope-send.svg" alt="message" />
               </div>
@@ -176,7 +183,7 @@ export default function Header() {
           <button
             className="hamburger d-flex"
             type="button"
-            aria-label="Menu"
+            aria-label={t("menu")}
             onClick={() => {
               document.body.classList.toggle("nav-active");
             }}
@@ -196,11 +203,11 @@ export default function Header() {
         <div className="m-right d-flex">
           {megaMenuColumns.map((col) => (
             <li key={col.id} id={col.id}>
-              <Link href={col.href}>{col.title}</Link>
+              <Link href={col.href}>{tm(col.titleKey)}</Link>
               <ul className="sub-menu">
                 {col.links.map((link) => (
                   <li key={link.id} id={link.id}>
-                    <a href={link.href}>{link.label}</a>
+                    <Link href={link.href}>{tm(link.key)}</Link>
                   </li>
                 ))}
               </ul>

@@ -2,42 +2,47 @@
 
 import { gsap } from "@/lib/gsap";
 import { useCallback, useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { emit } from "@/lib/site-events";
+import { Link } from "@/i18n/navigation";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
+// Every entry carries both `href` and `hasSubmenu` so the union stays uniform
+// under `as const` (which is what keeps the translation keys strictly typed).
 const mobileLinks = [
-  { id: "menu-item-96", label: "Group", href: "/group/" },
-  { id: "menu-item-85", label: "Exports", hasSubmenu: true },
-  { id: "menu-item-106", label: "Digital", href: "/businesses/service-exports/" },
-  { id: "menu-item-99", label: "Industries", href: "/industries/" },
-  { id: "menu-item-100", label: "Reach", href: "/global-presence/" },
-  { id: "menu-item-101", label: "Insights", href: "/insights/" },
-  { id: "menu-item-102", label: "Careers", href: "/careers/" },
-];
+  { id: "menu-item-96", key: "group", href: "/group/", hasSubmenu: false },
+  { id: "menu-item-85", key: "exports", href: "/businesses/product-exports/", hasSubmenu: true },
+  { id: "menu-item-106", key: "digital", href: "/businesses/service-exports/", hasSubmenu: false },
+  { id: "menu-item-99", key: "industries", href: "/industries/", hasSubmenu: false },
+  { id: "menu-item-100", key: "reach", href: "/global-presence/", hasSubmenu: false },
+  { id: "menu-item-101", key: "insights", href: "/insights/", hasSubmenu: false },
+  { id: "menu-item-102", key: "careers", href: "/careers/", hasSubmenu: false },
+] as const;
 
 const serviceSubmenu = [
   {
     id: "menu-item-86",
-    label: "Product Exports",
+    titleKey: "productExports",
     href: "/businesses/product-exports/",
     links: [
-      { id: "menu-item-87", label: "Textile & Apparel", href: "/businesses/product-exports/textile-apparel/" },
-      { id: "menu-item-88", label: "Healthcare & Pharma", href: "/businesses/product-exports/healthcare-pharmaceuticals/" },
-      { id: "menu-item-89", label: "Building Materials", href: "/businesses/product-exports/building-materials/" },
-      { id: "menu-item-103", label: "Agriculture & Food", href: "/businesses/product-exports/agriculture-food/" },
+      { id: "menu-item-87", key: "textileApparel", href: "/businesses/product-exports/textile-apparel/" },
+      { id: "menu-item-88", key: "healthcarePharma", href: "/businesses/product-exports/healthcare-pharmaceuticals/" },
+      { id: "menu-item-89", key: "buildingMaterials", href: "/businesses/product-exports/building-materials/" },
+      { id: "menu-item-103", key: "agricultureFood", href: "/businesses/product-exports/agriculture-food/" },
     ],
   },
   {
     id: "menu-item-93",
-    label: "The Group",
+    titleKey: "theGroup",
     href: "/group/",
     links: [
-      { id: "menu-item-94", label: "Product Exports", href: "/businesses/product-exports/" },
-      { id: "menu-item-95", label: "Trivoxa Digital", href: "/businesses/service-exports/" },
-      { id: "menu-item-97", label: "Our Story", href: "/group/" },
-      { id: "menu-item-98", label: "Contact", href: "/contact/" },
+      { id: "menu-item-94", key: "productExports", href: "/businesses/product-exports/" },
+      { id: "menu-item-95", key: "trivoxaDigital", href: "/businesses/service-exports/" },
+      { id: "menu-item-97", key: "ourStory", href: "/group/" },
+      { id: "menu-item-98", key: "contact", href: "/contact/" },
     ],
   },
-];
+] as const;
 
 export default function MobileNav() {
   const navRef = useRef<HTMLDivElement>(null);
@@ -86,6 +91,8 @@ export default function MobileNav() {
   }, []);
 
   const openModal = () => emit("modal:open");
+  const t = useTranslations("nav");
+  const tm = useTranslations("megaMenu");
 
   return (
     <div ref={navRef} className="mobile-nav">
@@ -94,15 +101,15 @@ export default function MobileNav() {
           {mobileLinks.map((link) =>
             link.hasSubmenu ? (
               <li key={link.id} ref={servicesRef} id={link.id}>
-                <a onClick={toggleServices}>{link.label}</a>
+                <a onClick={toggleServices}>{t(link.key)}</a>
                 <ul className="sub-menu">
                   {serviceSubmenu.map((col) => (
                     <li key={col.id} id={col.id}>
-                      <a href="#">{col.label}</a>
+                      <Link href={col.href}>{tm(col.titleKey)}</Link>
                       <ul>
                         {col.links.map((sub) => (
                           <li key={sub.id} id={sub.id}>
-                            <a href={sub.href}>{sub.label}</a>
+                            <Link href={sub.href}>{tm(sub.key)}</Link>
                           </li>
                         ))}
                       </ul>
@@ -112,12 +119,15 @@ export default function MobileNav() {
               </li>
             ) : (
               <li key={link.id} id={link.id}>
-                <a href={link.href!}>{link.label}</a>
+                <Link href={link.href}>{t(link.key)}</Link>
               </li>
             )
           )}
           <li>
-            <a onClick={openModal} style={{ cursor: "pointer" }}>Contact Us</a>
+            <a onClick={openModal} style={{ cursor: "pointer" }}>{t("contactUs")}</a>
+          </li>
+          <li className="mobile-nav__lang">
+            <LanguageSwitcher variant="mobile" />
           </li>
         </ul>
       </div>

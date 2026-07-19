@@ -1,0 +1,34 @@
+{
+  "nav": {
+    "group": "समूह",
+    "exports": "निर्यात",
+    "digital": "डिजिटल",
+    "industries": "उद्योग",
+    "reach": "वैश्विक पहुँच",
+    "insights": "अंतर्दृष्टि",
+    "careers": "करियर",
+    "contactUs": "संपर्क करें",
+    "menu": "मेनू",
+    "close": "बंद करें"
+  },
+  "megaMenu": {
+    "productExports": "उत्पाद निर्यात",
+    "theGroup": "समूह",
+    "textileApparel": "वस्त्र एवं परिधान",
+    "healthcarePharma": "स्वास्थ्य एवं औषधि",
+    "buildingMaterials": "निर्माण सामग्री",
+    "furnitureInteriors": "फर्नीचर एवं इंटीरियर",
+    "agricultureFood": "कृषि एवं खाद्य",
+    "engineeringIndustrial": "इंजीनियरिंग एवं औद्योगिक",
+    "jewellery": "आभूषण एवं बहुमूल्य उत्पाद",
+    "allProductExports": "सभी उत्पाद निर्यात",
+    "trivoxaDigital": "Trivoxa Digital",
+    "industries": "उद्योग",
+    "ourStory": "हमारी कहानी",
+    "contact": "संपर्क"
+  },
+  "language": {
+    "label": "भाषा",
+    "select": "भाषा चुनें"
+  }
+}
