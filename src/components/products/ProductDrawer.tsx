@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import type { Product } from "@/lib/data/product-categories";
+import { displayField } from "@/lib/data/product-categories";
 
 /** Slide-in spec drawer for a product row. Same interaction as the RFQ
  * category drawer (ind-drawer styles, patterns.css). */
@@ -36,35 +37,31 @@ export default function ProductDrawer({ product, onClose }: { product: Product |
             <dl>
               <div>
                 <dt>HS Code</dt>
-                <dd>{product.hsCode}</dd>
+                <dd>{displayField(product.hsCode)}</dd>
               </div>
               <div>
                 <dt>Available Grades</dt>
-                <dd>{product.grades}</dd>
+                <dd>{displayField(product.grades)}</dd>
               </div>
               <div>
                 <dt>Minimum Order Quantity</dt>
-                <dd>{product.moq}</dd>
+                <dd>{displayField(product.moq)}</dd>
               </div>
               <div>
                 <dt>Weight</dt>
-                <dd>{product.specs.weight}</dd>
+                <dd>{displayField(product.specs.weight)}</dd>
               </div>
               <div>
                 <dt>Width</dt>
-                <dd>{product.specs.width}</dd>
+                <dd>{displayField(product.specs.width)}</dd>
               </div>
               <div>
                 <dt>Composition</dt>
-                <dd>{product.specs.composition}</dd>
+                <dd>{displayField(product.specs.composition)}</dd>
               </div>
               <div>
                 <dt>Packaging</dt>
-                <dd>{product.specs.packaging}</dd>
-              </div>
-              <div>
-                <dt>Samples</dt>
-                <dd>{product.specs.sampleAvailability}</dd>
+                <dd>{displayField(product.specs.packaging)}</dd>
               </div>
             </dl>
           </motion.div>

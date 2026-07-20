@@ -9,6 +9,7 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 // Every entry carries both `href` and `hasSubmenu` so the union stays uniform
 // under `as const` (which is what keeps the translation keys strictly typed).
+// Careers lives in the footer only — see Header.tsx for the same change.
 const mobileLinks = [
   { id: "menu-item-96", key: "group", href: "/group/", hasSubmenu: false },
   { id: "menu-item-85", key: "exports", href: "/businesses/product-exports/", hasSubmenu: true },
@@ -16,7 +17,6 @@ const mobileLinks = [
   { id: "menu-item-99", key: "industries", href: "/industries/", hasSubmenu: false },
   { id: "menu-item-100", key: "reach", href: "/global-presence/", hasSubmenu: false },
   { id: "menu-item-101", key: "insights", href: "/insights/", hasSubmenu: false },
-  { id: "menu-item-102", key: "careers", href: "/careers/", hasSubmenu: false },
 ] as const;
 
 const serviceSubmenu = [
@@ -29,6 +29,7 @@ const serviceSubmenu = [
       { id: "menu-item-88", key: "healthcarePharma", href: "/businesses/product-exports/healthcare-pharmaceuticals/" },
       { id: "menu-item-89", key: "buildingMaterials", href: "/businesses/product-exports/building-materials/" },
       { id: "menu-item-103", key: "agricultureFood", href: "/businesses/product-exports/agriculture-food/" },
+      { id: "menu-item-104", key: "engineeringIndustrial", href: "/businesses/product-exports/engineering-industrial/" },
     ],
   },
   {

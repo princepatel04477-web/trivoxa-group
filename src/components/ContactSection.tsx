@@ -117,7 +117,7 @@ export default function ContactSection() {
           <div className="row d-flex">
             <div className="left">
               <div className="contact-form d-flex">
-                <ContactForm className="d-flex" />
+                <ContactForm className="d-flex" redirectOnSuccess />
               </div>
             </div>
             <div className="information d-flex">

@@ -12,6 +12,8 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 // key (not the visible label) so it keeps working in every language.
 const MEGA_TRIGGER = "exports";
 
+// Careers lives in the footer only (not top nav) — it costs commercial
+// attention on every page for a link that currently has no open roles.
 const navLinks = [
   { id: "menu-item-51", key: "group", href: "/group/" },
   { id: "menu-item-53", key: "exports", href: "/businesses/product-exports/" },
@@ -19,9 +21,13 @@ const navLinks = [
   { id: "menu-item-67", key: "industries", href: "/industries/" },
   { id: "menu-item-68", key: "reach", href: "/global-presence/" },
   { id: "menu-item-69", key: "insights", href: "/insights/" },
-  { id: "menu-item-70", key: "careers", href: "/careers/" },
 ] as const;
 
+// Furniture & Interiors and Jewellery & Precious Products are withheld from
+// navigation until real product data exists — both currently render the
+// "Detailed Portfolio in Progress" fallback with no other real content.
+// Routes still exist at their URLs (not deleted), so re-adding a links entry
+// below is all it takes once data lands.
 const megaMenuColumns = [
   {
     id: "menu-item-71",
@@ -31,10 +37,8 @@ const megaMenuColumns = [
       { id: "menu-item-72", key: "textileApparel", href: "/businesses/product-exports/textile-apparel/" },
       { id: "menu-item-73", key: "healthcarePharma", href: "/businesses/product-exports/healthcare-pharmaceuticals/" },
       { id: "menu-item-74", key: "buildingMaterials", href: "/businesses/product-exports/building-materials/" },
-      { id: "menu-item-86", key: "furnitureInteriors", href: "/businesses/product-exports/furniture-interiors/" },
       { id: "menu-item-84", key: "agricultureFood", href: "/businesses/product-exports/agriculture-food/" },
       { id: "menu-item-85", key: "engineeringIndustrial", href: "/businesses/product-exports/engineering-industrial/" },
-      { id: "menu-item-90", key: "jewellery", href: "/businesses/product-exports/jewellery-precious-products/" },
     ],
   },
   {

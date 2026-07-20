@@ -247,16 +247,9 @@ export default function GroupPage() {
                 logistics providers, technology partners, and industry specialists who share our values.
               </p>
             </div>
-            <div className="partners-grid__future">
-              <h3 className="partners-grid__future-title">Future Strategic Partners</h3>
-              <div className="partner-slots">
-                {Array.from({ length: 6 }, (_, i) => (
-                  <div key={i} className="partner-slot">
-                    <span>Partner Slot — TBA</span>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <p className="partners-grid__growth-note">
+              Our partner network continues to grow across manufacturing, logistics, and technology.
+            </p>
           </div>
         </div>
       </section>

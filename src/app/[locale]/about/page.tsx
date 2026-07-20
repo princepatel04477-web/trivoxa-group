@@ -38,45 +38,10 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <Section eyebrow="Leadership" title="The Person Behind the Group.">
-        <div className="tvx-founder-pending">
-          <div className="tvx-founder-pending__avatar" aria-hidden="true">
-            <svg width="56" height="56" viewBox="0 0 56 56">
-              <circle cx="28" cy="28" r="26" fill="none" strokeDasharray="4 4" />
-              <circle cx="28" cy="21" r="9" fill="none" />
-              <path d="M11 46c2-10 9-15 17-15s15 5 17 15" fill="none" />
-            </svg>
-          </div>
-          <div>
-            <p className="tvx-founder-pending__label">Founder profile — in progress</p>
-            <p className="tvx-founder-pending__note">
-              Name, photo, and a personal note from the founder will be added here. We&rsquo;d rather
-              leave this section honestly incomplete than fill it with a stand-in.
-            </p>
-          </div>
-        </div>
-      </Section>
-
-      <Section eyebrow="Registered Details" title="Company &amp; Contact.">
-        <div className="tvx-info-row">
-          <div className="tvx-info-label">Registered Name</div>
-          <p>Available on request</p>
-        </div>
-        <div className="tvx-info-row">
-          <div className="tvx-info-label">Year Founded</div>
-          <p>Available on request</p>
-        </div>
+      <Section eyebrow="Company & Contact" title="Where to Find Us.">
         <div className="tvx-info-row">
           <div className="tvx-info-label">Registered Address</div>
-          <p>Surat, Gujarat, India — full address available on request</p>
-        </div>
-        <div className="tvx-info-row">
-          <div className="tvx-info-label">IEC (Import Export Code)</div>
-          <p className="tvx-mono">Available on request</p>
-        </div>
-        <div className="tvx-info-row">
-          <div className="tvx-info-label">GST</div>
-          <p className="tvx-mono">Available on request</p>
+          <p>Surat, Gujarat, India</p>
         </div>
         <div className="tvx-info-row">
           <div className="tvx-info-label">Email</div>

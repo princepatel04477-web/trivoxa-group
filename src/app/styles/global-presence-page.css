@@ -138,3 +138,152 @@
     font-size: 1.5rem;
   }
 }
+
+/* ---------- Global Presence — origin/region diagram ---------- */
+.presence-map-diagram {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(220px, 1fr);
+  gap: var(--space-xl);
+  align-items: center;
+  margin-top: var(--space-2xl);
+}
+
+.presence-map-diagram__svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.presence-map-diagram__spoke {
+  stroke: var(--color-rule);
+  stroke-width: 1;
+  transition: stroke 0.25s ease, stroke-width 0.25s ease;
+}
+
+.presence-map-diagram__spoke.is-active {
+  stroke: var(--color-accent);
+  stroke-width: 1.5;
+}
+
+.presence-map-diagram__origin circle:first-child {
+  fill: var(--color-accent);
+}
+
+.presence-map-diagram__origin-ring {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 1;
+  opacity: 0.4;
+}
+
+.presence-map-diagram__origin text {
+  fill: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+.presence-map-diagram__node {
+  cursor: pointer;
+  outline: none;
+}
+
+.presence-map-diagram__node circle {
+  fill: var(--color-paper);
+  stroke: var(--color-ink-2);
+  stroke-width: 1.5;
+  transition: fill 0.25s ease, stroke 0.25s ease, r 0.25s ease;
+}
+
+.presence-map-diagram__node.is-active circle,
+.presence-map-diagram__node:focus-visible circle {
+  fill: var(--color-accent);
+  stroke: var(--color-accent);
+  r: 9;
+}
+
+.presence-map-diagram__label {
+  fill: var(--color-ink-2);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: fill 0.25s ease;
+}
+
+.presence-map-diagram__node.is-active .presence-map-diagram__label,
+.presence-map-diagram__node:focus-visible .presence-map-diagram__label {
+  fill: var(--color-ink);
+}
+
+.presence-map-diagram__panel {
+  min-height: 8rem;
+  padding: var(--space-lg);
+  border: 1px solid var(--color-rule);
+  border-radius: 4px;
+}
+
+.presence-map-diagram__panel-title {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  letter-spacing: -0.01em;
+  margin-bottom: var(--space-sm);
+}
+
+.presence-map-diagram__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+}
+
+.presence-map-diagram__chip {
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--color-rule);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-ink-2);
+}
+
+.presence-map-diagram__panel-hint {
+  font-size: 0.9rem;
+  color: var(--color-ink-2);
+  font-style: italic;
+}
+
+/* ---------- Export Ports ---------- */
+.presence-ports {
+  margin-top: var(--space-2xl);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-md);
+}
+
+.presence-port {
+  padding: var(--space-md);
+  border: 1px solid var(--color-rule);
+  border-radius: 4px;
+}
+
+.presence-port__name {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  letter-spacing: -0.01em;
+}
+
+.presence-port__code {
+  display: inline-block;
+  margin-top: var(--space-3xs);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--color-accent);
+  letter-spacing: 0.06em;
+}
+
+@media (max-width: 800px) {
+  .presence-map-diagram {
+    grid-template-columns: 1fr;
+  }
+}

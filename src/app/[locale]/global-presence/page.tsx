@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "@/app/styles/global-presence-page.css";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, Checklist, CtaBand } from "@/components/trivoxa/ui";
+import GlobalPresenceMap from "@/components/presence/GlobalPresenceMap";
 
 export const metadata: Metadata = {
   title: "Global Presence | Trivoxa Group",
@@ -10,12 +11,21 @@ export const metadata: Metadata = {
 };
 
 const regions = [
-  { icon: "🇪🇺", title: "Europe", description: "Textiles, building materials, and professional services for established and emerging European markets." },
-  { icon: "🕌", title: "Middle East", description: "Building materials, agriculture, and consumer goods for fast-growing Gulf and regional markets." },
-  { icon: "🌍", title: "Africa", description: "Agriculture, pharmaceuticals, and industrial products supporting infrastructure and development." },
-  { icon: "🗽", title: "North America", description: "Textiles, home goods, and technology services for demanding, quality-focused buyers." },
-  { icon: "🌎", title: "South America", description: "Sourcing partnerships and consumer goods for expanding regional supply chains." },
-  { icon: "🌏", title: "Asia-Pacific", description: "Manufacturing collaboration, technology services, and cross-border trade across APAC." },
+  { icon: "🇪🇺", title: "Europe", description: "Textiles, building materials, and professional services for established and emerging European markets.", categories: ["Textiles", "Building Materials", "Professional Services"] },
+  { icon: "🕌", title: "Middle East", description: "Building materials, agriculture, and consumer goods for fast-growing Gulf and regional markets.", categories: ["Building Materials", "Agriculture", "Consumer Goods"] },
+  { icon: "🌍", title: "Africa", description: "Agriculture, pharmaceuticals, and industrial products supporting infrastructure and development.", categories: ["Agriculture", "Pharmaceuticals", "Industrial Products"] },
+  { icon: "🗽", title: "North America", description: "Textiles, home goods, and technology services for demanding, quality-focused buyers.", categories: ["Textiles", "Home Goods", "Technology Services"] },
+  { icon: "🌎", title: "South America", description: "Sourcing partnerships and consumer goods for expanding regional supply chains.", categories: ["Sourcing Partnerships", "Consumer Goods"] },
+  { icon: "🌏", title: "Asia-Pacific", description: "Manufacturing collaboration, technology services, and cross-border trade across APAC.", categories: ["Manufacturing Collaboration", "Technology Services", "Cross-Border Trade"] },
+];
+
+// Export ports — Layer 2 (commerce/logistics data, honestly placed on the
+// logistics page rather than the homepage). UN/LOCODEs are the standard
+// public codes for these ports, not invented.
+const exportPorts = [
+  { name: "Mundra", code: "INMUN" },
+  { name: "Kandla", code: "INKLA" },
+  { name: "Nhava Sheva (JNPT)", code: "INNSA" },
 ];
 
 const ecosystem = [
@@ -73,11 +83,23 @@ export default function GlobalPresencePage() {
       />
 
       <Section eyebrow="Regions We Serve" title="Building Presence Across Six Global Regions." lead="Rather than counting borders, we focus on building durable relationships across the regions where our partners operate and grow.">
+        <GlobalPresenceMap regions={regions.map((r) => ({ title: r.title, categories: r.categories }))} />
         <div className="tvx-lanes">
           {regions.map((r) => (
             <div className="tvx-lane" key={r.title}>
               <span className="tvx-lane__name">{r.title}</span>
               <span className="tvx-lane__desc">{r.description}</span>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section eyebrow="Export Ports" title="Where Shipments Leave From." lead="Every shipment is coordinated through established Indian export ports, regardless of destination.">
+        <div className="presence-ports">
+          {exportPorts.map((p) => (
+            <div className="presence-port" key={p.code}>
+              <span className="presence-port__name">{p.name}</span>
+              <span className="presence-port__code">{p.code}</span>
             </div>
           ))}
         </div>

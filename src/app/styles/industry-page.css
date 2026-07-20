@@ -236,3 +236,53 @@
   .ind-cert-row { gap: 24px; }
   .ind-cert { width: 92px; }
 }
+
+/* ---------- Industry Context (D2 differentiation) ---------- */
+.industry-context {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-xl);
+  margin-top: var(--space-xl);
+}
+
+.industry-context h3 {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: var(--space-sm);
+}
+
+.industry-context__buyers ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+}
+
+.industry-context__buyers li {
+  padding-left: var(--space-md);
+  position: relative;
+  font-size: 1rem;
+  color: var(--color-ink);
+  line-height: 1.6;
+}
+
+.industry-context__buyers li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.7em;
+  width: 6px;
+  height: 1px;
+  background: var(--color-accent);
+}
+
+.industry-context__compliance p {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--color-ink-2);
+}

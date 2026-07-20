@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Product, ProductGroup } from "@/lib/data/product-categories";
+import { displayField } from "@/lib/data/product-categories";
 import ProductDrawer from "@/components/products/ProductDrawer";
 
 function Table({ products, onSelect }: { products: Product[]; onSelect: (p: Product) => void }) {
@@ -26,9 +27,9 @@ function Table({ products, onSelect }: { products: Product[]; onSelect: (p: Prod
               onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onSelect(p)}
             >
               <td>{p.name}</td>
-              <td className="mono">{p.hsCode}</td>
-              <td>{p.grades}</td>
-              <td className="mono">{p.moq}</td>
+              <td className="mono">{displayField(p.hsCode)}</td>
+              <td>{displayField(p.grades)}</td>
+              <td className="mono">{displayField(p.moq)}</td>
             </tr>
           ))}
         </tbody>

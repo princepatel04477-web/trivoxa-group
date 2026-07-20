@@ -1,6 +1,8 @@
 /** Product-export taxonomy from the master content doc §4 (Business
  * Taxonomy + §4.2–4.4 portfolios). Product names are verbatim; HS codes,
- * grades, MOQs, and spec fields marked "TBD" await real trade data.
+ * grades, MOQs, and spec fields marked "TBD" await real trade data — the
+ * UI (ProductTable/ProductDrawer) renders that sentinel as "—", never the
+ * literal word, via `displayField()` below.
  * The three fabric HS codes were supplied in the build brief. */
 
 export interface ProductSpecs {
@@ -9,6 +11,12 @@ export interface ProductSpecs {
   composition: string;
   packaging: string;
   sampleAvailability: string;
+}
+
+/** Renders the "TBD" sentinel as an honest, unlabelled dash instead of the
+ * literal word — a standard "not yet specified" convention, not a claim. */
+export function displayField(value: string): string {
+  return value === "TBD" ? "—" : value;
 }
 
 export interface Product {
@@ -68,8 +76,8 @@ export const exportCategories: ExportCategory[] = [
           product("Polyester Greige Fabric", "5407.61", "Standard, Premium", "5 MT"),
           product("Dyed Fabric", "5407.72"),
           product("Finished Fabric", "5407.73"),
-          product("Cotton Fabric", "5208.xx"),
-          product("Blended Fabric", "5210.xx"),
+          product("Cotton Fabric"),
+          product("Blended Fabric"),
         ],
       },
       {

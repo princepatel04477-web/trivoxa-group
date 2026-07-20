@@ -8,6 +8,12 @@ import NumberedList from "@/components/patterns/NumberedList";
 import IndustryManifest from "@/components/industries/IndustryManifest";
 import { exportCategories } from "@/lib/data/product-categories";
 
+// Furniture & Interiors and Jewellery & Precious Products are withheld from
+// this listing (and site navigation) until real product data exists — see
+// the matching note in Header.tsx. Both routes still exist directly.
+const WITHHELD_SLUGS = new Set(["furniture-interiors", "jewellery-precious-products"]);
+const liveExportCategories = exportCategories.filter((c) => !WITHHELD_SLUGS.has(c.slug));
+
 export const metadata: Metadata = {
   title: "Product Exports | Trivoxa Group",
   description:
@@ -55,7 +61,7 @@ export default function ProductExportsPage() {
       {/* 3. INDUSTRIES WE SERVE — 7-row manifest into category pages */}
       <Section eyebrow="Industries We Serve" title="Products Across Every Major Sector." lead="Explore the industries we support through our product export division.">
         <IndustryManifest
-          rows={exportCategories.map((c) => ({
+          rows={liveExportCategories.map((c) => ({
             name: c.name,
             description: c.description,
             href: `/businesses/product-exports/${c.slug}/`,

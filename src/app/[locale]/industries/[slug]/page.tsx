@@ -60,6 +60,29 @@ export default async function IndustryPage(props: PageProps<"/[locale]/industrie
         ]}
       />
 
+      {(industry.buyerTypes || industry.complianceNote) && (
+        <Section eyebrow="Industry Context" title={`Who We Serve in ${industry.name}`}>
+          <div className="industry-context">
+            {industry.buyerTypes && (
+              <div className="industry-context__buyers">
+                <h3>Typical Buyers</h3>
+                <ul>
+                  {industry.buyerTypes.map((b) => (
+                    <li key={b}>{b}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {industry.complianceNote && (
+              <div className="industry-context__compliance">
+                <h3>What Buyers Should Know</h3>
+                <p>{industry.complianceNote}</p>
+              </div>
+            )}
+          </div>
+        </Section>
+      )}
+
       {industry.categories.length > 0 && (
         <Section eyebrow="What We Offer" title="What We Export" lead="Every category is quoted against real HS codes, minimum order quantities, and lead times — no guesswork before you send an RFQ.">
           <CategoryTable categories={industry.categories} />

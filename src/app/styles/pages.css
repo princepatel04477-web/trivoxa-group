@@ -448,3 +448,26 @@
 /* Inner pages have no hero timeline — reveal the fixed header statically. */
 .tvx .header { transform: translateY(0); }
 .tvx .header::before { opacity: 1; }
+
+/* ---------- Thank-you page ---------- */
+.thank-you-steps {
+  margin: var(--space-lg) 0 0;
+  padding-left: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  max-width: 44rem;
+}
+
+.thank-you-steps li {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--color-ink-2);
+}
+
+.thank-you-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+}

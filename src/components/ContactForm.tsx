@@ -2,12 +2,24 @@
 
 import { useState } from "react";
 import { contactSchema } from "@/lib/validation/contact";
+import { useRouter } from "@/i18n/navigation";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
-export default function ContactForm({ className }: { className?: string }) {
+export default function ContactForm({
+  className,
+  redirectOnSuccess = false,
+}: {
+  className?: string;
+  /** Navigate to /thank-you on success instead of showing the inline
+   * confirmation. Set only for the standalone /contact page — the modal
+   * keeps the inline message, since navigating away out from under an open
+   * modal is jarring UX. */
+  redirectOnSuccess?: boolean;
+}) {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -29,8 +41,12 @@ export default function ContactForm({ className }: { className?: string }) {
         body: JSON.stringify(parsed.data),
       });
       if (!res.ok) throw new Error();
-      setStatus("success");
       form.reset();
+      if (redirectOnSuccess) {
+        router.push("/thank-you");
+        return;
+      }
+      setStatus("success");
     } catch {
       setStatus("error");
       setError("Something went wrong sending your message. Please try again.");

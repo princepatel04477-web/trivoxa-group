@@ -11,8 +11,9 @@ export interface LeadershipPanelProps {
    * flat section on the page. Set only on the first panel of a founders
    * wall so the wall reads as one section with one landmark. */
   eyebrow?: string;
-  /** Omit name/role/photoSrc entirely until a real profile is ready — renders
-   * an honest "profile pending" placeholder instead of a stand-in. */
+  /** Omit photoSrc until a real portrait is ready — the panel collapses to a
+   * single-column, text-only layout rather than showing a "profile pending"
+   * placeholder in the photo's place. Name/role/message stay real either way. */
   name?: string;
   role?: string;
   email?: string;
@@ -49,21 +50,15 @@ export default function LeadershipPanel({ eyebrow, name, role, email, photoSrc, 
   }, []);
 
   return (
-    <section className={`leadership-panel leadership-panel--${align}`} ref={ref}>
-      <div ref={portraitRef} className="leadership-panel__portrait">
-        {photoSrc ? (
+    <section
+      className={`leadership-panel leadership-panel--${align}${photoSrc ? "" : " leadership-panel--no-photo"}`}
+      ref={ref}
+    >
+      {photoSrc && (
+        <div ref={portraitRef} className="leadership-panel__portrait">
           <img src={photoSrc} alt={name ?? "Leadership portrait"} />
-        ) : (
-          <div className="leadership-panel__pending">
-            <svg width="72" height="72" viewBox="0 0 56 56" aria-hidden="true">
-              <circle cx="28" cy="28" r="26" fill="none" strokeDasharray="4 4" />
-              <circle cx="28" cy="21" r="9" fill="none" />
-              <path d="M11 46c2-10 9-15 17-15s15 5 17 15" fill="none" />
-            </svg>
-            <p className="leadership-panel__pending-label">Profile in progress</p>
-          </div>
-        )}
-      </div>
+        </div>
+      )}
       <div className="leadership-panel__text">
         {eyebrow && (
           <h2 data-reveal-body className="leadership-panel__eyebrow">
