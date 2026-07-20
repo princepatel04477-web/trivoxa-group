@@ -33,16 +33,11 @@
   },
   "home": {
     "hero": {
-      "eyebrow": "India's partner voor inkoopgedreven sourcing en exportmanagement",
-      "title": "Koop geverifieerde Indiase producten in. Exporteer met vertrouwen.",
-      "subtitle": "Trivoxa verbindt internationale kopers met geverifieerde Indiase productiepartners in textiel, voeding, bouwmaterialen, gezondheidszorg en industriële goederen — begeleid van sourcing tot verscheping.",
-      "ctaQuote": "Vraag een sourcingofferte aan",
-      "ctaProfile": "Exportprofiel downloaden",
-      "ribbonLocation": "Surat, India",
-      "ribbonScope": "Wereldwijde sourcing & exportmanagement",
-      "ribbonReply": "Antwoord binnen 1 werkdag",
-      "ribbonSamples": "Monsters beschikbaar",
-      "ribbonTerms": "FOB / CIF / CFR ondersteuning"
+      "eyebrow": "Internationale handels- en bedrijvengroep",
+      "title": "Wij bouwen aan de toekomst van wereldhandel.",
+      "subtitle": "Trivoxa Group is een internationale ondernemingsgroep die betrouwbare producten, strategische sourcingoplossingen en professionele diensten levert op wereldwijde markten. Wij verbinden bedrijven met kansen, vereenvoudigen internationale handel en bouwen partnerschappen die gericht zijn op langetermijnsucces.",
+      "ctaQuote": "Offerte aanvragen",
+      "ctaProfile": "Ontdek onze bedrijfsonderdelen"
     },
     "about": {
       "eyebrow": "Wie wij zijn",
@@ -78,16 +73,16 @@
       "ctaContact": "Neem contact op"
     },
     "trust": {
-      "eyebrow": "Waarom kopers Trivoxa vertrouwen",
-      "heading": "Een sourcingpartner, niet zomaar een leveranciersgids.",
-      "p1Title": "Geverifieerd leveranciersnetwerk",
-      "p1Body": "Elke productiepartner wordt vóór toelating doorgelicht — capaciteit, compliance en staat van dienst — zodat kopers uitsluitend met voorgekwalificeerde Indiase leveranciers werken.",
-      "p2Title": "Gedocumenteerde kwaliteitscontrole",
-      "p2Body": "Inspectiepunten van de fabrieksvloer tot het laden van de container. Kwaliteitsrapporten en verpakkingsfoto's zijn op verzoek beschikbaar voor elke zending.",
-      "p3Title": "Verzendklare uitvoering",
-      "p3Body": "Wij verzorgen exportdocumentatie, Incoterms (FOB / CIF / CFR) en havenlogistiek via Mundra, Kandla en Nhava Sheva — geschikt voor zowel eerste als terugkerende importeurs.",
-      "p4Title": "Transparante juridische identiteit",
-      "p4Body": "Statutaire zetel, IEC, GST en CIN zijn openbaar gepubliceerd. Geen verborgen entiteiten, geen juridische gegevens die pas op aanvraag beschikbaar zijn.",
+      "eyebrow": "Waarom bedrijven voor Trivoxa kiezen",
+      "heading": "Gebouwd op ervaring. Gericht op partnerschap.",
+      "p1Title": "Productiefundament",
+      "p1Body": "Gebouwd op de productie-expertise van onze moedermaatschappij, Shiveshwar Textiles — tientallen jaren productiekennis die elke sourcingbeslissing en elke kwaliteitsnorm die wij hanteren mede bepaalt.",
+      "p2Title": "Kwaliteitsgedreven werkwijze",
+      "p2Body": "Elk project wordt begeleid door gestructureerde kwaliteitscoördinatie — van productiespecificaties tot de uiteindelijke levering — met documentatie en transparantie in elke fase.",
+      "p3Title": "Expertise in internationale handel",
+      "p3Body": "Van exportdocumentatie en logistieke coördinatie tot internationale compliance: wij beheren de complexiteit van grensoverschrijdende handel, zodat onze partners zich kunnen richten op hun bedrijf.",
+      "p4Title": "Langdurige partnerschappen",
+      "p4Body": "Wij geloven dat duurzaam succes ontstaat door blijvende relaties, niet door eenmalige transacties. Onze aanpak is erop gericht waarde te creëren die jarenlang groeit, niet alleen per zending.",
       "cta": "Bekijk exportmogelijkheden"
     },
     "globalPresence": {
@@ -95,9 +90,19 @@
       "heading": "Kansen verbinden over grenzen heen",
       "lead": "Internationaal zakendoen berust op vertrouwen, samenwerking en sterke relaties. Via een groeiend netwerk van leveranciers, partners en klanten bouwt Trivoxa Group betekenisvolle verbindingen waarmee organisaties met vertrouwen kunnen groeien op internationale markten.",
       "disclaimer": "Illustratieve handelscorridors — representatief voor de routes die Trivoxa bedient, geen realtime zendingvolging.",
-      "quote": "Uit welke haven een zending ook vertrekt — Mundra, Kandla, Nhava Sheva — ze draagt dezelfde standaard die op de productievloer in Surat is gezet. Dat verandert niet met de bestemming.",
+      "quote": "Kwaliteitsnormen veranderen niet met de bestemming. Elk product, elke zending, elk partnerschap draagt dezelfde toewijding aan uitmuntendheid.",
       "cite": "— Trivoxa Group",
-      "cta": "Bekijk wereldwijde aanwezigheid"
+      "cta": "Bekijk wereldwijde aanwezigheid",
+      "corridor1Region": "Europa",
+      "corridor1Category": "Textiel & industriële materialen",
+      "corridor2Region": "Midden-Oosten",
+      "corridor2Category": "Landbouw & bouwmaterialen",
+      "corridor3Region": "Azië-Pacific",
+      "corridor3Category": "Textiel & consumentengoederen",
+      "corridor4Region": "Noord-Amerika",
+      "corridor4Category": "Gezondheidszorg & farmacie",
+      "corridor5Region": "Afrika",
+      "corridor5Category": "Techniek & industriële producten"
     },
     "industries": {
       "eyebrow": "Sectoren",
@@ -113,7 +118,7 @@
     "businessArms": {
       "arm1Eyebrow": "Bedrijfsonderdeel 01",
       "arm2Eyebrow": "Bedrijfsonderdeel 02",
-      "arm1Thesis": "Wij verbinden internationale kopers met zorgvuldig geselecteerde productiepartners in heel India en leveren kwaliteitsproducten via betrouwbare sourcing- en exportoplossingen.",
+      "arm1Thesis": "Wij verbinden bedrijven wereldwijd met betrouwbare productiepartners en leveren kwaliteitsproducten via solide sourcing- en exportoplossingen in uiteenlopende sectoren.",
       "arm2Thesis": "Een eigen technologietak voor software, AI, branding en digitale marketing — zodat bedrijven kunnen bouwen, groeien en moderniseren.",
       "arm1Cta": "Bekijk sourcingmogelijkheden",
       "arm2Cta": "Bekijk dienstverlening",

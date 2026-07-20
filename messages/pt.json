@@ -33,16 +33,11 @@
   },
   "home": {
     "hero": {
-      "eyebrow": "O parceiro indiano de sourcing e gestão de exportação do lado do comprador",
-      "title": "Adquira produtos indianos verificados. Exporte com confiança.",
-      "subtitle": "A Trivoxa liga compradores internacionais a parceiros industriais indianos verificados nos setores têxtil, alimentar, materiais de construção, saúde e bens industriais, com gestão desde o sourcing até à expedição.",
-      "ctaQuote": "Pedir proposta de sourcing",
-      "ctaProfile": "Descarregar perfil de exportação",
-      "ribbonLocation": "Surat, Índia",
-      "ribbonScope": "Sourcing global e gestão de exportação",
-      "ribbonReply": "Resposta em 1 dia útil",
-      "ribbonSamples": "Amostras disponíveis",
-      "ribbonTerms": "Apoio FOB / CIF / CFR"
+      "eyebrow": "Grupo internacional de comércio e negócios",
+      "title": "Construindo o futuro do comércio global.",
+      "subtitle": "A Trivoxa Group é um grupo empresarial internacional que oferece produtos de confiança, soluções estratégicas de sourcing e serviços profissionais em mercados globais. Ligamos empresas a oportunidades, simplificamos o comércio internacional e construímos parcerias pensadas para o sucesso a longo prazo.",
+      "ctaQuote": "Pedir orçamento",
+      "ctaProfile": "Explorar os nossos negócios"
     },
     "about": {
       "eyebrow": "Quem somos",
@@ -78,16 +73,16 @@
       "ctaContact": "Contacte-nos"
     },
     "trust": {
-      "eyebrow": "Porque os compradores confiam na Trivoxa",
-      "heading": "Um parceiro de sourcing, não um mero diretório de fornecedores.",
-      "p1Title": "Rede de fornecedores verificados",
-      "p1Body": "Cada parceiro industrial é avaliado antes da integração — capacidade, conformidade e historial — para que os compradores trabalhem apenas com fornecedores indianos pré-qualificados.",
-      "p2Title": "Controlo de qualidade documentado",
-      "p2Body": "Pontos de inspeção da fábrica até ao carregamento do contentor. Relatórios de qualidade e fotografias da embalagem disponíveis mediante pedido para cada expedição.",
-      "p3Title": "Execução pronta para expedição",
-      "p3Body": "Tratamos da documentação de exportação, dos Incoterms (FOB / CIF / CFR) e da logística portuária em Mundra, Kandla e Nhava Sheva — tanto para importadores de primeira viagem como recorrentes.",
-      "p4Title": "Identidade legal transparente",
-      "p4Body": "Sede social, IEC, GST e CIN são publicados abertamente. Sem entidades ocultas nem dados legais reservados a pedidos.",
+      "eyebrow": "Porque as empresas escolhem a Trivoxa",
+      "heading": "Construída sobre a experiência. Focada na parceria.",
+      "p1Title": "Base industrial",
+      "p1Body": "Construída sobre a experiência industrial da nossa empresa-mãe, a Shiveshwar Textiles — décadas de conhecimento de produção que orientam cada decisão de sourcing e cada padrão de qualidade que mantemos.",
+      "p2Title": "Operações orientadas pela qualidade",
+      "p2Body": "Cada projeto é guiado por uma coordenação de qualidade estruturada — desde as especificações de produção até à entrega final — com documentação e transparência em cada etapa.",
+      "p3Title": "Experiência em comércio internacional",
+      "p3Body": "Da documentação de exportação e coordenação logística à conformidade internacional, gerimos a complexidade do comércio transfronteiriço para que os nossos parceiros se possam concentrar no seu negócio.",
+      "p4Title": "Parcerias de longo prazo",
+      "p4Body": "Acreditamos que o sucesso sustentável se constrói através de relações duradouras, e não de transações pontuais. A nossa abordagem visa criar valor que se acumula ao longo dos anos, não apenas em cada expedição.",
       "cta": "Ver capacidades de exportação"
     },
     "globalPresence": {
@@ -95,9 +90,19 @@
       "heading": "Ligar oportunidades além-fronteiras",
       "lead": "O comércio internacional assenta em confiança, colaboração e relações sólidas. Através de uma rede crescente de fornecedores, parceiros e clientes, a Trivoxa Group constrói ligações significativas que permitem às organizações crescer com confiança nos mercados internacionais.",
       "disclaimer": "Corredores comerciais ilustrativos — representativos das rotas operadas pela Trivoxa, não um seguimento de expedições em tempo real.",
-      "quote": "Seja qual for o porto de partida — Mundra, Kandla, Nhava Sheva — a expedição leva o mesmo padrão definido na fábrica de Surat. Isso não muda com o destino.",
+      "quote": "Os padrões de qualidade não mudam com o destino. Cada produto, cada expedição, cada parceria carrega o mesmo compromisso com a excelência.",
       "cite": "— Trivoxa Group",
-      "cta": "Ver presença global"
+      "cta": "Ver presença global",
+      "corridor1Region": "Europa",
+      "corridor1Category": "Têxteis e materiais industriais",
+      "corridor2Region": "Médio Oriente",
+      "corridor2Category": "Agricultura e materiais de construção",
+      "corridor3Region": "Ásia-Pacífico",
+      "corridor3Category": "Têxteis e bens de consumo",
+      "corridor4Region": "América do Norte",
+      "corridor4Category": "Saúde e farmacêutica",
+      "corridor5Region": "África",
+      "corridor5Category": "Engenharia e produtos industriais"
     },
     "industries": {
       "eyebrow": "Setores",
@@ -113,7 +118,7 @@
     "businessArms": {
       "arm1Eyebrow": "Divisão 01",
       "arm2Eyebrow": "Divisão 02",
-      "arm1Thesis": "Ligamos compradores internacionais a parceiros industriais cuidadosamente selecionados em toda a Índia, entregando produtos de qualidade através de soluções fiáveis de sourcing e exportação.",
+      "arm1Thesis": "Ligamos empresas em todo o mundo a parceiros industriais de confiança, entregando produtos de qualidade através de soluções fiáveis de sourcing e exportação em múltiplos setores.",
       "arm2Thesis": "Uma divisão tecnológica dedicada a software, IA, branding e marketing digital, ajudando as empresas a construir, crescer e modernizar-se.",
       "arm1Cta": "Ver capacidades de sourcing",
       "arm2Cta": "Ver capacidades de serviço",

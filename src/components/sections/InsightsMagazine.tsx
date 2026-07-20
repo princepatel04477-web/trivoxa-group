@@ -53,28 +53,27 @@ export default function InsightsMagazine() {
           </p>
         </div>
 
+        {/* Article bodies don't exist yet — each card is a non-interactive
+            preview (not a link to itself) rather than a dead link to the
+            listing page, and is labelled accordingly. */}
         <div className="magazine-grid" data-reveal-body>
-          <Link href="/insights/" className="magazine-feature">
+          <div className="magazine-feature magazine-feature--pending">
             <div className="magazine-feature__image" data-reveal-image />
             <span className="magazine-feature__tag">{featured.tag}</span>
             <h3 className="magazine-feature__title">{featured.title}</h3>
             <p className="magazine-feature__dek">{featured.dek}</p>
-          </Link>
+            <span className="magazine-feature__pending">Coming soon</span>
+          </div>
           <div className="magazine-secondary">
             {rest.map((a) => (
-              <Link href="/insights/" className="magazine-secondary__item" key={a.tag}>
+              <div className="magazine-secondary__item magazine-secondary__item--pending" key={a.tag}>
                 <span className="magazine-secondary__tag">{a.tag}</span>
                 <h4 className="magazine-secondary__title">{a.title}</h4>
                 <p className="magazine-secondary__dek">{a.dek}</p>
-              </Link>
+                <span className="magazine-secondary__pending">Coming soon</span>
+              </div>
             ))}
           </div>
-        </div>
-
-        <div className="magazine-more" data-reveal-body>
-          <Link className="btn-ghost" href="/insights/">
-            Read All Articles →
-          </Link>
         </div>
       </div>
     </section>

@@ -93,13 +93,6 @@ export default function HeroSection() {
             <span>{t("ctaProfile")}</span>
           </Link>
         </div>
-        <div className="hero-proof-ribbon" role="list" aria-label="Trading facts">
-          <span role="listitem">{t("ribbonLocation")}</span>
-          <span role="listitem">{t("ribbonScope")}</span>
-          <span role="listitem">{t("ribbonReply")}</span>
-          <span role="listitem">{t("ribbonSamples")}</span>
-          <span role="listitem">{t("ribbonTerms")}</span>
-        </div>
       </div>
       <div className="scroll-to">
         <div className="line">

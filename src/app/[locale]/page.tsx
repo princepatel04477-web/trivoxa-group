@@ -17,7 +17,6 @@ import BusinessArmsPanels from "@/components/sections/BusinessArmsPanels";
 import IndustriesManifest from "@/components/sections/IndustriesManifest";
 import GlobalPresenceTicker from "@/components/sections/GlobalPresenceTicker";
 import ValuesHoverList from "@/components/sections/ValuesHoverList";
-import CertificationsStrip from "@/components/sections/CertificationsStrip";
 import InsightsMagazine from "@/components/sections/InsightsMagazine";
 import { AboutPreview, CareersPreview, FinalCta } from "@/components/home/previews";
 import SiteFooter from "@/components/SiteFooter";
@@ -26,9 +25,9 @@ import ParticleCanvasWrapper from "@/components/ParticleCanvasWrapper";
 import WhyBuyersTrust from "@/components/sections/WhyBuyersTrust";
 
 export const metadata: Metadata = {
-  title: "Trivoxa Group | Source Verified Indian Products. Export With Confidence.",
+  title: "Trivoxa Group | International Trade & Business Solutions",
   description:
-    "Trivoxa connects international buyers with vetted Indian manufacturing partners across textiles, food, building materials, healthcare, and industrial goods — managed from sourcing to shipment.",
+    "Trivoxa Group is an international business group delivering product sourcing, manufacturing partnerships, and professional services across global markets. Built on decades of manufacturing expertise.",
 };
 
 export default function Home() {
@@ -68,10 +67,6 @@ export default function Home() {
 
       {/* 6 · Values — numbered hover list */}
       <ValuesHoverList />
-      <div className="section-divider" />
-
-      {/* 6b · Compliance & memberships — trust layer */}
-      <CertificationsStrip />
       <div className="section-divider" />
 
       {/* 7 · Insights — magazine columns */}

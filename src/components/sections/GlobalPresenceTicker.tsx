@@ -6,19 +6,16 @@ import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { Link } from "@/i18n/navigation";
 import { revealHeadings, revealBody } from "@/hooks/useScrollAnimations";
 
-const CORRIDORS = [
-  { lane: "Mumbai → Rotterdam", cargo: "Cotton & Textiles" },
-  { lane: "Mundra → Jebel Ali", cargo: "Spices & Agri" },
-  { lane: "Kandla → Hamburg", cargo: "Marble & Granite" },
-  { lane: "Nhava Sheva → Singapore", cargo: "Textiles" },
-  { lane: "Mumbai → New York", cargo: "Pharmaceuticals" },
-  { lane: "Mundra → Rotterdam", cargo: "Engineering Goods" },
-  { lane: "Kandla → Jebel Ali", cargo: "Agri Produce" },
-  { lane: "Nhava Sheva → Hamburg", cargo: "Building Materials" },
-];
+// Ticker reads as destination-market coverage, not named Indian port pairs —
+// the brand no longer anchors to specific origin ports on the homepage.
+const CORRIDOR_KEYS = [1, 2, 3, 4, 5] as const;
 
 export default function GlobalPresenceTicker() {
   const t = useTranslations("home.globalPresence");
+  const CORRIDORS = CORRIDOR_KEYS.map((n) => ({
+    region: t(`corridor${n}Region`),
+    category: t(`corridor${n}Category`),
+  }));
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -51,7 +48,7 @@ export default function GlobalPresenceTicker() {
         <div className="ticker-track">
           {doubled.map((row, i) => (
             <span className="ticker-row" key={i}>
-              {row.lane} · {row.cargo}
+              {row.region} · {row.category}
             </span>
           ))}
         </div>

@@ -16,10 +16,12 @@ interface CertMark {
 // Honest maturity model. Operational licensing is ACTIVE; sector certs are
 // being secured with target dates. Verified credentials will later link to
 // PDFs (registration number, authority, legal entity, validity period).
-// No "In process" tiles are shown on the homepage — per audit fix #1.
-const MARKS: CertMark[] = [
+const ACTIVE_MARKS: CertMark[] = [
   { code: "IEC", name: "Import Export Code", state: "active", detail: "Active" },
   { code: "GST", name: "Goods & Services Tax Registration", state: "active", detail: "Active" },
+];
+
+const IN_PROGRESS_MARKS: CertMark[] = [
   { code: "FIEO", name: "Federation of Indian Export Organisations", state: "in-application", detail: "In application — target Q4 2026" },
   { code: "APEDA", name: "Agricultural & Processed Food Products Export Development Authority", state: "in-application", detail: "In application — target Q4 2026" },
   { code: "FSSAI", name: "Food Safety & Standards Authority of India", state: "in-application", detail: "In application — target Q1 2027" },
@@ -57,6 +59,9 @@ function CertBadge({ mark }: { mark: CertMark }) {
   );
 }
 
+/** Full certifications grid for the dedicated /compliance page — active
+ * credentials presented prominently first, pending ones grouped separately
+ * underneath so the page never reads as "not yet certified" at a glance. */
 export default function CertificationsStrip() {
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -83,14 +88,21 @@ export default function CertificationsStrip() {
   return (
     <section className="certifications-strip" ref={sectionRef}>
       <div className="container">
-        <span className="certifications-strip__eyebrow">COMPLIANCE APPROACH</span>
-        <h2 className="certifications-strip__title">
-          Verified where we are. Transparent where we are going.
-        </h2>
-        <div className="certifications-strip__row">
-          {MARKS.map((mark) => (
-            <CertBadge key={mark.code} mark={mark} />
-          ))}
+        <div className="certifications-strip__group">
+          <h3 className="certifications-strip__group-title">Active</h3>
+          <div className="certifications-strip__row">
+            {ACTIVE_MARKS.map((mark) => (
+              <CertBadge key={mark.code} mark={mark} />
+            ))}
+          </div>
+        </div>
+        <div className="certifications-strip__group">
+          <h3 className="certifications-strip__group-title">In Progress</h3>
+          <div className="certifications-strip__row">
+            {IN_PROGRESS_MARKS.map((mark) => (
+              <CertBadge key={mark.code} mark={mark} />
+            ))}
+          </div>
         </div>
         <p className="certifications-strip__footnote">
           Operational licensing (IEC, GST) is active. Sector certifications are being

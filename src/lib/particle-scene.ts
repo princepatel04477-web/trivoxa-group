@@ -17,11 +17,23 @@ import {
   type Effect,
 } from "postprocessing";
 
-// Density tiers (Phase 3.3): desktop 12–18k, mobile 5–7k instanced points.
-const COUNT_DESKTOP = 14000;
-const COUNT_MOBILE = 6000;
+// Density tiers — halved from the original 14k/6k (perf gate, July 2026):
+// the prior density exceeded frame budget on mid-range hardware, producing an
+// unresponsive tab under sustained load. See the frame-budget monitor below
+// for the runtime fallback if this still isn't enough on a given device.
+const COUNT_DESKTOP = 7000;
+const COUNT_MOBILE = 3000;
 const MAX_DPR_DESKTOP = 1.5;
 const MAX_DPR_MOBILE = 1.5;
+
+// Frame-budget gate: 20ms/frame is the 50fps floor. 10 consecutive frames
+// over budget (not one-off jank from GC or a tab switch) triggers the static
+// fallback via the onDegrade callback. warmupSeconds skips the shader-compile
+// / first-texture-upload spike every scene has on its first paint, which
+// would otherwise false-positive on every load regardless of device.
+const FRAME_BUDGET_MS = 20;
+const FRAME_BUDGET_STREAK = 10;
+const WARMUP_SECONDS = 1.5;
 
 // Globe motion (Phase 3.2)
 const IDLE_OMEGA = (2 * Math.PI) / 26; // rad/s — single-axis idle spin, 26s/rev
@@ -129,7 +141,7 @@ function loadEagle(url: string, name: string, targetWidth: number, color: number
   });
 }
 
-export async function createParticleScene(): Promise<ParticleScene> {
+export async function createParticleScene(onDegrade?: () => void): Promise<ParticleScene> {
   const width = window.innerWidth;
   const height = window.innerHeight;
 
@@ -336,12 +348,40 @@ export async function createParticleScene(): Promise<ParticleScene> {
 
   const clock = new THREE.Clock();
 
+  // Frame-budget monitor (perf gate): tracks real, unclamped frame time.
+  // Sustained >20ms frames (sub-50fps) for FRAME_BUDGET_STREAK in a row —
+  // not a single GC pause or tab-switch stutter — means this device can't
+  // hold the field at an acceptable rate, and it hands off to the caller's
+  // static fallback exactly once. warmupElapsed skips the shader-compile /
+  // first-texture-upload spike on frame one so that alone can't trip it.
+  let overBudgetStreak = 0;
+  let warmupElapsed = 0;
+  let degraded = false;
+
   function renderLoop() {
     // Delta-time normalization: every idle motion below is scaled by real
     // elapsed seconds, so speed is identical at 30, 60, or 144fps. Clamp the
-    // step so a background tab returning doesn't jump the animation.
-    const delta = Math.min(clock.getDelta(), 0.05);
+    // step so a background tab returning doesn't jump the animation — but
+    // keep the raw value too, for the frame-budget monitor below, which needs
+    // to see genuinely slow frames rather than a clamped-away view of them.
+    const rawDelta = clock.getDelta();
+    const delta = Math.min(rawDelta, 0.05);
     const dt60 = delta * 60; // frames-equivalent, for the old per-frame rates
+
+    if (onDegrade && !degraded) {
+      warmupElapsed += rawDelta;
+      if (warmupElapsed > WARMUP_SECONDS) {
+        if (rawDelta * 1000 > FRAME_BUDGET_MS) {
+          overBudgetStreak++;
+          if (overBudgetStreak >= FRAME_BUDGET_STREAK) {
+            degraded = true;
+            onDegrade();
+          }
+        } else {
+          overBudgetStreak = 0;
+        }
+      }
+    }
     // prefers-reduced-motion: freeze the per-particle twinkle too, not just spin.
     if (!reducedMotion) shimmerUniform.value += delta * 2.2; // GPU per-particle shimmer clock
 
@@ -446,7 +486,10 @@ export async function createParticleScene(): Promise<ParticleScene> {
     } else {
       renderer.render(scene, camera);
     }
-    animId = requestAnimationFrame(renderLoop);
+    // Once degraded, stop self-scheduling — the caller's onDegrade handler
+    // owns teardown (dispose() also cancels animId, this just avoids one more
+    // wasted frame in between).
+    if (!degraded) animId = requestAnimationFrame(renderLoop);
   }
   renderLoop();
 

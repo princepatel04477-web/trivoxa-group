@@ -33,16 +33,11 @@
   },
   "home": {
     "hero": {
-      "eyebrow": "Il partner indiano per il sourcing e la gestione delle esportazioni lato acquirente",
-      "title": "Acquista prodotti indiani verificati. Esporta con fiducia.",
-      "subtitle": "Trivoxa collega gli acquirenti internazionali a partner manifatturieri indiani verificati nei settori tessile, alimentare, materiali da costruzione, sanità e beni industriali, con gestione dal sourcing alla spedizione.",
-      "ctaQuote": "Richiedi un'offerta di sourcing",
-      "ctaProfile": "Scarica il profilo di export",
-      "ribbonLocation": "Surat, India",
-      "ribbonScope": "Sourcing globale e gestione export",
-      "ribbonReply": "Risposta entro 1 giorno lavorativo",
-      "ribbonSamples": "Campioni disponibili",
-      "ribbonTerms": "Supporto FOB / CIF / CFR"
+      "eyebrow": "Gruppo internazionale di commercio e business",
+      "title": "Costruiamo il futuro del commercio globale.",
+      "subtitle": "Trivoxa Group è un gruppo internazionale che offre prodotti affidabili, soluzioni strategiche di sourcing e servizi professionali sui mercati globali. Colleghiamo le imprese a nuove opportunità, semplifichiamo il commercio internazionale e costruiamo partnership pensate per il successo a lungo termine.",
+      "ctaQuote": "Richiedi un preventivo",
+      "ctaProfile": "Scopri le nostre attività"
     },
     "about": {
       "eyebrow": "Chi siamo",
@@ -78,16 +73,16 @@
       "ctaContact": "Contattaci"
     },
     "trust": {
-      "eyebrow": "Perché gli acquirenti scelgono Trivoxa",
-      "heading": "Un partner di sourcing, non un semplice elenco di fornitori.",
-      "p1Title": "Rete di fornitori verificati",
-      "p1Body": "Ogni partner produttivo è valutato prima dell'inserimento — capacità, conformità e storico — così gli acquirenti trattano solo con fornitori indiani prequalificati.",
-      "p2Title": "Controllo qualità documentato",
-      "p2Body": "Punti di ispezione dallo stabilimento al carico del container. Report qualità e fotografie dell'imballaggio disponibili su richiesta per ogni spedizione.",
-      "p3Title": "Esecuzione pronta alla spedizione",
-      "p3Body": "Gestiamo documentazione export, Incoterms (FOB / CIF / CFR) e logistica portuale su Mundra, Kandla e Nhava Sheva — pensata sia per chi importa la prima volta sia per i clienti abituali.",
-      "p4Title": "Identità legale trasparente",
-      "p4Body": "Sede legale, IEC, GST e CIN sono pubblicati apertamente. Nessuna entità nascosta, nessun dato legale riservato alle richieste.",
+      "eyebrow": "Perché le aziende scelgono Trivoxa",
+      "heading": "Costruita sull'esperienza. Orientata alla partnership.",
+      "p1Title": "Fondamenta produttive",
+      "p1Body": "Costruita sull'esperienza produttiva della nostra azienda madre, Shiveshwar Textiles — decenni di know-how produttivo che guidano ogni decisione di sourcing e ogni standard di qualità che manteniamo.",
+      "p2Title": "Operazioni guidate dalla qualità",
+      "p2Body": "Ogni progetto è seguito da un coordinamento qualità strutturato — dalle specifiche di produzione fino alla consegna finale — con documentazione e trasparenza in ogni fase.",
+      "p3Title": "Competenza nel commercio internazionale",
+      "p3Body": "Dalla documentazione di esportazione al coordinamento logistico fino alla conformità internazionale, gestiamo la complessità del commercio transfrontaliero affinché i nostri partner possano concentrarsi sul proprio business.",
+      "p4Title": "Partnership di lungo periodo",
+      "p4Body": "Crediamo che il successo sostenibile nasca da relazioni durature, non da transazioni occasionali. Il nostro approccio è pensato per creare valore che cresce negli anni, non solo nelle singole spedizioni.",
       "cta": "Scopri le capacità di export"
     },
     "globalPresence": {
@@ -95,9 +90,19 @@
       "heading": "Colleghiamo opportunità oltre i confini",
       "lead": "Il commercio internazionale si fonda su fiducia, collaborazione e relazioni solide. Attraverso una rete in crescita di fornitori, partner e clienti, Trivoxa Group costruisce connessioni significative che permettono alle organizzazioni di crescere con sicurezza sui mercati internazionali.",
       "disclaimer": "Corridoi commerciali illustrativi — rappresentativi delle rotte operate da Trivoxa, non tracciamento spedizioni in tempo reale.",
-      "quote": "Da qualunque porto parta una spedizione — Mundra, Kandla, Nhava Sheva — porta con sé lo stesso standard fissato nello stabilimento di Surat. E questo non cambia con la destinazione.",
+      "quote": "Gli standard di qualità non cambiano con la destinazione. Ogni prodotto, ogni spedizione, ogni partnership porta lo stesso impegno verso l'eccellenza.",
       "cite": "— Trivoxa Group",
-      "cta": "Vedi la presenza globale"
+      "cta": "Vedi la presenza globale",
+      "corridor1Region": "Europa",
+      "corridor1Category": "Tessile e materiali industriali",
+      "corridor2Region": "Medio Oriente",
+      "corridor2Category": "Agricoltura e materiali da costruzione",
+      "corridor3Region": "Asia-Pacifico",
+      "corridor3Category": "Tessile e beni di consumo",
+      "corridor4Region": "Nord America",
+      "corridor4Category": "Sanità e farmaceutica",
+      "corridor5Region": "Africa",
+      "corridor5Category": "Ingegneria e prodotti industriali"
     },
     "industries": {
       "eyebrow": "Settori",
@@ -113,7 +118,7 @@
     "businessArms": {
       "arm1Eyebrow": "Divisione 01",
       "arm2Eyebrow": "Divisione 02",
-      "arm1Thesis": "Colleghiamo gli acquirenti internazionali a partner produttivi accuratamente selezionati in tutta l'India, per fornire prodotti di qualità con soluzioni affidabili di sourcing ed export.",
+      "arm1Thesis": "Colleghiamo aziende di tutto il mondo a partner produttivi affidabili per fornire prodotti di qualità attraverso soluzioni solide di sourcing ed export in molteplici settori.",
       "arm2Thesis": "Una divisione tecnologica dedicata a software, IA, branding e marketing digitale, per aiutare le imprese a costruire, crescere e modernizzarsi.",
       "arm1Cta": "Vedi le capacità di sourcing",
       "arm2Cta": "Vedi le capacità di servizio",

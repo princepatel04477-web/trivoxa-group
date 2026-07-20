@@ -33,16 +33,11 @@
   },
   "home": {
     "hero": {
-      "eyebrow": "Indiens Partner für einkaufsseitiges Sourcing und Exportmanagement",
-      "title": "Geprüfte indische Produkte beschaffen. Mit Sicherheit exportieren.",
-      "subtitle": "Trivoxa verbindet internationale Käufer mit geprüften indischen Fertigungspartnern in den Bereichen Textilien, Lebensmittel, Baustoffe, Gesundheit und Industriegüter – begleitet von der Beschaffung bis zum Versand.",
-      "ctaQuote": "Beschaffungsangebot anfordern",
-      "ctaProfile": "Exportprofil herunterladen",
-      "ribbonLocation": "Surat, Indien",
-      "ribbonScope": "Globale Beschaffung & Exportmanagement",
-      "ribbonReply": "Antwort innerhalb von 1 Werktag",
-      "ribbonSamples": "Muster verfügbar",
-      "ribbonTerms": "FOB / CIF / CFR Unterstützung"
+      "eyebrow": "Internationale Handels- und Unternehmensgruppe",
+      "title": "Wir gestalten die Zukunft des globalen Handels.",
+      "subtitle": "Die Trivoxa Group ist eine internationale Unternehmensgruppe, die vertrauenswürdige Produkte, strategische Beschaffungslösungen und professionelle Dienstleistungen auf globalen Märkten anbietet. Wir verbinden Unternehmen mit Chancen, vereinfachen den internationalen Handel und bauen Partnerschaften für langfristigen Erfolg auf.",
+      "ctaQuote": "Angebot anfordern",
+      "ctaProfile": "Geschäftsbereiche entdecken"
     },
     "about": {
       "eyebrow": "Wer wir sind",
@@ -78,16 +73,16 @@
       "ctaContact": "Kontakt"
     },
     "trust": {
-      "eyebrow": "Warum Käufer Trivoxa vertrauen",
-      "heading": "Ein Beschaffungspartner, kein bloßes Lieferantenverzeichnis.",
-      "p1Title": "Geprüftes Lieferantennetzwerk",
-      "p1Body": "Jeder Fertigungspartner wird vor der Aufnahme geprüft – Leistungsfähigkeit, Compliance und Erfolgsbilanz – sodass Käufer ausschließlich mit vorqualifizierten indischen Lieferanten arbeiten.",
-      "p2Title": "Dokumentierte Qualitätskontrolle",
-      "p2Body": "Prüfpunkte von der Fertigung bis zur Containerverladung. QC-Berichte und Verpackungsfotos sind für jede Sendung auf Anfrage erhältlich.",
-      "p3Title": "Versandfertige Abwicklung",
-      "p3Body": "Wir übernehmen Exportdokumente, Incoterms (FOB / CIF / CFR) und Hafenlogistik über Mundra, Kandla und Nhava Sheva – geeignet für Erstimporteure ebenso wie für Stammkunden.",
-      "p4Title": "Transparente Rechtsidentität",
-      "p4Body": "Firmensitz, IEC, GST und CIN sind offen veröffentlicht. Keine verborgenen Gesellschaften, keine erst auf Anfrage zugänglichen Rechtsangaben.",
+      "eyebrow": "Warum Unternehmen sich für Trivoxa entscheiden",
+      "heading": "Erfahrung als Fundament. Partnerschaft im Fokus.",
+      "p1Title": "Fertigungs-Fundament",
+      "p1Body": "Aufgebaut auf der Fertigungserfahrung unseres Mutterunternehmens Shiveshwar Textiles – jahrzehntelanges Produktionswissen, das jede Beschaffungsentscheidung und jeden Qualitätsstandard prägt, den wir vertreten.",
+      "p2Title": "Qualitätsorientierte Abläufe",
+      "p2Body": "Jedes Projekt wird durch strukturierte Qualitätskoordination begleitet – von den Produktionsvorgaben bis zur finalen Lieferung – mit Dokumentation und Transparenz auf jeder Stufe.",
+      "p3Title": "Expertise im internationalen Handel",
+      "p3Body": "Von Exportdokumentation und Logistikkoordination bis zur internationalen Compliance übernehmen wir die Komplexität des grenzüberschreitenden Handels, damit sich unsere Partner auf ihr Geschäft konzentrieren können.",
+      "p4Title": "Langfristige Partnerschaften",
+      "p4Body": "Wir glauben, dass nachhaltiger Erfolg durch dauerhafte Beziehungen entsteht – nicht durch einmalige Transaktionen. Unser Ansatz ist darauf ausgelegt, Wert zu schaffen, der über Jahre wächst, nicht nur über einzelne Sendungen.",
       "cta": "Exportleistungen entdecken"
     },
     "globalPresence": {
@@ -95,9 +90,19 @@
       "heading": "Chancen über Grenzen hinweg verbinden",
       "lead": "Internationales Geschäft beruht auf Vertrauen, Zusammenarbeit und belastbaren Beziehungen. Über ein wachsendes Netzwerk aus Lieferanten, Partnern und Kunden baut die Trivoxa Group tragfähige Verbindungen auf, die Unternehmen ein sicheres Wachstum in internationalen Märkten ermöglichen.",
       "disclaimer": "Beispielhafte Handelskorridore – repräsentativ für die von Trivoxa bedienten Routen, keine Echtzeit-Sendungsverfolgung.",
-      "quote": "Aus welchem Hafen eine Sendung auch ausläuft – Mundra, Kandla oder Nhava Sheva –, sie trägt denselben Standard, der in der Fertigung in Surat gesetzt wurde. Daran ändert das Ziel nichts.",
+      "quote": "Qualitätsstandards ändern sich nicht mit dem Bestimmungsort. Jedes Produkt, jede Sendung, jede Partnerschaft trägt dasselbe Engagement für Exzellenz.",
       "cite": "— Trivoxa Group",
-      "cta": "Globale Präsenz ansehen"
+      "cta": "Globale Präsenz ansehen",
+      "corridor1Region": "Europa",
+      "corridor1Category": "Textilien & Industriematerialien",
+      "corridor2Region": "Naher Osten",
+      "corridor2Category": "Landwirtschaft & Baustoffe",
+      "corridor3Region": "Asien-Pazifik",
+      "corridor3Category": "Textilien & Konsumgüter",
+      "corridor4Region": "Nordamerika",
+      "corridor4Category": "Gesundheit & Pharmazeutika",
+      "corridor5Region": "Afrika",
+      "corridor5Category": "Technik & Industrieprodukte"
     },
     "industries": {
       "eyebrow": "Branchen",
@@ -113,7 +118,7 @@
     "businessArms": {
       "arm1Eyebrow": "Geschäftsbereich 01",
       "arm2Eyebrow": "Geschäftsbereich 02",
-      "arm1Thesis": "Wir verbinden internationale Käufer mit sorgfältig ausgewählten Fertigungspartnern in ganz Indien und liefern Qualitätsprodukte über verlässliche Beschaffungs- und Exportlösungen.",
+      "arm1Thesis": "Wir verbinden Unternehmen weltweit mit vertrauenswürdigen Fertigungspartnern und liefern Qualitätsprodukte durch verlässliche Beschaffungs- und Exportlösungen über mehrere Branchen hinweg.",
       "arm2Thesis": "Ein eigener Technologiebereich für Software, KI, Branding und digitales Marketing – damit Unternehmen aufbauen, wachsen und modernisieren können.",
       "arm1Cta": "Beschaffungsleistungen ansehen",
       "arm2Cta": "Serviceleistungen ansehen",

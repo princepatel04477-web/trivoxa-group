@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useState, type FormEvent } from "react";
+import { Link } from "@/i18n/navigation";
 
 const sitemapPrimary = [
   { label: "Group", href: "/group/" },
@@ -20,6 +20,7 @@ const sitemapSecondary = [
 const legalLinks = [
   { label: "Privacy", href: "/privacy-policy/" },
   { label: "Terms", href: "/terms/" },
+  { label: "Compliance", href: "/compliance/" },
   { label: "Anti-corruption Policy", href: "/anti-corruption-policy/" },
   { label: "Cookie Preferences", href: "/cookie-preferences/" },
 ];
@@ -56,36 +57,6 @@ export default function SiteFooter() {
               <img src="/images/trivoxa-logo.png" alt="Trivoxa Group" />
             </div>
             <p className="tagline">Building the Future of Global Commerce — One Partnership at a Time.</p>
-            <div className="footer-legal-block">
-              <div className="footer-legal-row">
-                <span className="footer-legal-label">Registered Office</span>
-                <span>[PLACEHOLDER — full registered address, Surat, Gujarat, India]</span>
-              </div>
-              <div className="footer-legal-row">
-                <span className="footer-legal-label">IEC</span>
-                <span className="mono">[PLACEHOLDER — IEC number]</span>
-              </div>
-              <div className="footer-legal-row">
-                <span className="footer-legal-label">GST</span>
-                <span className="mono">[PLACEHOLDER — GST registration number]</span>
-              </div>
-              <div className="footer-legal-row">
-                <span className="footer-legal-label">CIN</span>
-                <span className="mono">[PLACEHOLDER — CIN / company registration]</span>
-              </div>
-              <div className="footer-legal-row">
-                <span className="footer-legal-label">Trade Contact</span>
-                <span>
-                  <a href="https://wa.me/[PLACEHOLDER]" className="footer-legal-link">WhatsApp</a>
-                  {" · "}
-                  <a href="mailto:export@trivoxa.example" className="footer-legal-link">export@trivoxa.example</a>
-                </span>
-              </div>
-              <div className="footer-legal-row footer-legal-row--hours">
-                <span className="footer-legal-label">Hours</span>
-                <span>Mon–Sat, 10:00–19:00 IST (UTC+5:30)</span>
-              </div>
-            </div>
           </div>
 
           {/* Sitemap columns */}
@@ -113,7 +84,7 @@ export default function SiteFooter() {
           {/* Newsletter column */}
           <div className="col footer-newsletter">
             <div className="title">Stay Informed</div>
-            <p className="footer-newsletter__copy">Quarterly dispatch on Indian export markets.</p>
+            <p className="footer-newsletter__copy">Quarterly dispatch on global trade and business insights.</p>
             {sent ? (
               <p className="footer-newsletter__thanks">Thanks — you&rsquo;re on the list.</p>
             ) : (

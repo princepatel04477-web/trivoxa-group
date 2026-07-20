@@ -33,16 +33,11 @@
   },
   "home": {
     "hero": {
-      "eyebrow": "Le partenaire indien du sourcing et de la gestion des exportations côté acheteur",
-      "title": "Sourcez des produits indiens vérifiés. Exportez en toute confiance.",
-      "subtitle": "Trivoxa met en relation les acheteurs internationaux avec des partenaires industriels indiens vérifiés dans le textile, l'alimentaire, les matériaux de construction, la santé et les biens industriels — du sourcing à l'expédition.",
-      "ctaQuote": "Demander une offre de sourcing",
-      "ctaProfile": "Télécharger le profil d'exportation",
-      "ribbonLocation": "Surat, Inde",
-      "ribbonScope": "Sourcing mondial & gestion des exportations",
-      "ribbonReply": "Réponse sous 1 jour ouvré",
-      "ribbonSamples": "Échantillons disponibles",
-      "ribbonTerms": "Prise en charge FOB / CIF / CFR"
+      "eyebrow": "Groupe international de commerce et d'affaires",
+      "title": "Construire l'avenir du commerce mondial.",
+      "subtitle": "Trivoxa Group est un groupe d'affaires international proposant des produits fiables, des solutions de sourcing stratégiques et des services professionnels sur les marchés mondiaux. Nous connectons les entreprises à de nouvelles opportunités, simplifions le commerce international et bâtissons des partenariats conçus pour durer.",
+      "ctaQuote": "Demander un devis",
+      "ctaProfile": "Découvrir nos activités"
     },
     "about": {
       "eyebrow": "Qui nous sommes",
@@ -78,16 +73,16 @@
       "ctaContact": "Contactez-nous"
     },
     "trust": {
-      "eyebrow": "Pourquoi les acheteurs font confiance à Trivoxa",
-      "heading": "Un partenaire de sourcing, pas un simple annuaire de fournisseurs.",
-      "p1Title": "Réseau de fournisseurs vérifiés",
-      "p1Body": "Chaque partenaire industriel est évalué avant son intégration — capacités, conformité et antécédents — afin que les acheteurs ne traitent qu'avec des fournisseurs indiens préqualifiés.",
-      "p2Title": "Contrôle qualité documenté",
-      "p2Body": "Points de contrôle de l'atelier au chargement du conteneur. Rapports qualité et photographies d'emballage disponibles sur demande pour chaque expédition.",
-      "p3Title": "Exécution prête à l'expédition",
-      "p3Body": "Nous gérons les documents d'exportation, les Incoterms (FOB / CIF / CFR) et la logistique portuaire via Mundra, Kandla et Nhava Sheva — pour les primo-importateurs comme pour les clients réguliers.",
-      "p4Title": "Identité juridique transparente",
-      "p4Body": "Siège social, IEC, GST et CIN sont publiés ouvertement. Aucune entité dissimulée, aucune information juridique réservée aux demandes.",
+      "eyebrow": "Pourquoi les entreprises choisissent Trivoxa",
+      "heading": "Bâti sur l'expérience. Tourné vers le partenariat.",
+      "p1Title": "Fondations industrielles",
+      "p1Body": "Bâti sur l'expertise industrielle de notre société mère, Shiveshwar Textiles — des décennies de savoir-faire en production qui guident chaque décision de sourcing et chaque norme de qualité que nous défendons.",
+      "p2Title": "Une exploitation axée sur la qualité",
+      "p2Body": "Chaque projet est encadré par une coordination qualité structurée — des spécifications de production jusqu'à la livraison finale — avec documentation et transparence à chaque étape.",
+      "p3Title": "Expertise du commerce international",
+      "p3Body": "De la documentation d'exportation à la coordination logistique, en passant par la conformité internationale, nous gérons la complexité du commerce transfrontalier afin que nos partenaires puissent se concentrer sur leur activité.",
+      "p4Title": "Des partenariats durables",
+      "p4Body": "Nous croyons que la réussite durable se construit par des relations qui durent, non par des transactions ponctuelles. Notre approche vise à créer une valeur qui se renforce au fil des années, pas seulement au fil des expéditions.",
       "cta": "Découvrir nos capacités d'exportation"
     },
     "globalPresence": {
@@ -95,9 +90,19 @@
       "heading": "Relier les opportunités au-delà des frontières",
       "lead": "Le commerce international repose sur la confiance, la collaboration et des relations solides. Grâce à un réseau croissant de fournisseurs, de partenaires et de clients, Trivoxa Group tisse des liens durables qui permettent aux organisations de se développer sereinement sur les marchés internationaux.",
       "disclaimer": "Corridors commerciaux illustratifs — représentatifs des lignes exploitées par Trivoxa, et non un suivi d'expédition en temps réel.",
-      "quote": "Quel que soit le port de départ — Mundra, Kandla, Nhava Sheva — l'expédition porte la même exigence fixée à l'atelier de Surat. La destination n'y change rien.",
+      "quote": "Les normes de qualité ne changent pas selon la destination. Chaque produit, chaque expédition, chaque partenariat porte le même engagement envers l'excellence.",
       "cite": "— Trivoxa Group",
-      "cta": "Voir notre présence mondiale"
+      "cta": "Voir notre présence mondiale",
+      "corridor1Region": "Europe",
+      "corridor1Category": "Textiles & Matériaux industriels",
+      "corridor2Region": "Moyen-Orient",
+      "corridor2Category": "Agriculture & Matériaux de construction",
+      "corridor3Region": "Asie-Pacifique",
+      "corridor3Category": "Textiles & Biens de consommation",
+      "corridor4Region": "Amérique du Nord",
+      "corridor4Category": "Santé & Pharmaceutique",
+      "corridor5Region": "Afrique",
+      "corridor5Category": "Ingénierie & Produits industriels"
     },
     "industries": {
       "eyebrow": "Secteurs",
@@ -113,7 +118,7 @@
     "businessArms": {
       "arm1Eyebrow": "Pôle d'activité 01",
       "arm2Eyebrow": "Pôle d'activité 02",
-      "arm1Thesis": "Nous mettons en relation les acheteurs internationaux avec des partenaires industriels soigneusement sélectionnés partout en Inde, pour livrer des produits de qualité via des solutions fiables de sourcing et d'exportation.",
+      "arm1Thesis": "Nous connectons les entreprises du monde entier à des partenaires industriels de confiance pour livrer des produits de qualité grâce à des solutions fiables de sourcing et d'exportation, dans de multiples secteurs.",
       "arm2Thesis": "Un pôle technologique dédié : logiciels, IA, branding et marketing digital — pour aider les entreprises à bâtir, croître et se moderniser.",
       "arm1Cta": "Voir les capacités de sourcing",
       "arm2Cta": "Voir les capacités de service",

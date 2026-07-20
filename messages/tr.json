@@ -33,16 +33,11 @@
   },
   "home": {
     "hero": {
-      "eyebrow": "Hindistan'da alıcı tarafı tedarik ve ihracat yönetimi ortağınız",
-      "title": "Doğrulanmış Hint ürünleri tedarik edin. Güvenle ihraç edin.",
-      "subtitle": "Trivoxa, uluslararası alıcıları tekstil, gıda, yapı malzemeleri, sağlık ve sanayi ürünleri alanlarında doğrulanmış Hint üretim ortaklarıyla buluşturur; tedarikten sevkiyata kadar tüm süreci yönetir.",
-      "ctaQuote": "Tedarik teklifi isteyin",
-      "ctaProfile": "İhracat yetkinlik profilini indirin",
-      "ribbonLocation": "Surat, Hindistan",
-      "ribbonScope": "Küresel tedarik ve ihracat yönetimi",
-      "ribbonReply": "1 iş günü içinde yanıt",
-      "ribbonSamples": "Numune mevcut",
-      "ribbonTerms": "FOB / CIF / CFR desteği"
+      "eyebrow": "Uluslararası Ticaret ve İş Grubu",
+      "title": "Küresel ticaretin geleceğini inşa ediyoruz.",
+      "subtitle": "Trivoxa Group, küresel pazarlarda güvenilir ürünler, stratejik tedarik çözümleri ve profesyonel hizmetler sunan uluslararası bir iş grubudur. İşletmeleri fırsatlarla buluşturuyor, uluslararası ticareti kolaylaştırıyor ve uzun vadeli başarı için kurulmuş ortaklıklar inşa ediyoruz.",
+      "ctaQuote": "Teklif isteyin",
+      "ctaProfile": "İş kollarımızı keşfedin"
     },
     "about": {
       "eyebrow": "Biz kimiz",
@@ -78,16 +73,16 @@
       "ctaContact": "Bize ulaşın"
     },
     "trust": {
-      "eyebrow": "Alıcılar neden Trivoxa'ya güveniyor",
-      "heading": "Bir tedarik ortağı; sıradan bir tedarikçi rehberi değil.",
-      "p1Title": "Doğrulanmış tedarikçi ağı",
-      "p1Body": "Her üretim ortağı sisteme alınmadan önce kapasite, uyumluluk ve geçmiş performans açısından incelenir; böylece alıcılar yalnızca ön yeterliliği onaylanmış Hint tedarikçilerle çalışır.",
-      "p2Title": "Belgelenmiş kalite kontrolü",
-      "p2Body": "Üretim alanından konteyner yüklemesine kadar denetim noktaları. Her sevkiyat için kalite raporları ve ambalaj fotoğrafları talep üzerine sunulur.",
-      "p3Title": "Sevkiyata hazır yürütme",
-      "p3Body": "İhracat belgelerini, Incoterms kurallarını (FOB / CIF / CFR) ve Mundra, Kandla ile Nhava Sheva limanlarındaki lojistiği biz yönetiriz — ilk kez ithalat yapanlar için de, düzenli müşteriler için de.",
-      "p4Title": "Şeffaf yasal kimlik",
-      "p4Body": "Kayıtlı merkez, IEC, GST ve CIN bilgileri açıkça yayımlanır. Gizli şirket yapısı yok; talebe bağlı tutulan yasal bilgi yok.",
+      "eyebrow": "İşletmeler neden Trivoxa'yı seçiyor",
+      "heading": "Deneyim üzerine kurulu. Ortaklığa odaklı.",
+      "p1Title": "Üretim temeli",
+      "p1Body": "Ana şirketimiz Shiveshwar Textiles'in üretim uzmanlığı üzerine kurulu — her tedarik kararını ve sahip çıktığımız her kalite standardını şekillendiren onlarca yıllık üretim bilgisi.",
+      "p2Title": "Kaliteye dayalı operasyonlar",
+      "p2Body": "Her proje, üretim şartnamelerinden nihai teslimata kadar yapılandırılmış kalite koordinasyonuyla yürütülür — her aşamada belgeleme ve şeffaflıkla.",
+      "p3Title": "Küresel ticaret uzmanlığı",
+      "p3Body": "İhracat belgelerinden lojistik koordinasyona, uluslararası uyumluluğa kadar sınır ötesi ticaretin karmaşıklığını biz yönetiyoruz; böylece ortaklarımız kendi işlerine odaklanabiliyor.",
+      "p4Title": "Uzun vadeli ortaklıklar",
+      "p4Body": "Sürdürülebilir başarının, tek seferlik işlemlerle değil, kalıcı ilişkilerle elde edildiğine inanıyoruz. Yaklaşımımız, yalnızca sevkiyatlarla değil, yıllar içinde büyüyen bir değer yaratmak üzere tasarlandı.",
       "cta": "İhracat yetkinliklerini inceleyin"
     },
     "globalPresence": {
@@ -95,9 +90,19 @@
       "heading": "Fırsatları sınırların ötesinde birleştiriyoruz",
       "lead": "Uluslararası ticaret güven, iş birliği ve sağlam ilişkiler üzerine kuruludur. Genişleyen tedarikçi, ortak ve müşteri ağı sayesinde Trivoxa Group, kurumların uluslararası pazarlarda güvenle büyümesini sağlayan anlamlı bağlantılar kuruyor.",
       "disclaimer": "Örnek ticaret koridorları — Trivoxa'nın hizmet verdiği hatları temsil eder, canlı sevkiyat takibi değildir.",
-      "quote": "Sevkiyat hangi limandan çıkarsa çıksın — Mundra, Kandla, Nhava Sheva — Surat'taki üretim alanında belirlenen aynı standardı taşır. Bu, varış noktasına göre değişmez.",
+      "quote": "Kalite standartları varış noktasına göre değişmez. Her ürün, her sevkiyat, her ortaklık aynı mükemmellik taahhüdünü taşır.",
       "cite": "— Trivoxa Group",
-      "cta": "Küresel varlığı görüntüle"
+      "cta": "Küresel varlığı görüntüle",
+      "corridor1Region": "Avrupa",
+      "corridor1Category": "Tekstil ve Endüstriyel Malzemeler",
+      "corridor2Region": "Orta Doğu",
+      "corridor2Category": "Tarım ve Yapı Malzemeleri",
+      "corridor3Region": "Asya-Pasifik",
+      "corridor3Category": "Tekstil ve Tüketim Ürünleri",
+      "corridor4Region": "Kuzey Amerika",
+      "corridor4Category": "Sağlık ve İlaç",
+      "corridor5Region": "Afrika",
+      "corridor5Category": "Mühendislik ve Endüstriyel Ürünler"
     },
     "industries": {
       "eyebrow": "Sektörler",
@@ -113,7 +118,7 @@
     "businessArms": {
       "arm1Eyebrow": "İş Kolu 01",
       "arm2Eyebrow": "İş Kolu 02",
-      "arm1Thesis": "Uluslararası alıcıları Hindistan genelinde özenle seçilmiş üretim ortaklarıyla buluşturuyor; güvenilir tedarik ve ihracat çözümleriyle kaliteli ürünler sunuyoruz.",
+      "arm1Thesis": "Dünya genelindeki işletmeleri güvenilir üretim ortaklarıyla buluşturuyor; güvenilir tedarik ve ihracat çözümleriyle birçok sektörde kaliteli ürünler sunuyoruz.",
       "arm2Thesis": "Yazılım, yapay zekâ, marka ve dijital pazarlama sunan özel bir teknoloji hizmetleri kolu — işletmelerin kurmasına, büyümesine ve modernleşmesine yardımcı olur.",
       "arm1Cta": "Tedarik yetkinliklerini görün",
       "arm2Cta": "Hizmet yetkinliklerini görün",

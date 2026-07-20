@@ -33,16 +33,11 @@
   },
   "home": {
     "hero": {
-      "eyebrow": "Indyjski partner w zakresie zakupów i zarządzania eksportem po stronie kupującego",
-      "title": "Kupuj zweryfikowane indyjskie produkty. Eksportuj z pewnością.",
-      "subtitle": "Trivoxa łączy międzynarodowych nabywców ze zweryfikowanymi indyjskimi producentami w branżach tekstylnej, spożywczej, materiałów budowlanych, ochrony zdrowia i towarów przemysłowych — z obsługą od zakupu po wysyłkę.",
-      "ctaQuote": "Poproś o ofertę zakupową",
-      "ctaProfile": "Pobierz profil eksportowy",
-      "ribbonLocation": "Surat, Indie",
-      "ribbonScope": "Globalne zakupy i zarządzanie eksportem",
-      "ribbonReply": "Odpowiedź w 1 dzień roboczy",
-      "ribbonSamples": "Próbki dostępne",
-      "ribbonTerms": "Obsługa FOB / CIF / CFR"
+      "eyebrow": "Międzynarodowa grupa handlowo-biznesowa",
+      "title": "Budujemy przyszłość globalnego handlu.",
+      "subtitle": "Trivoxa Group to międzynarodowa grupa biznesowa dostarczająca sprawdzone produkty, strategiczne rozwiązania zakupowe oraz usługi profesjonalne na rynkach globalnych. Łączymy firmy z możliwościami, upraszczamy handel międzynarodowy i budujemy partnerstwa nastawione na długoterminowy sukces.",
+      "ctaQuote": "Poproś o wycenę",
+      "ctaProfile": "Poznaj nasze obszary działalności"
     },
     "about": {
       "eyebrow": "Kim jesteśmy",
@@ -78,16 +73,16 @@
       "ctaContact": "Skontaktuj się"
     },
     "trust": {
-      "eyebrow": "Dlaczego kupujący ufają Trivoxa",
-      "heading": "Partner zakupowy, a nie zwykły katalog dostawców.",
-      "p1Title": "Zweryfikowana sieć dostawców",
-      "p1Body": "Każdy partner produkcyjny jest sprawdzany przed nawiązaniem współpracy — pod kątem możliwości, zgodności i dotychczasowych realizacji — dzięki czemu kupujący współpracują wyłącznie ze wstępnie zakwalifikowanymi dostawcami z Indii.",
-      "p2Title": "Udokumentowana kontrola jakości",
-      "p2Body": "Punkty kontrolne od hali produkcyjnej po załadunek kontenera. Raporty jakości i zdjęcia opakowań są dostępne na życzenie dla każdej wysyłki.",
-      "p3Title": "Realizacja gotowa do wysyłki",
-      "p3Body": "Prowadzimy dokumentację eksportową, reguły Incoterms (FOB / CIF / CFR) oraz logistykę portową w Mundrze, Kandli i Nhava Sheva — zarówno dla importerów początkujących, jak i stałych.",
-      "p4Title": "Przejrzysta tożsamość prawna",
-      "p4Body": "Siedziba, numery IEC, GST i CIN są publikowane jawnie. Żadnych ukrytych podmiotów ani danych prawnych udostępnianych dopiero na zapytanie.",
+      "eyebrow": "Dlaczego firmy wybierają Trivoxa",
+      "heading": "Zbudowani na doświadczeniu. Skupieni na partnerstwie.",
+      "p1Title": "Fundament produkcyjny",
+      "p1Body": "Zbudowani na doświadczeniu produkcyjnym naszej spółki macierzystej, Shiveshwar Textiles — dziesięcioleciach wiedzy produkcyjnej, które kształtują każdą decyzję zakupową i każdy standard jakości, którego przestrzegamy.",
+      "p2Title": "Działania nastawione na jakość",
+      "p2Body": "Każdy projekt jest prowadzony w oparciu o uporządkowaną koordynację jakości — od specyfikacji produkcyjnych po ostateczną dostawę — z dokumentacją i przejrzystością na każdym etapie.",
+      "p3Title": "Ekspertyza w handlu międzynarodowym",
+      "p3Body": "Od dokumentacji eksportowej i koordynacji logistycznej po zgodność z przepisami międzynarodowymi — zarządzamy złożonością handlu transgranicznego, aby nasi partnerzy mogli skupić się na swoim biznesie.",
+      "p4Title": "Długoterminowe partnerstwa",
+      "p4Body": "Wierzymy, że trwały sukces buduje się poprzez trwałe relacje, a nie jednorazowe transakcje. Nasze podejście ma tworzyć wartość, która narasta przez lata, a nie tylko przy pojedynczych dostawach.",
       "cta": "Poznaj możliwości eksportowe"
     },
     "globalPresence": {
@@ -95,9 +90,19 @@
       "heading": "Łączymy możliwości ponad granicami",
       "lead": "Handel międzynarodowy opiera się na zaufaniu, współpracy i trwałych relacjach. Dzięki rosnącej sieci dostawców, partnerów i klientów Trivoxa Group buduje wartościowe połączenia, które pozwalają organizacjom pewnie rozwijać się na rynkach międzynarodowych.",
       "disclaimer": "Poglądowe korytarze handlowe — reprezentują trasy obsługiwane przez Trivoxa, nie są śledzeniem przesyłek w czasie rzeczywistym.",
-      "quote": "Z któregokolwiek portu wyrusza przesyłka — Mundra, Kandla, Nhava Sheva — niesie ten sam standard ustalony na hali produkcyjnej w Suracie. Cel podróży tego nie zmienia.",
+      "quote": "Standardy jakości nie zmieniają się wraz z miejscem docelowym. Każdy produkt, każda dostawa, każde partnerstwo niesie to samo zaangażowanie w doskonałość.",
       "cite": "— Trivoxa Group",
-      "cta": "Zobacz obecność globalną"
+      "cta": "Zobacz obecność globalną",
+      "corridor1Region": "Europa",
+      "corridor1Category": "Tekstylia i materiały przemysłowe",
+      "corridor2Region": "Bliski Wschód",
+      "corridor2Category": "Rolnictwo i materiały budowlane",
+      "corridor3Region": "Azja i Pacyfik",
+      "corridor3Category": "Tekstylia i dobra konsumpcyjne",
+      "corridor4Region": "Ameryka Północna",
+      "corridor4Category": "Ochrona zdrowia i farmacja",
+      "corridor5Region": "Afryka",
+      "corridor5Category": "Inżynieria i produkty przemysłowe"
     },
     "industries": {
       "eyebrow": "Branże",
@@ -113,7 +118,7 @@
     "businessArms": {
       "arm1Eyebrow": "Obszar działalności 01",
       "arm2Eyebrow": "Obszar działalności 02",
-      "arm1Thesis": "Łączymy międzynarodowych nabywców ze starannie wybranymi partnerami produkcyjnymi w całych Indiach, dostarczając produkty wysokiej jakości dzięki niezawodnym rozwiązaniom zakupowym i eksportowym.",
+      "arm1Thesis": "Łączymy firmy na całym świecie ze sprawdzonymi partnerami produkcyjnymi, dostarczając produkty wysokiej jakości dzięki niezawodnym rozwiązaniom zakupowym i eksportowym w wielu branżach.",
       "arm2Thesis": "Wydzielony pion usług technologicznych: oprogramowanie, SI, branding i marketing cyfrowy — wspiera firmy w budowaniu, wzroście i modernizacji.",
       "arm1Cta": "Zobacz możliwości zakupowe",
       "arm2Cta": "Zobacz zakres usług",

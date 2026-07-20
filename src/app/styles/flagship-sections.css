@@ -379,6 +379,21 @@
   margin: 0 auto var(--space-xl);
   color: var(--color-ink);
 }
+.certifications-strip__group {
+  margin-bottom: var(--space-2xl);
+}
+.certifications-strip__group:last-of-type {
+  margin-bottom: 0;
+}
+.certifications-strip__group-title {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-ink-2);
+  margin-bottom: var(--space-lg);
+}
 .certifications-strip__row {
   display: flex;
   flex-wrap: wrap;
@@ -692,9 +707,23 @@
   font-size: 0.9rem;
   color: var(--color-ink-2);
 }
-.magazine-more {
-  text-align: right;
-  margin-top: var(--space-lg);
+/* Pending state: article bodies don't exist yet, so cards render as
+   non-interactive previews (no href, no hover affordance) with a small
+   "Coming soon" marker instead of linking anywhere. */
+.magazine-feature--pending,
+.magazine-secondary__item--pending {
+  cursor: default;
+}
+.magazine-feature__pending,
+.magazine-secondary__pending {
+  display: inline-block;
+  margin-top: var(--space-2xs);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-ink-2);
+  opacity: 0.65;
 }
 @media (max-width: 900px) {
   .magazine-feature,
