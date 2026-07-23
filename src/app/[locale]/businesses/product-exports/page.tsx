@@ -1,18 +1,27 @@
 import type { Metadata } from "next";
 import "@/app/styles/patterns.css";
 import "@/app/styles/product-exports-page.css";
+import "@/app/styles/product-grid.css";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, CtaBand } from "@/components/trivoxa/ui";
 import HorizontalTimeline from "@/components/patterns/HorizontalTimeline";
 import NumberedList from "@/components/patterns/NumberedList";
 import IndustryManifest from "@/components/industries/IndustryManifest";
+import ProductGrid from "@/components/products/ProductGrid";
 import { exportCategories } from "@/lib/data/product-categories";
+import { industries } from "@/lib/data/industries";
 
 // Furniture & Interiors and Jewellery & Precious Products are withheld from
 // this listing (and site navigation) until real product data exists — see
 // the matching note in Header.tsx. Both routes still exist directly.
 const WITHHELD_SLUGS = new Set(["furniture-interiors", "jewellery-precious-products"]);
 const liveExportCategories = exportCategories.filter((c) => !WITHHELD_SLUGS.has(c.slug));
+
+/** Every published product across every industry — feeds the searchable,
+ * filterable grid (spec §4). */
+const allProducts = industries.flatMap((i) =>
+  i.categories.map((p) => ({ ...p, industry: i.name, industrySlug: i.slug }))
+);
 
 export const metadata: Metadata = {
   title: "Product Exports | Trivoxa Group",
@@ -65,9 +74,17 @@ export default function ProductExportsPage() {
             name: c.name,
             description: c.description,
             href: `/businesses/product-exports/${c.slug}/`,
-            image: c.image,
           }))}
         />
+      </Section>
+
+      {/* 3b. FULL PRODUCT PORTFOLIO — searchable, filterable, RFQ-ready */}
+      <Section
+        eyebrow="Full Product Portfolio"
+        title="Search Everything We Export."
+        lead="Every published product across all industries — search by name or HS code, filter by industry and incoterm, and add products straight to your RFQ."
+      >
+        <ProductGrid products={allProducts} showIndustryFilter />
       </Section>
 
       {/* 4. GLOBAL SOURCING PROCESS — horizontal timeline */}
