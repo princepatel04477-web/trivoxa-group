@@ -3,6 +3,8 @@ import "@/app/styles/global-presence-page.css";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, Checklist, CtaBand } from "@/components/trivoxa/ui";
 import GlobalPresenceMap from "@/components/presence/GlobalPresenceMap";
+import PresenceStats from "@/components/presence/PresenceStats";
+import LazyCrane from "@/components/LazyCrane";
 
 export const metadata: Metadata = {
   title: "Global Presence | Trivoxa Group",
@@ -21,11 +23,35 @@ const regions = [
 
 // Export ports — Layer 2 (commerce/logistics data, honestly placed on the
 // logistics page rather than the homepage). UN/LOCODEs are the standard
-// public codes for these ports, not invented.
+// public codes for these ports, not invented; the descriptors are public
+// knowledge about each port's role in Indian trade.
 const exportPorts = [
-  { name: "Mundra", code: "INMUN" },
-  { name: "Kandla", code: "INKLA" },
-  { name: "Nhava Sheva (JNPT)", code: "INNSA" },
+  {
+    name: "Mundra",
+    code: "INMUN",
+    role: "India's largest commercial port by cargo volume",
+    detail: "All-weather, deep-draft port on the Gulf of Kutch — the workhorse for containerized and bulk export cargo out of Gujarat.",
+  },
+  {
+    name: "Kandla",
+    code: "INKLA",
+    role: "Major gateway for dry and liquid bulk",
+    detail: "Deendayal Port anchors agri-commodity and bulk exports — a natural fit for spices, grains, and castor shipments.",
+  },
+  {
+    name: "Nhava Sheva (JNPT)",
+    code: "INNSA",
+    role: "India's largest container port",
+    detail: "Handles roughly half of India's containerized trade — the default corridor for European and American consignments.",
+  },
+];
+
+/** Honest presence numbers derived from what the site actually publishes. */
+const presenceStats = [
+  { value: 6, label: "Regions served" },
+  { value: 8, label: "Industries covered" },
+  { value: 3, label: "Export ports" },
+  { value: 24, suffix: "h", label: "Response window (IST)" },
 ];
 
 const ecosystem = [
@@ -94,12 +120,24 @@ export default function GlobalPresencePage() {
         </div>
       </Section>
 
+      {/* Presence in numbers — animated counters (spec §3/§4) */}
+      <Section eyebrow="Presence in Numbers" title="The Network, Measured Honestly.">
+        <PresenceStats stats={presenceStats} />
+      </Section>
+
       <Section eyebrow="Export Ports" title="Where Shipments Leave From." lead="Every shipment is coordinated through established Indian export ports, regardless of destination.">
-        <div className="presence-ports">
+        <div className="presence-crane" aria-hidden="true">
+          <LazyCrane variant="subtle" />
+        </div>
+        <div className="presence-ports presence-ports--cards">
           {exportPorts.map((p) => (
-            <div className="presence-port" key={p.code}>
-              <span className="presence-port__name">{p.name}</span>
-              <span className="presence-port__code">{p.code}</span>
+            <div className="presence-port presence-port--card" key={p.code}>
+              <div className="presence-port__head">
+                <span className="presence-port__name">{p.name}</span>
+                <span className="presence-port__code">{p.code}</span>
+              </div>
+              <span className="presence-port__role">{p.role}</span>
+              <p className="presence-port__detail">{p.detail}</p>
             </div>
           ))}
         </div>
