@@ -670,28 +670,59 @@ a, button {
 }
 
 /* ---------- Global film/paper grain (Task 1) ---------- */
-/* One static layer mounted once (GrainOverlay, last child of <body>). soft-light
-   makes a single grayscale-noise tile read correctly over the navy ground and
-   any lighter surface. STATIC ONLY — never animate (animated grain repaints
-   every frame and breaks the 60fps floor). Interactive chrome (header, mobile
-   nav, custom cursor, modals) is raised above z-index 9999 so grain never dims
-   what the user reads or clicks. pointer-events:none keeps every click through. */
+/* One layer mounted once (GrainOverlay, last child of <body>). soft-light makes
+   a single grayscale-noise tile read correctly over the navy ground and any
+   lighter surface. It now ANIMATES as a subtle film shimmer — but cheaply: the
+   noise tile repeats, so we only jitter `background-position` in discrete steps
+   (~11/sec). No per-pixel canvas, no animated feTurbulence, no re-generated
+   noise — just the same tile shown at a shifting offset, so the compositor cost
+   stays low enough to hold the 60fps floor alongside the home WebGL field.
+   Reduced-motion and small screens fall back below. Interactive chrome (header,
+   mobile nav, cursor, modals) is raised above z-index 9999 so grain never dims
+   what the user reads/clicks; pointer-events:none keeps every click through. */
 .grain-overlay {
   position: fixed;
   inset: 0;
   z-index: 9999;
   pointer-events: none;
-  /* Lifted from 0.055 so the film grain still reads over the brighter Remotion
-     background films (which sit at z-index -1). Still static — never animated. */
+  /* 0.09 keeps the grain reading over the brighter Remotion films (z-index -1)
+     while staying subtle — text stays crisp. */
   opacity: 0.09;
   mix-blend-mode: soft-light;
   background-repeat: repeat;
   background-size: 160px 160px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain-shift 0.7s steps(1) infinite;
+  will-change: background-position;
 }
-/* Grain is a decorative texture, not information — hide it when the user has
-   asked for reduced motion/effects is unnecessary (it's static), but respect
-   forced-colors by dropping it so it can't wash out high-contrast modes. */
+/* Discrete offsets within one repeating 160px tile — every stop shows full,
+   gap-free noise, so the pattern reads as a flickering film grain. */
+@keyframes grain-shift {
+  0%   { background-position: 0 0; }
+  12%  { background-position: -13px 9px; }
+  24%  { background-position: 11px -14px; }
+  36%  { background-position: -7px -11px; }
+  48%  { background-position: 15px 6px; }
+  60%  { background-position: -12px 13px; }
+  72%  { background-position: 8px -9px; }
+  84%  { background-position: -15px -5px; }
+  100% { background-position: 6px 12px; }
+}
+/* Decorative texture, not information: hold it static when the user asks for
+   reduced motion, and drop it entirely under forced-colors so it can't wash out
+   high-contrast modes. */
+@media (prefers-reduced-motion: reduce) {
+  .grain-overlay {
+    animation: none;
+  }
+}
+/* Mobile GPUs pay more for the full-viewport soft-light re-blend — slow the
+   flicker so it stays cheap. */
+@media (max-width: 767px) {
+  .grain-overlay {
+    animation-duration: 1.4s;
+  }
+}
 @media (forced-colors: active) {
   .grain-overlay {
     display: none;
