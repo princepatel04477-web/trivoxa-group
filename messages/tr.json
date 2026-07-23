@@ -9,7 +9,12 @@
     "careers": "Kariyer",
     "contactUs": "Bize Ulaşın",
     "menu": "Menü",
-    "close": "Kapat"
+    "close": "Kapat",
+    "home": "Ana Sayfa",
+    "theGroup": "Grup",
+    "businesses": "İş Alanları",
+    "globalPresence": "Küresel Varlık",
+    "requestQuote": "Teklif İsteyin"
   },
   "megaMenu": {
     "productExports": "Ürün İhracatı",
@@ -25,7 +30,19 @@
     "trivoxaDigital": "Trivoxa Digital",
     "industries": "Sektörler",
     "ourStory": "Hikâyemiz",
-    "contact": "İletişim"
+    "contact": "İletişim",
+    "serviceExports": "Hizmet İhracatı",
+    "story": "Hikayemiz",
+    "leadership": "Liderlik",
+    "foundation": "Shiveshwar Vakfı",
+    "vision": "Vizyon",
+    "commitments": "Taahhütler",
+    "technology": "Teknoloji",
+    "ai": "Yapay Zeka",
+    "software": "Yazılım",
+    "designBranding": "Tasarım ve Marka",
+    "digitalMarketing": "Dijital Pazarlama",
+    "businessSupport": "İş Desteği"
   },
   "language": {
     "label": "Dil",

@@ -138,7 +138,7 @@ export default function GroupPage() {
       </div>
 
       {/* 3. OUR FOUNDATION */}
-      <section className="tvx-section foundation-section">
+      <section className="tvx-section foundation-section" id="foundation">
         <div className="container">
           <Eyebrow>Our Foundation</Eyebrow>
           <h2>Built on Manufacturing Excellence. Inspired by Global Opportunity.</h2>
@@ -187,7 +187,7 @@ export default function GroupPage() {
       />
 
       {/* 5. OUR VISION */}
-      <section className="group-vision">
+      <section className="group-vision" id="vision">
         <SectionGrain className="group-vision__grain" />
         <div className="container group-vision__inner">
           <Eyebrow>Our Vision</Eyebrow>
@@ -209,17 +209,19 @@ export default function GroupPage() {
       </Section>
 
       {/* 7. LEADERSHIP — founders wall */}
-      {founders.map((f, i) => (
-        <LeadershipPanel
-          key={f.name}
-          eyebrow={i === 0 ? "Leadership" : undefined}
-          name={f.name}
-          role={f.role}
-          email={f.email}
-          align={f.align}
-          message={f.message}
-        />
-      ))}
+      <div id="leadership">
+        {founders.map((f, i) => (
+          <LeadershipPanel
+            key={f.name}
+            eyebrow={i === 0 ? "Leadership" : undefined}
+            name={f.name}
+            role={f.role}
+            email={f.email}
+            align={f.align}
+            message={f.message}
+          />
+        ))}
+      </div>
 
       {/* 8. BUSINESS ECOSYSTEM */}
       <Section eyebrow="Our Ecosystem" title="One Connected Network. Endless Opportunities." lead="Trivoxa Group brings together manufacturing expertise, strategic sourcing, technology, logistics, and professional services within one integrated business ecosystem.">
@@ -255,7 +257,7 @@ export default function GroupPage() {
       </section>
 
       {/* 10. OUR COMMITMENTS */}
-      <Section eyebrow="Our Commitments" title="Our Commitment to Every Relationship." lead="Every partnership begins with trust and is strengthened through consistent action. We are committed to conducting business responsibly, delivering reliable solutions, and continuously improving the way we serve our partners around the world.">
+      <Section id="commitments" eyebrow="Our Commitments" title="Our Commitment to Every Relationship." lead="Every partnership begins with trust and is strengthened through consistent action. We are committed to conducting business responsibly, delivering reliable solutions, and continuously improving the way we serve our partners around the world.">
         <table className="commitments-table">
           <thead>
             <tr>

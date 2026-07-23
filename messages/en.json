@@ -9,7 +9,12 @@
     "careers": "Careers",
     "contactUs": "Contact Us",
     "menu": "Menu",
-    "close": "Close"
+    "close": "Close",
+    "home": "Home",
+    "theGroup": "The Group",
+    "businesses": "Businesses",
+    "globalPresence": "Global Presence",
+    "requestQuote": "Request a Quote"
   },
   "megaMenu": {
     "productExports": "Product Exports",
@@ -25,7 +30,19 @@
     "trivoxaDigital": "Trivoxa Digital",
     "industries": "Industries",
     "ourStory": "Our Story",
-    "contact": "Contact"
+    "contact": "Contact",
+    "serviceExports": "Service Exports",
+    "story": "Our Story",
+    "leadership": "Leadership",
+    "foundation": "Shiveshwar Foundation",
+    "vision": "Vision",
+    "commitments": "Commitments",
+    "technology": "Technology",
+    "ai": "AI",
+    "software": "Software",
+    "designBranding": "Design & Branding",
+    "digitalMarketing": "Digital Marketing",
+    "businessSupport": "Business Support"
   },
   "language": {
     "label": "Language",

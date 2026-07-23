@@ -12,6 +12,7 @@ import MobileNav from "@/components/MobileNav";
 import ContactModal from "@/components/ContactModal";
 import SiteFooter from "@/components/SiteFooter";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import MobileStickyCta from "@/components/MobileStickyCta";
 
 /**
  * Shell for every non-home route: fixed header, mobile nav, contact modal,
@@ -29,6 +30,7 @@ export default function TrivoxaShell({ children }: { children: ReactNode }) {
       <main>{children}</main>
       <SiteFooter />
       <WhatsAppButton />
+      <MobileStickyCta />
     </div>
   );
 }

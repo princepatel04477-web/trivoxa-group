@@ -9,7 +9,12 @@
     "careers": "करियर",
     "contactUs": "संपर्क करें",
     "menu": "मेनू",
-    "close": "बंद करें"
+    "close": "बंद करें",
+    "home": "होम",
+    "theGroup": "समूह",
+    "businesses": "व्यवसाय",
+    "globalPresence": "वैश्विक उपस्थिति",
+    "requestQuote": "कोटेशन का अनुरोध करें"
   },
   "megaMenu": {
     "productExports": "उत्पाद निर्यात",
@@ -25,7 +30,19 @@
     "trivoxaDigital": "Trivoxa Digital",
     "industries": "उद्योग",
     "ourStory": "हमारी कहानी",
-    "contact": "संपर्क"
+    "contact": "संपर्क",
+    "serviceExports": "सेवा निर्यात",
+    "story": "हमारी कहानी",
+    "leadership": "नेतृत्व",
+    "foundation": "शिवेश्वर फाउंडेशन",
+    "vision": "दृष्टि",
+    "commitments": "प्रतिबद्धताएँ",
+    "technology": "प्रौद्योगिकी",
+    "ai": "एआई",
+    "software": "सॉफ़्टवेयर",
+    "designBranding": "डिज़ाइन और ब्रांडिंग",
+    "digitalMarketing": "डिजिटल मार्केटिंग",
+    "businessSupport": "व्यवसाय सहायता"
   },
   "language": {
     "label": "भाषा",

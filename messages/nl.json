@@ -9,7 +9,12 @@
     "careers": "Werken bij",
     "contactUs": "Neem contact op",
     "menu": "Menu",
-    "close": "Sluiten"
+    "close": "Sluiten",
+    "home": "Home",
+    "theGroup": "De Groep",
+    "businesses": "Activiteiten",
+    "globalPresence": "Wereldwijde aanwezigheid",
+    "requestQuote": "Offerte aanvragen"
   },
   "megaMenu": {
     "productExports": "Productexport",
@@ -25,7 +30,19 @@
     "trivoxaDigital": "Trivoxa Digital",
     "industries": "Sectoren",
     "ourStory": "Ons verhaal",
-    "contact": "Contact"
+    "contact": "Contact",
+    "serviceExports": "Dienstenexport",
+    "story": "Ons verhaal",
+    "leadership": "Leiderschap",
+    "foundation": "Shiveshwar-stichting",
+    "vision": "Visie",
+    "commitments": "Toezeggingen",
+    "technology": "Technologie",
+    "ai": "AI",
+    "software": "Software",
+    "designBranding": "Design & branding",
+    "digitalMarketing": "Digitale marketing",
+    "businessSupport": "Zakelijke ondersteuning"
   },
   "language": {
     "label": "Taal",

@@ -9,7 +9,12 @@
     "careers": "الوظائف",
     "contactUs": "اتصل بنا",
     "menu": "القائمة",
-    "close": "إغلاق"
+    "close": "إغلاق",
+    "home": "الرئيسية",
+    "theGroup": "المجموعة",
+    "businesses": "الأعمال",
+    "globalPresence": "الحضور العالمي",
+    "requestQuote": "اطلب عرض سعر"
   },
   "megaMenu": {
     "productExports": "صادرات المنتجات",
@@ -25,7 +30,19 @@
     "trivoxaDigital": "Trivoxa Digital",
     "industries": "القطاعات",
     "ourStory": "قصتنا",
-    "contact": "اتصل بنا"
+    "contact": "اتصل بنا",
+    "serviceExports": "تصدير الخدمات",
+    "story": "قصتنا",
+    "leadership": "القيادة",
+    "foundation": "مؤسسة شيفيشوار",
+    "vision": "الرؤية",
+    "commitments": "التزاماتنا",
+    "technology": "التقنية",
+    "ai": "الذكاء الاصطناعي",
+    "software": "البرمجيات",
+    "designBranding": "التصميم والعلامة التجارية",
+    "digitalMarketing": "التسويق الرقمي",
+    "businessSupport": "دعم الأعمال"
   },
   "language": {
     "label": "اللغة",

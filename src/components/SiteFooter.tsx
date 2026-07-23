@@ -3,17 +3,45 @@
 import { useState, type FormEvent } from "react";
 import { Link } from "@/i18n/navigation";
 
-const sitemapPrimary = [
-  { label: "Group", href: "/group/" },
-  { label: "Exports", href: "/businesses/product-exports/" },
-  { label: "Industries", href: "/industries/" },
-  { label: "Reach", href: "/global-presence/" },
+const DIGITAL_URL = "https://digital.trivoxagroup.com";
+const LINKEDIN_URL = process.env.NEXT_PUBLIC_LINKEDIN_URL;
+
+/** Rich footer (spec §1 + §3): full nav mirror — the long industry and
+ * service lists live HERE, not in the top nav — plus newsletter, locations,
+ * legal, and the parent-company credit. */
+const groupColumn = [
+  { label: "Our Story", href: "/group/#our-story" },
+  { label: "Leadership", href: "/group/#leadership" },
+  { label: "Shiveshwar Foundation", href: "/group/#foundation" },
+  { label: "Vision", href: "/group/#vision" },
+  { label: "Commitments", href: "/group/#commitments" },
+  { label: "Compliance", href: "/compliance/" },
+  { label: "Careers", href: "/careers/" },
 ];
 
-const sitemapSecondary = [
+const productColumn = [
+  { label: "Textile & Apparel", href: "/businesses/product-exports/textile-apparel/" },
+  { label: "Healthcare & Pharmaceuticals", href: "/businesses/product-exports/healthcare-pharmaceuticals/" },
+  { label: "Building Materials", href: "/businesses/product-exports/building-materials/" },
+  { label: "Agriculture & Food", href: "/businesses/product-exports/agriculture-food/" },
+  { label: "Engineering & Industrial", href: "/businesses/product-exports/engineering-industrial/" },
+  { label: "All Product Exports", href: "/businesses/product-exports/" },
+];
+
+const serviceColumn = [
+  { label: "Technology", href: "/businesses/service-exports/technology/" },
+  { label: "AI", href: "/businesses/service-exports/ai/" },
+  { label: "Software", href: "/businesses/service-exports/software/" },
+  { label: "Design & Branding", href: "/businesses/service-exports/design/" },
+  { label: "Digital Marketing", href: "/businesses/service-exports/marketing/" },
+  { label: "Business Support", href: "/businesses/service-exports/business-support/" },
+];
+
+const exploreColumn = [
+  { label: "Industries", href: "/industries/" },
+  { label: "Global Presence", href: "/global-presence/" },
   { label: "Insights", href: "/insights/" },
-  { label: "Careers", href: "/careers/" },
-  { label: "RFQ", href: "/rfq/" },
+  { label: "Request a Quote", href: "/rfq/" },
   { label: "Contact", href: "/contact/" },
 ];
 
@@ -24,6 +52,21 @@ const legalLinks = [
   { label: "Anti-corruption Policy", href: "/anti-corruption-policy/" },
   { label: "Cookie Preferences", href: "/cookie-preferences/" },
 ];
+
+function FooterColumn({ title, links }: { title: string; links: { label: string; href: string }[] }) {
+  return (
+    <div className="col">
+      <div className="title">{title}</div>
+      <ul>
+        {links.map((link) => (
+          <li key={link.label}>
+            <Link href={link.href}>{link.label}</Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 export default function SiteFooter() {
   const [email, setEmail] = useState("");
@@ -51,35 +94,42 @@ export default function SiteFooter() {
     <section className="footer">
       <div className="container">
         <div className="footer-content d-flex">
-          {/* Brand / legal column */}
+          {/* Brand column */}
           <div className="col footer-brand">
             <div className="logo">
               <img src="/images/trivoxa-logo.png" alt="Trivoxa Group" />
             </div>
             <p className="tagline">Building the Future of Global Commerce — One Partnership at a Time.</p>
+
+            <div className="footer-locations">
+              <div className="footer-locations__hq">
+                <span className="footer-locations__label">Headquarters</span>
+                <p>Surat, Gujarat, India</p>
+              </div>
+              <div className="footer-locations__global">
+                <span className="footer-locations__label">Serving buyers across</span>
+                <p>Middle East · Europe · Africa · North America · Southeast Asia</p>
+              </div>
+            </div>
+
+            <div className="footer-social">
+              {LINKEDIN_URL && (
+                <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer" aria-label="Trivoxa Group on LinkedIn">
+                  <img src="/images/icons/linkedin.svg" alt="" width={20} height={20} />
+                  <span>LinkedIn</span>
+                </a>
+              )}
+              <a href={DIGITAL_URL} target="_blank" rel="noopener noreferrer" className="footer-social__digital">
+                digital.trivoxagroup.com ↗
+              </a>
+            </div>
           </div>
 
-          {/* Sitemap columns */}
-          <div className="col">
-            <div className="title">Sitemap</div>
-            <ul>
-              {sitemapPrimary.map((link) => (
-                <li key={link.label}>
-                  <Link href={link.href}>{link.label}</Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="col">
-            <div className="title">&nbsp;</div>
-            <ul>
-              {sitemapSecondary.map((link) => (
-                <li key={link.label}>
-                  <Link href={link.href}>{link.label}</Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* Nav mirror */}
+          <FooterColumn title="The Group" links={groupColumn} />
+          <FooterColumn title="Product Exports" links={productColumn} />
+          <FooterColumn title="Service Exports" links={serviceColumn} />
+          <FooterColumn title="Explore" links={exploreColumn} />
 
           {/* Newsletter column */}
           <div className="col footer-newsletter">
@@ -103,6 +153,7 @@ export default function SiteFooter() {
               </form>
             )}
             {error && <p className="footer-newsletter__error" role="alert">{error}</p>}
+            <p className="footer-response-note">Responds within 24 business hours (IST)</p>
           </div>
         </div>
 
@@ -114,6 +165,9 @@ export default function SiteFooter() {
               {link.label}
             </Link>
           ))}
+          <span className="footer-parent-credit">
+            A venture built on the manufacturing heritage of Shiveshwar Textiles
+          </span>
         </div>
       </div>
     </section>

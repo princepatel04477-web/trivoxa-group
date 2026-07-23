@@ -9,7 +9,12 @@
     "careers": "Карьера",
     "contactUs": "Связаться с нами",
     "menu": "Меню",
-    "close": "Закрыть"
+    "close": "Закрыть",
+    "home": "Главная",
+    "theGroup": "Группа",
+    "businesses": "Направления",
+    "globalPresence": "Глобальное присутствие",
+    "requestQuote": "Запросить предложение"
   },
   "megaMenu": {
     "productExports": "Экспорт продукции",
@@ -25,7 +30,19 @@
     "trivoxaDigital": "Trivoxa Digital",
     "industries": "Отрасли",
     "ourStory": "Наша история",
-    "contact": "Контакты"
+    "contact": "Контакты",
+    "serviceExports": "Экспорт услуг",
+    "story": "Наша история",
+    "leadership": "Руководство",
+    "foundation": "Фонд Shiveshwar",
+    "vision": "Видение",
+    "commitments": "Обязательства",
+    "technology": "Технологии",
+    "ai": "ИИ",
+    "software": "Программное обеспечение",
+    "designBranding": "Дизайн и брендинг",
+    "digitalMarketing": "Цифровой маркетинг",
+    "businessSupport": "Бизнес-поддержка"
   },
   "language": {
     "label": "Язык",

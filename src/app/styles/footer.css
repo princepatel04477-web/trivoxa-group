@@ -50,17 +50,84 @@
 }
 
 .footer .footer-brand {
-  width: 32%;
-  padding-right: 40px;
+  width: 24%;
+  padding-right: 36px;
   border-right: 1px solid color-mix(in srgb, var(--text) 8%, transparent);
 }
 
 .footer .col:not(.footer-brand):not(.footer-newsletter) {
-  width: 15%;
+  width: 14%;
 }
 
 .footer .footer-newsletter {
-  width: 26%;
+  width: 18%;
+}
+
+/* Locations block (brand column) */
+.footer-locations {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.footer-locations__label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 35%, transparent);
+  margin-bottom: 4px;
+}
+
+.footer-locations p {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--text) 60%, transparent);
+}
+
+/* Social row (brand column) */
+.footer-social {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-social a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  color: color-mix(in srgb, var(--text) 55%, transparent);
+  transition: color 0.3s ease;
+  width: fit-content;
+}
+
+.footer-social a:hover {
+  color: var(--color-accent, var(--gold));
+}
+
+.footer-social__digital {
+  font-family: var(--font-mono);
+  font-size: 13px !important;
+  letter-spacing: 0.04em;
+  color: var(--color-accent, var(--gold)) !important;
+  opacity: 0.85;
+}
+
+.footer-response-note {
+  margin-top: 18px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.05em;
+  color: color-mix(in srgb, var(--gold) 70%, transparent);
+}
+
+.footer-parent-credit {
+  margin-left: auto;
+  font-style: italic;
+  opacity: 0.8;
 }
 
 .footer .footer-content .logo {
@@ -249,7 +316,25 @@
     padding-top: 80px;
   }
   .footer .footer-brand {
-    width: 30%;
+    width: 100%;
+    border-right: none;
+    padding-right: 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--text) 8%, transparent);
+    padding-bottom: 32px;
+  }
+  .footer .col:not(.footer-brand):not(.footer-newsletter) {
+    width: 20%;
+  }
+  .footer .footer-newsletter {
+    width: 24%;
+  }
+  .footer-locations {
+    flex-direction: row;
+    gap: 48px;
+  }
+  .footer-parent-credit {
+    margin-left: 0;
+    width: 100%;
   }
 }
 

@@ -117,6 +117,126 @@ section {
   width: 100%;
 }
 
+/* ---------- Crane animation component (spec §2) ---------- */
+.crane {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.crane__stroke {
+  stroke: var(--gold, #c9a24b);
+  stroke-width: 2;
+  stroke-linecap: round;
+  fill: none;
+}
+
+.crane__stroke--faint {
+  opacity: 0.35;
+  stroke-width: 1.2;
+}
+
+.crane__container {
+  fill: color-mix(in srgb, var(--gold) 8%, transparent);
+}
+
+.crane--subtle {
+  opacity: 0.22;
+  pointer-events: none;
+}
+
+.crane--hero {
+  opacity: 0.65;
+}
+
+.crane--loader {
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+.crane--success {
+  max-width: 340px;
+  margin: 0 auto;
+}
+
+/* ---------- Site-wide sticky mobile CTA (spec §1) ---------- */
+.mobile-sticky-cta {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mobile-sticky-cta {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 9998; /* under the nav overlay + grain, above content */
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+    background: linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--bg) 92%, transparent) 40%);
+    pointer-events: none;
+  }
+  .mobile-sticky-cta a {
+    pointer-events: all;
+    display: block;
+    text-align: center;
+    padding: 14px 20px;
+    border-radius: 40px;
+    border: 1px solid color-mix(in srgb, var(--gold) 55%, transparent);
+    background: color-mix(in srgb, var(--bg-card, var(--bg)) 88%, var(--gold) 12%);
+    color: var(--gold-bright, var(--gold));
+    font-family: var(--font-lufga);
+    font-weight: 500;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 10px 30px rgba(4, 9, 20, 0.5);
+  }
+  body.nav-active .mobile-sticky-cta {
+    display: none;
+  }
+}
+
+/* ---------- WhatsApp floating action button ---------- */
+.wa-fab {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--bg-card, #101623);
+  border: 1px solid color-mix(in srgb, var(--gold) 35%, transparent);
+  color: var(--gold-bright, var(--gold));
+  box-shadow: 0 10px 30px rgba(4, 9, 20, 0.5);
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.wa-fab:hover {
+  transform: translateY(-2px);
+  border-color: var(--gold);
+}
+
+.wa-fab__dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #35c75a;
+}
+
+@media (max-width: 767px) {
+  /* Ride above the sticky RFQ bar. */
+  .wa-fab {
+    bottom: calc(78px + env(safe-area-inset-bottom));
+  }
+}
+
 /* Subtle card interaction lift */
 .card-lift {
   transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),

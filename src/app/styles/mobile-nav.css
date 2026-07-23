@@ -2,6 +2,13 @@ body.nav-active {
   overflow: hidden;
 }
 
+/* The overlay and the header share z-index 10000, and the overlay renders
+   later in the DOM — without this the open overlay covers the hamburger and
+   the menu can never be closed with it. */
+body.nav-active .header {
+  z-index: 10001;
+}
+
 body.nav-active .mobile-nav {
   pointer-events: all;
 }
@@ -38,6 +45,8 @@ body.nav-active .hamburger > div:nth-child(2) {
   overflow-y: scroll;
   display: flex;
   padding-top: 50px;
+  /* Clear the sticky bottom CTA so the last items stay reachable. */
+  padding-bottom: 96px;
   flex-direction: column;
 }
 
@@ -52,71 +61,136 @@ body.nav-active .hamburger > div:nth-child(2) {
   transform: translateY(20px);
 }
 
-.mobile-nav .nav__content > ul > li a {
+.mobile-nav .nav__content > ul > li:not(:last-child) {
+  margin-bottom: 25px;
+}
+
+.mobile-nav .nav__content > ul > li > a,
+.mobile-nav .nav__content > ul > li > .mobile-nav__acc-trigger {
   font-size: 30px;
   line-height: 32px;
   letter-spacing: 1px;
   display: block;
   font-family: var(--font-lufga);
   font-weight: 400;
+  color: var(--text);
 }
 
-.mobile-nav .nav__content > ul > li:first-child.opened > a::before {
+/* ---------- Accordion trigger ---------- */
+.mobile-nav__acc-trigger {
+  width: 100%;
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  background: none;
+  border: 0;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+.mobile-nav__caret {
+  font-size: 20px;
+  line-height: 1;
+  color: var(--gold-bright, var(--gold));
+  transition: transform 0.3s ease;
+}
+
+li.opened .mobile-nav__caret {
   transform: scaleY(-1);
 }
 
-.mobile-nav .nav__content > ul > li:first-child > a {
-  width: 100%;
-  cursor: pointer;
-  position: relative;
+/* ---------- Accordion panel ---------- */
+.mobile-nav__acc {
+  display: grid;
+  grid-template-rows: 0fr;
+  overflow: hidden;
+  transition: grid-template-rows 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
-.mobile-nav .nav__content > ul > li:first-child > a::before {
-  content: "";
-  position: absolute;
-  width: 13px;
-  bottom: 0;
-  right: 0;
-  margin: auto 0;
-  height: 8px;
-  top: 0;
-  background-image: url(/images/icons/chevron-down.svg);
-  background-repeat: no-repeat;
-  transition: all 0.3s;
+.mobile-nav__acc.is-open {
+  grid-template-rows: 1fr;
 }
 
-.mobile-nav .nav__content > ul > li:first-child > .sub-menu {
-  display: none;
-  margin-top: 20px;
+.mobile-nav__acc > * {
+  min-height: 0;
 }
 
-.mobile-nav .nav__content > ul > li:first-child > .sub-menu > li:not(:last-child) {
-  margin-bottom: 30px;
+.mobile-nav__acc .sub-menu {
+  padding: 18px 0 6px 15px;
 }
 
-.mobile-nav .nav__content > ul > li:first-child > .sub-menu > li > a {
-  font-size: 22px;
+.mobile-nav__acc .sub-menu > li a {
+  display: block;
+  padding: 8px 0;
+  font-size: 19px;
+  line-height: 26px;
+  font-family: var(--font-lufga);
+  font-weight: 400;
+}
+
+/* ---------- Businesses divisions ---------- */
+.mobile-nav__division {
+  padding: 18px 0 4px 15px;
+}
+
+.mobile-nav__division-title {
+  display: block;
+  font-size: 21px;
   line-height: 28px;
-  margin-bottom: 10px;
   letter-spacing: 1px;
-  padding-bottom: 5px;
+  margin-bottom: 6px;
   font-family: var(--font-lufga);
   font-weight: 600;
-  width: fit-content;
-  padding-left: 15px;
+  color: var(--gold-bright, var(--gold));
 }
 
-.mobile-nav .nav__content > ul > li:first-child > .sub-menu ul {
-  padding: revert;
-  list-style: circle;
+.mobile-nav__division ul {
+  list-style: none;
 }
 
-.mobile-nav .nav__content > ul > li:first-child > .sub-menu ul a {
+.mobile-nav__division ul a {
+  display: block;
   padding: 7px 0;
   font-size: 18px;
   line-height: 26px;
 }
 
-.mobile-nav .nav__content > ul > li:not(:last-child) {
-  margin-bottom: 25px;
+.mobile-nav__external {
+  display: block;
+  margin-top: 8px;
+  padding: 7px 0;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  color: var(--gold-bright, var(--gold));
+  opacity: 0.85;
+}
+
+/* ---------- Sticky bottom CTA inside the overlay ---------- */
+.mobile-nav__cta {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 14px 20px calc(14px + env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, transparent 0%, var(--bg-card) 38%);
+}
+
+.mobile-nav__cta a {
+  display: block;
+  text-align: center;
+  padding: 15px 20px;
+  border-radius: 40px;
+  border: 1px solid color-mix(in srgb, var(--gold) 55%, transparent);
+  background: color-mix(in srgb, var(--gold) 12%, transparent);
+  color: var(--gold-bright, var(--gold));
+  font-family: var(--font-lufga);
+  font-weight: 500;
+  font-size: 17px;
+  letter-spacing: 0.5px;
+}
+
+.mobile-nav__lang {
+  margin-top: 8px;
 }

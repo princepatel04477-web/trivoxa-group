@@ -9,7 +9,12 @@
     "careers": "Carriere",
     "contactUs": "Contattaci",
     "menu": "Menu",
-    "close": "Chiudi"
+    "close": "Chiudi",
+    "home": "Home",
+    "theGroup": "Il Gruppo",
+    "businesses": "Attività",
+    "globalPresence": "Presenza globale",
+    "requestQuote": "Richiedi un preventivo"
   },
   "megaMenu": {
     "productExports": "Esportazione di prodotti",
@@ -25,7 +30,19 @@
     "trivoxaDigital": "Trivoxa Digital",
     "industries": "Settori",
     "ourStory": "La nostra storia",
-    "contact": "Contatti"
+    "contact": "Contatti",
+    "serviceExports": "Esportazione di servizi",
+    "story": "La nostra storia",
+    "leadership": "Leadership",
+    "foundation": "Fondazione Shiveshwar",
+    "vision": "Visione",
+    "commitments": "Impegni",
+    "technology": "Tecnologia",
+    "ai": "IA",
+    "software": "Software",
+    "designBranding": "Design e branding",
+    "digitalMarketing": "Marketing digitale",
+    "businessSupport": "Supporto aziendale"
   },
   "language": {
     "label": "Lingua",

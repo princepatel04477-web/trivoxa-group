@@ -1,54 +1,48 @@
 "use client";
 
 import { gsap } from "@/lib/gsap";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { emit } from "@/lib/site-events";
-import { Link } from "@/i18n/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
-// Every entry carries both `href` and `hasSubmenu` so the union stays uniform
-// under `as const` (which is what keeps the translation keys strictly typed).
-// Careers lives in the footer only — see Header.tsx for the same change.
-const mobileLinks = [
-  { id: "menu-item-96", key: "group", href: "/group/", hasSubmenu: false },
-  { id: "menu-item-85", key: "exports", href: "/businesses/product-exports/", hasSubmenu: true },
-  { id: "menu-item-106", key: "digital", href: "/businesses/service-exports/", hasSubmenu: false },
-  { id: "menu-item-99", key: "industries", href: "/industries/", hasSubmenu: false },
-  { id: "menu-item-100", key: "reach", href: "/global-presence/", hasSubmenu: false },
-  { id: "menu-item-101", key: "insights", href: "/insights/", hasSubmenu: false },
+const DIGITAL_URL = "https://digital.trivoxagroup.com";
+
+/** Same information architecture as the desktop header (spec §1):
+ * six items, with The Group and Businesses as accordions. */
+const groupLinks = [
+  { key: "story", href: "/group/#our-story" },
+  { key: "leadership", href: "/group/#leadership" },
+  { key: "foundation", href: "/group/#foundation" },
+  { key: "vision", href: "/group/#vision" },
+  { key: "commitments", href: "/group/#commitments" },
 ] as const;
 
-const serviceSubmenu = [
-  {
-    id: "menu-item-86",
-    titleKey: "productExports",
-    href: "/businesses/product-exports/",
-    links: [
-      { id: "menu-item-87", key: "textileApparel", href: "/businesses/product-exports/textile-apparel/" },
-      { id: "menu-item-88", key: "healthcarePharma", href: "/businesses/product-exports/healthcare-pharmaceuticals/" },
-      { id: "menu-item-89", key: "buildingMaterials", href: "/businesses/product-exports/building-materials/" },
-      { id: "menu-item-103", key: "agricultureFood", href: "/businesses/product-exports/agriculture-food/" },
-      { id: "menu-item-104", key: "engineeringIndustrial", href: "/businesses/product-exports/engineering-industrial/" },
-    ],
-  },
-  {
-    id: "menu-item-93",
-    titleKey: "theGroup",
-    href: "/group/",
-    links: [
-      { id: "menu-item-94", key: "productExports", href: "/businesses/product-exports/" },
-      { id: "menu-item-95", key: "trivoxaDigital", href: "/businesses/service-exports/" },
-      { id: "menu-item-97", key: "ourStory", href: "/group/" },
-      { id: "menu-item-98", key: "contact", href: "/contact/" },
-    ],
-  },
+const productLinks = [
+  { key: "textileApparel", href: "/businesses/product-exports/textile-apparel/" },
+  { key: "healthcarePharma", href: "/businesses/product-exports/healthcare-pharmaceuticals/" },
+  { key: "buildingMaterials", href: "/businesses/product-exports/building-materials/" },
+  { key: "agricultureFood", href: "/businesses/product-exports/agriculture-food/" },
+  { key: "engineeringIndustrial", href: "/businesses/product-exports/engineering-industrial/" },
+  { key: "allProductExports", href: "/businesses/product-exports/" },
 ] as const;
+
+const serviceLinks = [
+  { key: "technology", href: "/businesses/service-exports/technology/" },
+  { key: "ai", href: "/businesses/service-exports/ai/" },
+  { key: "software", href: "/businesses/service-exports/software/" },
+  { key: "designBranding", href: "/businesses/service-exports/design/" },
+  { key: "digitalMarketing", href: "/businesses/service-exports/marketing/" },
+  { key: "businessSupport", href: "/businesses/service-exports/business-support/" },
+] as const;
+
+type Accordion = "group" | "biz" | null;
 
 export default function MobileNav() {
   const navRef = useRef<HTMLDivElement>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
-  const servicesRef = useRef<HTMLLIElement>(null);
+  const [openSection, setOpenSection] = useState<Accordion>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     if (!navRef.current) return;
@@ -75,62 +69,133 @@ export default function MobileNav() {
     };
   }, []);
 
-  const toggleServices = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    const li = servicesRef.current;
-    if (!li) return;
-    const submenu = li.querySelector(".sub-menu") as HTMLElement;
-    if (!submenu) return;
+  // Any navigation closes the overlay and collapses accordions.
+  useEffect(() => {
+    document.body.classList.remove("nav-active");
+    setOpenSection(null);
+  }, [pathname]);
 
-    li.classList.toggle("opened");
-    if (li.classList.contains("opened")) {
-      submenu.style.display = "block";
-      gsap.fromTo(submenu, { height: 0 }, { height: "auto", duration: 0.3 });
-    } else {
-      gsap.to(submenu, { height: 0, duration: 0.3, onComplete: () => { submenu.style.display = "none"; } });
-    }
+  const closeNav = useCallback(() => {
+    document.body.classList.remove("nav-active");
   }, []);
 
-  const openModal = () => emit("modal:open");
+  const toggle = (section: Exclude<Accordion, null>) =>
+    setOpenSection((cur) => (cur === section ? null : section));
+
   const t = useTranslations("nav");
   const tm = useTranslations("megaMenu");
+
+  const sub = (links: readonly { key: string; href: string }[]) => (
+    <ul>
+      {links.map((l) => (
+        <li key={l.key}>
+          <Link href={l.href} onClick={closeNav}>
+            {tm(l.key)}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
 
   return (
     <div ref={navRef} className="mobile-nav">
       <div className="nav__content">
         <ul>
-          {mobileLinks.map((link) =>
-            link.hasSubmenu ? (
-              <li key={link.id} ref={servicesRef} id={link.id}>
-                <a onClick={toggleServices}>{t(link.key)}</a>
-                <ul className="sub-menu">
-                  {serviceSubmenu.map((col) => (
-                    <li key={col.id} id={col.id}>
-                      <Link href={col.href}>{tm(col.titleKey)}</Link>
-                      <ul>
-                        {col.links.map((sub) => (
-                          <li key={sub.id} id={sub.id}>
-                            <Link href={sub.href}>{tm(sub.key)}</Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </li>
-                  ))}
-                </ul>
-              </li>
-            ) : (
-              <li key={link.id} id={link.id}>
-                <Link href={link.href}>{t(link.key)}</Link>
-              </li>
-            )
-          )}
           <li>
-            <a onClick={openModal} style={{ cursor: "pointer" }}>{t("contactUs")}</a>
+            <Link href="/" onClick={closeNav}>
+              {t("home")}
+            </Link>
+          </li>
+
+          {/* The Group — accordion */}
+          <li className={openSection === "group" ? "opened" : undefined}>
+            <button
+              type="button"
+              className="mobile-nav__acc-trigger"
+              aria-expanded={openSection === "group"}
+              onClick={() => toggle("group")}
+            >
+              {t("theGroup")}
+              <span className="mobile-nav__caret" aria-hidden="true">
+                ▾
+              </span>
+            </button>
+            <div className={`mobile-nav__acc${openSection === "group" ? " is-open" : ""}`}>
+              <ul className="sub-menu">
+                <li>
+                  <Link href="/group/" onClick={closeNav}>
+                    {tm("theGroup")}
+                  </Link>
+                </li>
+                {groupLinks.map((l) => (
+                  <li key={l.key}>
+                    <Link href={l.href} onClick={closeNav}>
+                      {tm(l.key)}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </li>
+
+          {/* Businesses — accordion with the two divisions */}
+          <li className={openSection === "biz" ? "opened" : undefined}>
+            <button
+              type="button"
+              className="mobile-nav__acc-trigger"
+              aria-expanded={openSection === "biz"}
+              onClick={() => toggle("biz")}
+            >
+              {t("businesses")}
+              <span className="mobile-nav__caret" aria-hidden="true">
+                ▾
+              </span>
+            </button>
+            <div className={`mobile-nav__acc${openSection === "biz" ? " is-open" : ""}`}>
+              <div className="mobile-nav__division">
+                <Link href="/businesses/product-exports/" className="mobile-nav__division-title" onClick={closeNav}>
+                  {tm("productExports")}
+                </Link>
+                {sub(productLinks)}
+              </div>
+              <div className="mobile-nav__division">
+                <Link href="/businesses/service-exports/" className="mobile-nav__division-title" onClick={closeNav}>
+                  {tm("serviceExports")}
+                </Link>
+                {sub(serviceLinks)}
+                <a className="mobile-nav__external" href={DIGITAL_URL} target="_blank" rel="noopener noreferrer">
+                  digital.trivoxagroup.com ↗
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <Link href="/global-presence/" onClick={closeNav}>
+              {t("globalPresence")}
+            </Link>
+          </li>
+          <li>
+            <Link href="/insights/" onClick={closeNav}>
+              {t("insights")}
+            </Link>
+          </li>
+          <li>
+            <Link href="/careers/" onClick={closeNav}>
+              {t("careers")}
+            </Link>
           </li>
           <li className="mobile-nav__lang">
             <LanguageSwitcher variant="mobile" />
           </li>
         </ul>
+      </div>
+
+      {/* Sticky bottom CTA — always reachable while the overlay is open. */}
+      <div className="mobile-nav__cta">
+        <Link href="/rfq/" onClick={closeNav} data-analytics="mobile-nav-rfq-cta">
+          {t("requestQuote")}
+        </Link>
       </div>
     </div>
   );

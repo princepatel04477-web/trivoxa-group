@@ -2,97 +2,86 @@
 import { useTranslations } from "next-intl";
 
 import { gsap } from "@/lib/gsap";
-import { useCallback, useEffect, useRef } from "react";
-import { on, emit } from "@/lib/site-events";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { on } from "@/lib/site-events";
 import { getLenis } from "@/components/providers/LenisProvider";
-import { Link } from "@/i18n/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
-// Identifies the nav item that opens the mega-menu. Keyed off the translation
-// key (not the visible label) so it keeps working in every language.
-const MEGA_TRIGGER = "exports";
+/** External URL of the dedicated Trivoxa Digital site. */
+const DIGITAL_URL = "https://digital.trivoxagroup.com";
 
-// Careers lives in the footer only (not top nav) — it costs commercial
-// attention on every page for a link that currently has no open roles.
-const navLinks = [
-  { id: "menu-item-51", key: "group", href: "/group/" },
-  { id: "menu-item-53", key: "exports", href: "/businesses/product-exports/" },
-  { id: "menu-item-88", key: "digital", href: "/businesses/service-exports/" },
-  { id: "menu-item-67", key: "industries", href: "/industries/" },
-  { id: "menu-item-68", key: "reach", href: "/global-presence/" },
-  { id: "menu-item-69", key: "insights", href: "/insights/" },
+/** "The Group" simple dropdown — anchors into /group/ chapters. */
+const groupDropdown = [
+  { key: "story", href: "/group/#our-story" },
+  { key: "leadership", href: "/group/#leadership" },
+  { key: "foundation", href: "/group/#foundation" },
+  { key: "vision", href: "/group/#vision" },
+  { key: "commitments", href: "/group/#commitments" },
 ] as const;
 
-// Furniture & Interiors and Jewellery & Precious Products are withheld from
-// navigation until real product data exists — both currently render the
-// "Detailed Portfolio in Progress" fallback with no other real content.
-// Routes still exist at their URLs (not deleted), so re-adding a links entry
-// below is all it takes once data lands.
-const megaMenuColumns = [
-  {
-    id: "menu-item-71",
-    titleKey: "productExports",
-    href: "/businesses/product-exports/",
-    links: [
-      { id: "menu-item-72", key: "textileApparel", href: "/businesses/product-exports/textile-apparel/" },
-      { id: "menu-item-73", key: "healthcarePharma", href: "/businesses/product-exports/healthcare-pharmaceuticals/" },
-      { id: "menu-item-74", key: "buildingMaterials", href: "/businesses/product-exports/building-materials/" },
-      { id: "menu-item-84", key: "agricultureFood", href: "/businesses/product-exports/agriculture-food/" },
-      { id: "menu-item-85", key: "engineeringIndustrial", href: "/businesses/product-exports/engineering-industrial/" },
-    ],
-  },
-  {
-    id: "menu-item-78",
-    titleKey: "theGroup",
-    href: "/group/",
-    links: [
-      { id: "menu-item-79", key: "allProductExports", href: "/businesses/product-exports/" },
-      { id: "menu-item-89", key: "trivoxaDigital", href: "/businesses/service-exports/" },
-      { id: "menu-item-81", key: "industries", href: "/industries/" },
-      { id: "menu-item-82", key: "ourStory", href: "/group/" },
-      { id: "menu-item-83", key: "contact", href: "/contact/" },
-    ],
-  },
+/** "Businesses" mega-menu — exactly two columns (spec §1). */
+const productColumn = [
+  { key: "textileApparel", href: "/businesses/product-exports/textile-apparel/" },
+  { key: "healthcarePharma", href: "/businesses/product-exports/healthcare-pharmaceuticals/" },
+  { key: "buildingMaterials", href: "/businesses/product-exports/building-materials/" },
+  { key: "agricultureFood", href: "/businesses/product-exports/agriculture-food/" },
+  { key: "engineeringIndustrial", href: "/businesses/product-exports/engineering-industrial/" },
+  { key: "allProductExports", href: "/businesses/product-exports/" },
 ] as const;
+
+const serviceColumn = [
+  { key: "technology", href: "/businesses/service-exports/technology/" },
+  { key: "ai", href: "/businesses/service-exports/ai/" },
+  { key: "software", href: "/businesses/service-exports/software/" },
+  { key: "designBranding", href: "/businesses/service-exports/design/" },
+  { key: "digitalMarketing", href: "/businesses/service-exports/marketing/" },
+  { key: "businessSupport", href: "/businesses/service-exports/business-support/" },
+] as const;
+
+type OpenMenu = "group" | "biz" | null;
 
 export default function Header() {
   const t = useTranslations("nav");
   const tm = useTranslations("megaMenu");
-  const megaRef = useRef<HTMLDivElement>(null);
-  const servicesRef = useRef<HTMLLIElement>(null);
+  const pathname = usePathname();
+  const [openMenu, setOpenMenu] = useState<OpenMenu>(null);
+  const closeTimer = useRef<number | null>(null);
 
-  const showMenu = useCallback(() => {
-    const el = megaRef.current;
-    if (!el) return;
-    el.style.transform = "translateY(0)";
-    el.style.opacity = "1";
-    el.style.pointerEvents = "all";
-    servicesRef.current?.classList.add("menu-active");
+  // Hover intent: a short grace period before closing so the pointer can
+  // travel from the trigger into the panel without the menu snapping shut.
+  const scheduleClose = useCallback(() => {
+    if (closeTimer.current) window.clearTimeout(closeTimer.current);
+    closeTimer.current = window.setTimeout(() => setOpenMenu(null), 160);
+  }, []);
+  const openNow = useCallback((menu: OpenMenu) => {
+    if (closeTimer.current) window.clearTimeout(closeTimer.current);
+    setOpenMenu(menu);
   }, []);
 
-  const hideMenu = useCallback(() => {
-    const el = megaRef.current;
-    if (!el) return;
-    el.style.transform = "translateY(70px)";
-    el.style.opacity = "0";
-    el.style.pointerEvents = "none";
-    servicesRef.current?.classList.remove("menu-active");
-  }, []);
-
+  // Escape closes any open panel; clicking a panel link also closes it.
   useEffect(() => {
-    const l1 = servicesRef.current;
-    const l2 = megaRef.current;
-    l1?.addEventListener("mouseenter", showMenu);
-    l1?.addEventListener("mouseleave", hideMenu);
-    l2?.addEventListener("mouseenter", showMenu);
-    l2?.addEventListener("mouseleave", hideMenu);
-    return () => {
-      l1?.removeEventListener("mouseenter", showMenu);
-      l1?.removeEventListener("mouseleave", hideMenu);
-      l2?.removeEventListener("mouseenter", showMenu);
-      l2?.removeEventListener("mouseleave", hideMenu);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpenMenu(null);
     };
-  }, [showMenu, hideMenu]);
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
+
+  // Route change always dismisses panels.
+  useEffect(() => {
+    setOpenMenu(null);
+  }, [pathname]);
+
+  /** Active-trail detection for the underline + aria-current. */
+  const isActive = useCallback(
+    (href: string) => {
+      const clean = href.replace(/\/$/, "");
+      if (clean === "") return pathname === "/";
+      return pathname === clean || pathname.startsWith(clean + "/");
+    },
+    [pathname]
+  );
 
   // Solid chrome once the page scrolls — without this the home hero's fixed
   // header floats transparent over section content (nav becomes unreadable).
@@ -115,7 +104,7 @@ export default function Header() {
     const setHidden = (next: boolean) => {
       if (next === hidden) return;
       hidden = next;
-      if (next) hideMenu(); // close the mega-menu when the bar slides away
+      if (next) setOpenMenu(null); // close panels when the bar slides away
       gsap.to(el, { yPercent: next ? -130 : 0, duration: 0.4, ease: "power2.out", overwrite: "auto" });
     };
     const apply = (y: number) => {
@@ -152,42 +141,111 @@ export default function Header() {
       window.removeEventListener("scroll", onScroll);
       if (raf) cancelAnimationFrame(raf);
     };
-  }, [hideMenu]);
+  }, []);
 
-  const openModal = () => emit("modal:open");
+  /** Close when keyboard focus leaves a trigger+panel pair entirely. */
+  const blurGuard = (menu: OpenMenu) => (e: React.FocusEvent<HTMLElement>) => {
+    if (openMenu === menu && !e.currentTarget.contains(e.relatedTarget as Node)) {
+      setOpenMenu(null);
+    }
+  };
 
   return (
     <div className="header" ref={rootRef}>
       <div className="header-wrapper d-flex">
         <div className="h-left d-flex">
           <div className="logo">
-            <Link href="/">
+            <Link href="/" aria-label="Trivoxa Group — home">
               <img src="/images/trivoxa-logo.png" alt="Trivoxa Group" />
             </Link>
           </div>
           <ul className="header-links d-flex">
-            {navLinks.map((link) => (
-              <li key={link.id} id={link.id} ref={link.key === MEGA_TRIGGER ? servicesRef : undefined}>
-                <Link href={link.href}>{t(link.key)}</Link>
-              </li>
-            ))}
+            <li className={isActive("/") && pathname === "/" ? "current-menu-item" : undefined}>
+              <Link href="/" aria-current={pathname === "/" ? "page" : undefined}>
+                {t("home")}
+              </Link>
+            </li>
+
+            {/* The Group — simple dropdown */}
+            <li
+              className={`has-drop${isActive("/group/") ? " current-menu-item" : ""}${openMenu === "group" ? " menu-active" : ""}`}
+              onMouseEnter={() => openNow("group")}
+              onMouseLeave={scheduleClose}
+              onBlur={blurGuard("group")}
+            >
+              <Link
+                href="/group/"
+                aria-current={isActive("/group/") ? "page" : undefined}
+                aria-haspopup="true"
+                aria-expanded={openMenu === "group"}
+                onFocus={() => openNow("group")}
+              >
+                {t("theGroup")}
+              </Link>
+              <div className={`nav-drop${openMenu === "group" ? " is-open" : ""}`} aria-hidden={openMenu !== "group"}>
+                <ul>
+                  {groupDropdown.map((item) => (
+                    <li key={item.key}>
+                      <Link href={item.href} tabIndex={openMenu === "group" ? 0 : -1} onClick={() => setOpenMenu(null)}>
+                        {tm(item.key)}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </li>
+
+            {/* Businesses — two-column mega-menu */}
+            <li
+              className={`has-drop${isActive("/businesses/") ? " current-menu-item" : ""}${openMenu === "biz" ? " menu-active" : ""}`}
+              onMouseEnter={() => openNow("biz")}
+              onMouseLeave={scheduleClose}
+              onBlur={blurGuard("biz")}
+            >
+              <Link
+                href="/businesses/"
+                aria-current={isActive("/businesses/") ? "page" : undefined}
+                aria-haspopup="true"
+                aria-expanded={openMenu === "biz"}
+                onFocus={() => openNow("biz")}
+              >
+                {t("businesses")}
+              </Link>
+            </li>
+
+            <li className={isActive("/global-presence/") ? "current-menu-item" : undefined}>
+              <Link href="/global-presence/" aria-current={isActive("/global-presence/") ? "page" : undefined}>
+                {t("globalPresence")}
+              </Link>
+            </li>
+            <li className={isActive("/insights/") ? "current-menu-item" : undefined}>
+              <Link href="/insights/" aria-current={isActive("/insights/") ? "page" : undefined}>
+                {t("insights")}
+              </Link>
+            </li>
+            <li className={isActive("/careers/") ? "current-menu-item" : undefined}>
+              <Link href="/careers/" aria-current={isActive("/careers/") ? "page" : undefined}>
+                {t("careers")}
+              </Link>
+            </li>
           </ul>
         </div>
         <div className="h-right d-flex">
           <LanguageSwitcher />
-          <button className="primary-button contact-open" onClick={openModal} type="button">
+          <Link href="/rfq/" className="primary-button nav-cta" data-analytics="nav-rfq-cta">
             <span className="d-flex">
-              <span>{t("contactUs")}</span>
+              <span>{t("requestQuote")}</span>
               <div className="img d-flex">
-                <img src="/images/icons/envelope-send.svg" alt="message" />
+                <img src="/images/icons/envelope-send.svg" alt="" />
               </div>
             </span>
-          </button>
+          </Link>
 
           <button
             className="hamburger d-flex"
             type="button"
             aria-label={t("menu")}
+            aria-expanded={undefined}
             onClick={() => {
               document.body.classList.toggle("nav-active");
             }}
@@ -195,28 +253,57 @@ export default function Header() {
             <div />
             <div />
           </button>
-          <div className="mobile-contact contact-open" onClick={openModal}>
+          <Link className="mobile-contact" href="/rfq/" aria-label={t("requestQuote")}>
             <div>
-              <img src="/images/icons/envelope-send.svg" alt="message" />
+              <img src="/images/icons/envelope-send.svg" alt="" />
             </div>
-          </div>
+          </Link>
         </div>
       </div>
-      <div ref={megaRef} className="mega-menu d-flex">
+
+      {/* Businesses mega-menu panel — two columns only (spec §1). */}
+      <div
+        className={`mega-menu d-flex${openMenu === "biz" ? " is-open" : ""}`}
+        aria-hidden={openMenu !== "biz"}
+        onMouseEnter={() => openNow("biz")}
+        onMouseLeave={scheduleClose}
+        onBlur={blurGuard("biz")}
+      >
         <div className="m-left" />
         <div className="m-right d-flex">
-          {megaMenuColumns.map((col) => (
-            <li key={col.id} id={col.id}>
-              <Link href={col.href}>{tm(col.titleKey)}</Link>
-              <ul className="sub-menu">
-                {col.links.map((link) => (
-                  <li key={link.id} id={link.id}>
-                    <Link href={link.href}>{tm(link.key)}</Link>
-                  </li>
-                ))}
-              </ul>
-            </li>
-          ))}
+          <div className="mega-col">
+            <Link href="/businesses/product-exports/" className="mega-col__title" tabIndex={openMenu === "biz" ? 0 : -1} onClick={() => setOpenMenu(null)}>
+              {tm("productExports")}
+            </Link>
+            <ul className="sub-menu">
+              {productColumn.map((link) => (
+                <li key={link.key}>
+                  <Link href={link.href} tabIndex={openMenu === "biz" ? 0 : -1} onClick={() => setOpenMenu(null)}>
+                    {tm(link.key)}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="mega-col">
+            <Link href="/businesses/service-exports/" className="mega-col__title" tabIndex={openMenu === "biz" ? 0 : -1} onClick={() => setOpenMenu(null)}>
+              {tm("serviceExports")}
+            </Link>
+            <ul className="sub-menu">
+              {serviceColumn.map((link) => (
+                <li key={link.key}>
+                  <Link href={link.href} tabIndex={openMenu === "biz" ? 0 : -1} onClick={() => setOpenMenu(null)}>
+                    {tm(link.key)}
+                  </Link>
+                </li>
+              ))}
+              <li className="mega-external">
+                <a href={DIGITAL_URL} target="_blank" rel="noopener noreferrer" tabIndex={openMenu === "biz" ? 0 : -1}>
+                  digital.trivoxagroup.com ↗
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>

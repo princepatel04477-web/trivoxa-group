@@ -23,6 +23,7 @@ import SiteFooter from "@/components/SiteFooter";
 import ContactModal from "@/components/ContactModal";
 import ParticleCanvasWrapper from "@/components/ParticleCanvasWrapper";
 import WhyBuyersTrust from "@/components/sections/WhyBuyersTrust";
+import MobileStickyCta from "@/components/MobileStickyCta";
 
 export const metadata: Metadata = {
   title: "Trivoxa Group | International Trade & Business Solutions",
@@ -82,6 +83,7 @@ export default function Home() {
 
       {/* 9 · Footer */}
       <SiteFooter />
+      <MobileStickyCta />
     </>
   );
 }
