@@ -3,6 +3,8 @@ import "@/app/styles/global-presence-page.css";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, Checklist, CtaBand } from "@/components/trivoxa/ui";
 import GlobalPresenceMap from "@/components/presence/GlobalPresenceMap";
+import WorldMap from "@/components/presence/WorldMap";
+import { getWorldMap } from "@/lib/world-map";
 import PresenceStats from "@/components/presence/PresenceStats";
 import LazyCrane from "@/components/LazyCrane";
 
@@ -109,6 +111,7 @@ export default function GlobalPresencePage() {
       />
 
       <Section eyebrow="Regions We Serve" title="Building Presence Across Six Global Regions." lead="Rather than counting borders, we focus on building durable relationships across the regions where our partners operate and grow.">
+        <WorldMap data={getWorldMap()} />
         <GlobalPresenceMap regions={regions.map((r) => ({ title: r.title, categories: r.categories }))} />
         <div className="tvx-lanes">
           {regions.map((r) => (

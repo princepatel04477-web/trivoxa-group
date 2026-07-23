@@ -13,7 +13,7 @@ const range = ["Bed Linen", "Towels", "Curtains", "Cushions", "Rugs", "Upholster
 
 export default function HomeTextilesPage() {
   return (
-    <TrivoxaShell film="product-exports">
+    <TrivoxaShell film="home-textiles">
       <PageHero
         crumb={[
           { label: "Businesses", href: "/businesses/" },

@@ -36,7 +36,7 @@ const applications = [
 
 export default function TextileApparelPage() {
   return (
-    <TrivoxaShell film="product-exports">
+    <TrivoxaShell film="textile-apparel">
       <PageHero
         crumb={[{ label: "Businesses", href: "/businesses/" }, { label: "Product Exports", href: "/businesses/product-exports/" }, { label: "Textile & Apparel" }]}
         eyebrow="Textile & Apparel"
