@@ -63,6 +63,12 @@
   max-width: 840px;
   margin-bottom: 24px;
   transform: scale(0.94);
+  /* Establishment hero display (Task 2): enlarged, tight metrics. Overrides
+     the base h1 size for the hero only. GSAP animates scale, not font-size,
+     so the reveal is unaffected. */
+  font-size: var(--fs-display);
+  line-height: var(--lh-display);
+  letter-spacing: var(--tracking-display);
 }
 
 .hp-sec-1 .container .subtitle {
@@ -73,13 +79,16 @@
   color: color-mix(in srgb, var(--text) 78%, transparent);
 }
 
-/* Trivoxa hero tagline — gold accent with refined spacing */
+/* Hero eyebrow — the mono eyebrow voice (Task 2), uniform with .eyebrow
+   site-wide: IBM Plex Mono, uppercase, 0.18em tracking, gold, small. Keeps the
+   hero's leading hairline (::before) as this view's one structural gold accent. */
 .hp-sec-1 .container .hero-tagline {
+  font-family: var(--font-mono);
   text-transform: uppercase;
-  font-size: 13px;
-  letter-spacing: 4.5px;
+  font-size: var(--fs-eyebrow);
+  letter-spacing: var(--tracking-eyebrow);
   font-weight: 500;
-  color: var(--trivoxa-gold, var(--gold-hover));
+  color: var(--gold);
   margin-bottom: 32px;
   display: flex;
   align-items: center;
@@ -313,8 +322,8 @@
     font-size: 14px;
   }
   .hp-sec-1 .container .hero-tagline {
-    letter-spacing: 3.5px;
-    font-size: 11px;
+    /* keep the em-based --tracking-eyebrow; only nudge size down on small screens */
+    font-size: 0.6875rem;
   }
   .hp-sec-1 .container .hero-tagline::before {
     width: 24px;

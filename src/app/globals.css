@@ -8,7 +8,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-work-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: ui-monospace, monospace;
+  --font-mono: var(--font-ibm-plex-mono), ui-monospace, monospace;
   --font-heading: var(--font-lufga), var(--font-work-sans), sans-serif;
   --font-lufga: var(--font-lufga), sans-serif;
   --font-display: var(--font-display);
@@ -138,6 +138,47 @@ html[lang="ru"] {
   --space-2xl: 4.5rem;
   --space-3xl: 7rem;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ============================================================
+     ESTABLISHMENT TYPE SCALE (Task 2) — the single strict scale.
+     Page CSS should resolve type through these tokens instead of
+     one-off px/rem. Fluid steps use clamp(min, vw, max). Longevity
+     is a function of restraint: few sizes, used consistently.
+     ============================================================ */
+  --fs-eyebrow: 0.75rem;                        /* 12px — mono eyebrow/label */
+  --fs-caption: 0.8125rem;                      /* 13px — captions, footnotes */
+  --fs-meta: 0.875rem;                          /* 14px — meta, fine print */
+  --fs-body-sm: 0.9375rem;                      /* 15px — dense body */
+  --fs-body: 1.0625rem;                         /* 17px — default body */
+  --fs-lead: clamp(1.125rem, 0.9rem + 1vw, 1.375rem);   /* standfirst / lead */
+  --fs-h4: clamp(1.25rem, 1.05rem + 0.9vw, 1.5rem);
+  --fs-h3: clamp(1.5rem, 1.15rem + 1.6vw, 2rem);
+  --fs-h2: clamp(2rem, 1.4rem + 2.6vw, 3rem);
+  --fs-h1: clamp(2.5rem, 1.6rem + 4vw, 4rem);
+  --fs-display: clamp(3rem, 1.55rem + 6vw, 5.5rem);  /* hero display (48→88px) */
+
+  /* Line-heights + tracking — establishment settings */
+  --lh-display: 1.02;
+  --lh-heading: 1.1;
+  --lh-body: 1.6;
+  --tracking-display: -0.01em;   /* tighten large Lufga display */
+  --tracking-eyebrow: 0.18em;    /* wide mono eyebrow tracking */
+
+  /* ============================================================
+     SECTION RHYTHM (Task 2) — ONE vertical padding, all 5 pages.
+     Consolidates the ~8 ad-hoc section paddings (60/64/80/88/92px
+     + assorted clamps) into a single institutional cadence.
+     ============================================================ */
+  --section-py: clamp(72px, 9vw, 128px);
+  --section-py-tight: clamp(48px, 6vw, 84px);
+
+  /* Hairline / rule — reads as a fine institutional line on the navy
+     ground (a navy-on-navy rule would be invisible; --line is the
+     canonical visible divider). --hairline-gold is the STRUCTURAL
+     accent, used at most once per view (Task 3). */
+  --hairline: var(--line);
+  --hairline-strong: color-mix(in srgb, var(--text) 14%, transparent);
+  --hairline-gold: color-mix(in srgb, var(--gold) 42%, transparent);
 
   /* Legacy semantic aliases — repointed onto the navy tokens so all existing
      var(--advida-*) / var(--trivoxa-*) references migrate automatically. */
@@ -277,6 +318,11 @@ html[lang="ru"] {
    images, insight thumbnails) — the ::after lays a bottom-up navy gradient. */
 .photo-scrim {
   position: relative;
+  /* Task 4 — institutional framing: sharp corners (<=2px) + a 1px inner hairline
+     instead of drop-shadows, so every editorial photo is seated the same way. */
+  border-radius: 2px;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px var(--hairline-strong);
 }
 .photo-scrim > img,
 .photo-scrim > picture,
@@ -285,6 +331,21 @@ html[lang="ru"] {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* Task 4 — one consistent grade so everything reads shot by the same hand:
+     -15% saturation, a touch more contrast, slightly pulled-down highlights,
+     and a hair of warmth. (CSS can't tone-map shadows-to-navy per-pixel; the
+     scrim's navy ::after gradient handles the shadow pull.) */
+  filter: saturate(0.85) contrast(1.03) brightness(0.98) sepia(0.05);
+}
+
+/* Opt-in grade + frame for editorial photos NOT wrapped in .photo-scrim
+   (leadership portraits, product/industry imgs). Same treatment, one source. */
+.photo-grade {
+  filter: saturate(0.85) contrast(1.03) brightness(0.98) sepia(0.05);
+}
+.institutional-frame {
+  border-radius: 2px;
+  box-shadow: inset 0 0 0 1px var(--hairline-strong);
 }
 .photo-scrim::after {
   content: "";
@@ -408,11 +469,42 @@ a, button {
 }
 [data-reveal-body] {
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(22px);
 }
 [data-reveal-image] {
   opacity: 0;
-  transform: scale(1.08);
+  transform: scale(1.04);
+}
+
+/* ---------- Reduced-motion hardening (Task 5) ---------- */
+/* Kills decorative CSS animation/transition and forces every reveal target
+   instantly present, so reduced-motion users never see a masked/blank section
+   even if the GSAP release path is late. Does not touch the WebGL particle
+   system or Lenis (they gate motion in their own code). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  [data-reveal-heading] {
+    clip-path: none !important;
+  }
+  [data-reveal-body],
+  [data-reveal-image] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .word_inner,
+  .p_inner,
+  .testimonial_inner {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
 }
 
 /* Custom cursor: 8px dot + 32px trailing hairline ring, non-touch pointers only. */
@@ -430,7 +522,8 @@ a, button {
   left: 0;
   border-radius: 50%;
   pointer-events: none;
-  z-index: 9999;
+  /* Topmost — above the global grain overlay (9999) and raised chrome (10000). */
+  z-index: 10001;
   will-change: transform;
   /* Hidden by default. Only revealed for non-touch pointers once JS adds
      .has-custom-cursor to <html> — prevents a frozen dot/ring in the
@@ -493,5 +586,101 @@ a, button {
     transform: translate(50%, -50%);
     width: min(70vw, 420px);
     height: min(70vw, 420px);
+  }
+}
+
+/* ============================================================
+   INSTITUTIONAL UTILITIES (Tasks 2 + 3)
+   The credibility furniture: mono eyebrows, the ledger voice,
+   hairline rules, honest footnotes, and the section rhythm.
+   ============================================================ */
+
+/* Section rhythm — apply to a <section> to get the ONE cadence. */
+.section-rhythm {
+  padding-block: var(--section-py);
+}
+.section-rhythm--tight {
+  padding-block: var(--section-py-tight);
+}
+
+/* Eyebrow — IBM Plex Mono, uppercase, wide tracking, gold, small.
+   Uniform site-wide (Task 2). Gold here is a LABEL, not decoration. */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-eyebrow);
+  color: var(--gold);
+}
+
+/* Ledger voice — IBM Plex Mono for reference numbers, corridor codes,
+   spec rows, precise captions. Tabular figures so columns align like a
+   manifest (Task 3). Never decorative — data only. */
+.ledger {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1, "zero" 1;
+  letter-spacing: 0.01em;
+  color: var(--text-2);
+}
+.ledger--dim {
+  color: var(--text-3);
+}
+.ledger--ink {
+  color: var(--text);
+}
+
+/* Hairline rule — 1px institutional divider between major blocks.
+   Structural, used sparingly. Default reads on the navy ground. */
+.hairline {
+  border: 0;
+  border-top: 1px solid var(--hairline);
+  width: 100%;
+}
+.hairline--strong {
+  border-top-color: var(--hairline-strong);
+}
+/* The ONE structural gold accent per view (Task 3) — a short seal rule. */
+.hairline--gold {
+  border-top-color: var(--hairline-gold);
+}
+
+/* Honest footnote — precise, never fabricated. The tone target is the
+   existing "illustrative trade corridors — not live shipment tracking"
+   caption (Task 3). Mono, dim, small, wide-ish. */
+.footnote {
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  color: var(--text-3);
+}
+
+/* ---------- Global film/paper grain (Task 1) ---------- */
+/* One static layer mounted once (GrainOverlay, last child of <body>). soft-light
+   makes a single grayscale-noise tile read correctly over the navy ground and
+   any lighter surface. STATIC ONLY — never animate (animated grain repaints
+   every frame and breaks the 60fps floor). Interactive chrome (header, mobile
+   nav, custom cursor, modals) is raised above z-index 9999 so grain never dims
+   what the user reads or clicks. pointer-events:none keeps every click through. */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.055;
+  mix-blend-mode: soft-light;
+  background-repeat: repeat;
+  background-size: 160px 160px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* Grain is a decorative texture, not information — hide it when the user has
+   asked for reduced motion/effects is unnecessary (it's static), but respect
+   forced-colors by dropping it so it can't wash out high-contrast modes. */
+@media (forced-colors: active) {
+  .grain-overlay {
+    display: none;
   }
 }

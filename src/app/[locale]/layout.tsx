@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Work_Sans, Noto_Sans_Arabic, Noto_Sans_Devanagari, Noto_Sans } from "next/font/google";
+import { Work_Sans, IBM_Plex_Mono, Noto_Sans_Arabic, Noto_Sans_Devanagari, Noto_Sans } from "next/font/google";
 import localFont from "next/font/local";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
@@ -7,6 +7,7 @@ import { setRequestLocale } from "next-intl/server";
 import "../globals.css";
 import LenisProvider from "@/components/providers/LenisProvider";
 import CustomCursor from "@/components/CustomCursor";
+import { GrainOverlay } from "@/components/GrainOverlay";
 import { routing, isRtl } from "@/i18n/routing";
 
 // latin-ext carries the Polish/Turkish diacritics (ł, ş, ğ, ı) that plain
@@ -15,6 +16,15 @@ const workSans = Work_Sans({
   variable: "--font-work-sans",
   subsets: ["latin", "latin-ext"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+});
+
+// IBM Plex Mono is the "ledger" voice — reference numbers, corridor codes, spec
+// rows, eyebrows. Used ONLY for that manifest texture, never for body copy.
+// Self-hosted by next/font at build time; nothing fetched at runtime.
+const ibmPlexMono = IBM_Plex_Mono({
+  variable: "--font-ibm-plex-mono",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
 });
 
 // Lufga is the brand display face but is Latin-only — the three faces below
@@ -87,7 +97,7 @@ export default async function LocaleLayout({
     <html
       lang={locale}
       dir={isRtl(locale) ? "rtl" : "ltr"}
-      className={`${workSans.variable} ${lufga.variable} ${calisto.variable} ${notoArabic.variable} ${notoDevanagari.variable} ${notoCyrillic.variable} h-full antialiased`}
+      className={`${workSans.variable} ${ibmPlexMono.variable} ${lufga.variable} ${calisto.variable} ${notoArabic.variable} ${notoDevanagari.variable} ${notoCyrillic.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full" suppressHydrationWarning>
@@ -97,6 +107,9 @@ export default async function LocaleLayout({
             {children}
           </LenisProvider>
         </NextIntlClientProvider>
+        {/* Global grain: last child of <body> so it composites over the whole
+            page. Outside the providers — it needs no i18n/scroll context. */}
+        <GrainOverlay />
       </body>
     </html>
   );

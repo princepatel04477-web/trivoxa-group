@@ -5,7 +5,9 @@
   padding: 18px 40px 0;
   width: 100%;
   transform: translateY(-200px);
-  z-index: 9999;
+  /* Above the global grain overlay (z-index 9999) so nav + language dropdown
+     (a descendant, rides this stacking context) are never dimmed. */
+  z-index: 10000;
 }
 
 .header::before {

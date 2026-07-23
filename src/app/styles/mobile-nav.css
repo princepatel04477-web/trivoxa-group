@@ -16,7 +16,9 @@ body.nav-active .hamburger > div:nth-child(2) {
 
 .mobile-nav {
   position: fixed;
-  z-index: 999;
+  /* Above the global grain overlay (z-index 9999) — the full-screen nav must
+     read crisp, not through grain. */
+  z-index: 10000;
   display: flex;
   pointer-events: none;
   justify-content: center;

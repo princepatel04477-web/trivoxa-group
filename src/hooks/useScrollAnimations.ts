@@ -31,7 +31,8 @@ export function revealHeadings(scope: Element, selector = "[data-reveal-heading]
       { clipPath: "inset(0 0 100% 0)" },
       {
         clipPath: "inset(0 0 0% 0)",
-        duration: 0.9,
+        // Task 5 — establishment motion discipline: slower, ease-out, restrained.
+        duration: 0.8,
         ease: REVEAL_EASE,
         onComplete: () => releaseReveal(el, "data-reveal-heading"),
         scrollTrigger: { trigger: el, start: "top 80%" },
@@ -50,20 +51,21 @@ export function revealBody(scope: Element, selector = "[data-reveal-body]") {
   }
   gsap.fromTo(
     els,
-    { y: 20, opacity: 0 },
+    { y: 22, opacity: 0 },
     {
       y: 0,
       opacity: 1,
-      duration: 0.6,
+      // Task 5 — 22px travel (within 16-24px), slower, gentle ease-out.
+      duration: 0.7,
       ease: "power2.out",
-      stagger: 0.05,
+      stagger: 0.06,
       onComplete: () => els.forEach((el) => releaseReveal(el, "data-reveal-body")),
       scrollTrigger: { trigger: els[0], start: "top 80%" },
     }
   );
 }
 
-/** Images: scale 1.08 -> 1, opacity 0 -> 1, 1.2s. */
+/** Images: scale 1.04 -> 1, opacity 0 -> 1, 0.8s (Task 5: subtler zoom, slower). */
 export function revealImages(scope: Element, selector = "[data-reveal-image]") {
   if (prefersReducedMotion()) {
     gsap.utils.toArray<HTMLElement>(selector, scope).forEach((el) => releaseReveal(el, "data-reveal-image"));
@@ -72,11 +74,12 @@ export function revealImages(scope: Element, selector = "[data-reveal-image]") {
   gsap.utils.toArray<HTMLElement>(selector, scope).forEach((el) => {
     gsap.fromTo(
       el,
-      { scale: 1.08, opacity: 0 },
+      { scale: 1.04, opacity: 0 },
       {
         scale: 1,
         opacity: 1,
-        duration: 1.2,
+        // Task 5 — restrained: 4% zoom instead of 8%, 0.8s instead of 1.2s.
+        duration: 0.8,
         ease: REVEAL_EASE,
         onComplete: () => releaseReveal(el, "data-reveal-image"),
         scrollTrigger: { trigger: el, start: "top 80%" },
