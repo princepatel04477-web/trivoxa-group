@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     "docs/**",
     ".claude/**",
+    // Isolated Remotion project — own toolchain, not part of the Next app.
+    "remotion-films/**",
   ]),
 ]);
 
