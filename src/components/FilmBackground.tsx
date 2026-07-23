@@ -14,13 +14,12 @@ export default function FilmBackground({ film }: { film: string }) {
   const [mode, setMode] = useState<"poster" | "video">("poster");
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Decide poster-only vs video once mounted (client-only; SSR renders poster).
+  // Always animate once mounted. (The poster is only the SSR/first-paint frame.)
+  // These ambient loops are a deliberate brand element, so they play regardless
+  // of the OS "reduce motion" setting — otherwise that setting hides the film
+  // entirely and the page looks static.
   useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const apply = () => setMode(mq.matches ? "poster" : "video");
-    apply();
-    mq.addEventListener("change", apply);
-    return () => mq.removeEventListener("change", apply);
+    setMode("video");
   }, []);
 
   // Kick playback the moment the element exists / has data, and pause on hide.
