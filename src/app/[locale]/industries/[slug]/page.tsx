@@ -107,7 +107,6 @@ export default async function IndustryPage(props: PageProps<"/[locale]/industrie
             name: i.name,
             description: i.description,
             href: `/industries/${i.slug}/`,
-            image: i.image,
           }))}
         />
       </Section>

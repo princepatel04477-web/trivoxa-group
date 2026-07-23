@@ -7,12 +7,12 @@ import { gsap, ScrollTrigger } from "@/lib/gsap";
 // Industry names reuse the megaMenu keys so the nav and this section always
 // agree; only the descriptions are unique to the home page.
 const INDUSTRY_DEFS = [
-  { nameKey: "textileApparel", descKey: "descTextile", image: "/images/industries/textile-editorial.png" },
-  { nameKey: "healthcarePharma", descKey: "descHealthcare", image: "/images/industries/healthcare-editorial.png" },
-  { nameKey: "buildingMaterials", descKey: "descBuilding", image: "/images/industries/building-editorial.png" },
-  { nameKey: "agricultureFood", descKey: "descAgri", image: "/images/industries/agriculture.jpg" },
-  { nameKey: "engineeringIndustrial", descKey: "descEngineering", image: "/images/industries/engineering.jpg" },
-  { nameKey: null, descKey: "descTechnology", image: "/images/industries/technology.jpg" },
+  { nameKey: "textileApparel", descKey: "descTextile" },
+  { nameKey: "healthcarePharma", descKey: "descHealthcare" },
+  { nameKey: "buildingMaterials", descKey: "descBuilding" },
+  { nameKey: "agricultureFood", descKey: "descAgri" },
+  { nameKey: "engineeringIndustrial", descKey: "descEngineering" },
+  { nameKey: null, descKey: "descTechnology" },
 ] as const;
 
 const TOTAL = String(INDUSTRY_DEFS.length).padStart(2, "0");
@@ -23,7 +23,6 @@ export default function IndustriesManifest() {
   const INDUSTRIES = INDUSTRY_DEFS.map((d) => ({
     name: d.nameKey ? tm(d.nameKey) : t("nameTechnology"),
     desc: t(d.descKey),
-    image: d.image,
   }));
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -92,7 +91,6 @@ export default function IndustriesManifest() {
               <h3 className="industries-folio__name">{ind.name}</h3>
               <p className="industries-folio__desc">{ind.desc}</p>
             </div>
-            <div className="industries-folio__image" style={{ backgroundImage: `url(${ind.image})` }} />
           </div>
         ))}
       </div>

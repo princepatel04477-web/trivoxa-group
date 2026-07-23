@@ -18,7 +18,6 @@ export interface Industry {
   name: string;
   /** Verbatim card copy from master doc §5.3. */
   description: string;
-  image: string;
   /** Slug into /businesses/product-exports/[category] when this industry
    * maps to a product-export category. */
   productCategorySlug?: string;
@@ -42,7 +41,6 @@ export const industries: Industry[] = [
     name: "Textile & Apparel",
     description:
       "Supporting manufacturers, brands, wholesalers, and sourcing companies with fabrics, home textiles, apparel accessories, and customized sourcing solutions.",
-    image: "/images/industries/textile-editorial.png",
     productCategorySlug: "textile-apparel",
     buyerTypes: ["Apparel & fashion brands", "Home & interior retailers", "Wholesalers & distributors", "Sourcing & buying houses"],
     complianceNote: "Buyers commonly request fabric composition labeling and, for EU/US-bound shipments, restricted-substances documentation (REACH, CPSIA). We coordinate the paperwork our manufacturing partners can provide for each order.",
@@ -59,7 +57,6 @@ export const industries: Industry[] = [
     name: "Healthcare & Pharmaceuticals",
     description:
       "Providing access to trusted pharmaceutical products and healthcare solutions through responsible sourcing and quality-focused manufacturing partnerships.",
-    image: "/images/industries/healthcare-editorial.png",
     productCategorySlug: "healthcare-pharmaceuticals",
     buyerTypes: ["Pharmaceutical distributors", "Healthcare product importers", "Pharmacy chains & wholesalers", "Nutraceutical brands"],
     complianceNote: "Pharmaceutical product exports are subject to destination-country import regulations. Buyers are responsible for confirming import licensing in their country.",
@@ -76,7 +73,6 @@ export const industries: Industry[] = [
     name: "Building Materials",
     description:
       "Supplying natural stone, marble, granite, ceramic products, and construction materials for residential, commercial, and infrastructure projects.",
-    image: "/images/industries/building-editorial.png",
     productCategorySlug: "building-materials",
     buyerTypes: ["Construction contractors", "Architects & designers", "Building material distributors", "Infrastructure project developers"],
     complianceNote: "Stone and tile shipments typically require dimensional-tolerance certificates and, for EU-bound consignments, CE marking documentation from the manufacturer. We coordinate the relevant paperwork for each order.",
@@ -93,7 +89,6 @@ export const industries: Industry[] = [
     name: "Furniture & Interiors",
     description:
       "Connecting businesses with quality furniture and interior solutions for residential, commercial, and hospitality environments.",
-    image: "/images/industries/furniture-editorial.png",
     productCategorySlug: "furniture-interiors",
     buyerTypes: ["Hospitality & hotel groups", "Commercial interior designers", "Furniture retailers & distributors"],
     complianceNote: "Solid-wood furniture typically ships under ISPM 15 fumigation certification for the packaging, alongside standard export documentation.",
@@ -104,7 +99,6 @@ export const industries: Industry[] = [
     name: "Agriculture & Food",
     description:
       "Supporting international buyers with carefully sourced agricultural products, fresh produce, spices, and processed food solutions.",
-    image: "/images/industries/agriculture.jpg",
     productCategorySlug: "agriculture-food",
     buyerTypes: ["Food importers & distributors", "Spice & ingredient wholesalers", "Food manufacturers", "Retail & foodservice buyers"],
     complianceNote: "Food and agricultural exports from India are regulated by FSSAI and APEDA. Buyers should confirm the specific registrations and phytosanitary certifications applicable to their shipment before placing an order.",
@@ -121,7 +115,6 @@ export const industries: Industry[] = [
     name: "Engineering & Industrial",
     description:
       "Delivering industrial products, engineering components, and manufacturing solutions that support industrial growth and infrastructure development.",
-    image: "/images/industries/engineering.jpg",
     productCategorySlug: "engineering-industrial",
     buyerTypes: ["Industrial equipment distributors", "OEM manufacturers", "Infrastructure & construction firms", "Maintenance & repair buyers"],
     complianceNote: "Machinery and components typically ship with material test certificates and, where applicable, CE or UL conformity documentation supplied by the manufacturer.",
@@ -138,7 +131,6 @@ export const industries: Industry[] = [
     name: "Technology",
     description:
       "Providing software development, artificial intelligence, digital transformation, and technology solutions for modern businesses.",
-    image: "/images/industries/technology.jpg",
     serviceHref: "/businesses/service-exports/",
     buyerTypes: ["Startups & scaleups", "Established enterprises", "Agencies seeking delivery capacity"],
     complianceNote: "Engagements are structured around clear scopes, IP ownership terms, and data-handling agreements suited to each client's jurisdiction.",
@@ -149,7 +141,6 @@ export const industries: Industry[] = [
     name: "Retail & Consumer Goods",
     description:
       "Helping retailers, distributors, and consumer brands strengthen their supply chains with scalable sourcing and business solutions.",
-    image: "/images/industries/retail-editorial.png",
     buyerTypes: ["Retail chains", "E-commerce brands", "Distributors & wholesalers"],
     complianceNote: "Consumer goods requirements vary by category — labeling, safety marks, and certification needs are confirmed against the destination market before production begins.",
     categories: [],

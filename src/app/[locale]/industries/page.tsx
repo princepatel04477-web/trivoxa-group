@@ -67,14 +67,13 @@ export default function IndustriesPage() {
         />
       </div>
 
-      {/* 3. INDUSTRIES WE SERVE — editorial manifest with hover previews */}
+      {/* 3. INDUSTRIES WE SERVE — editorial manifest */}
       <Section id="industries" eyebrow="Industries We Serve" title="Solutions Across Diverse Industries." lead="Trivoxa Group supports a growing portfolio of industries through trusted partnerships, responsible sourcing, and tailored business solutions.">
         <IndustryManifest
           rows={industries.map((i) => ({
             name: i.name,
             description: i.description,
             href: `/industries/${i.slug}/`,
-            image: i.image,
           }))}
         />
       </Section>
