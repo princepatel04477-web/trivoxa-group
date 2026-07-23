@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { useTranslations } from "next-intl";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
 
 // Industry names reuse the megaMenu keys so the nav and this section always
 // agree; only the descriptions are unique to the home page.
@@ -28,7 +29,9 @@ export default function IndustriesManifest() {
   const trackRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLSpanElement>(null);
 
-  useEffect(() => {
+  // Layout effect, not useEffect: this pins the section (see
+  // use-isomorphic-layout-effect.ts for why pinning requires it).
+  useIsomorphicLayoutEffect(() => {
     if (!sectionRef.current || !trackRef.current) return;
 
     const ctx = gsap.context(() => {

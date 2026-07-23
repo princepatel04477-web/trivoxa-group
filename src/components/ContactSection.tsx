@@ -24,10 +24,14 @@ export default function ContactSection() {
   const swiperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Brand logo marquee Swiper
+    // Brand logo marquee Swiper. Loop mode reorders the slide DOM nodes, which
+    // React owns — the instance MUST be destroyed on unmount so the original
+    // order is restored before React removes them, or unmounting the homepage
+    // throws removeChild DOMExceptions and kills client-side navigation.
     const el = swiperRef.current?.querySelector(".swiper") as HTMLElement | null;
+    let swiper: Swiper | undefined;
     if (el) {
-      new Swiper(el, {
+      swiper = new Swiper(el, {
         modules: [Autoplay],
         speed: 5000,
         loop: true,
@@ -83,7 +87,10 @@ export default function ContactSection() {
       ScrollTrigger.refresh();
     });
 
-    return () => ctx.revert();
+    return () => {
+      swiper?.destroy(true, true);
+      ctx.revert();
+    };
   }, []);
 
   return (

@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
 import { Link } from "@/i18n/navigation";
 import { onPreloaderDone, emit } from "@/lib/site-events";
 import { TitleChars, PChars } from "@/lib/split-text";
@@ -10,7 +10,9 @@ import GrainGlobe from "@/components/hero/GrainGlobe";
 
 export default function HeroSection() {
   const t = useTranslations("home.hero");
-  useEffect(() => {
+  // Layout effect, not useEffect: this pins .hp-sec-1 (see
+  // use-isomorphic-layout-effect.ts for why pinning requires it).
+  useIsomorphicLayoutEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ paused: true });
 

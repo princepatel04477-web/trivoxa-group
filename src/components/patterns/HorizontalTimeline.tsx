@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
 
 export interface TimelineStep {
   title: string;
@@ -17,7 +18,9 @@ export default function HorizontalTimeline({ steps }: { steps: TimelineStep[] })
   const railRef = useRef<HTMLOListElement>(null);
   const [active, setActive] = useState(0);
 
-  useEffect(() => {
+  // Layout effect, not useEffect: this pins the timeline (see
+  // use-isomorphic-layout-effect.ts for why pinning requires it).
+  useIsomorphicLayoutEffect(() => {
     if (!ref.current || !railRef.current) return;
     const ctx = gsap.context(() => {
       const mm = gsap.matchMedia();
