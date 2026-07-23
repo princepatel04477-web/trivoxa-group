@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Work_Sans, IBM_Plex_Mono, Noto_Sans_Arabic, Noto_Sans_Devanagari, Noto_Sans } from "next/font/google";
+import { Work_Sans, IBM_Plex_Mono, Noto_Sans_Arabic, Noto_Sans_Devanagari, Noto_Sans, Instrument_Serif, Instrument_Sans } from "next/font/google";
 import localFont from "next/font/local";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
@@ -16,6 +16,22 @@ const workSans = Work_Sans({
   variable: "--font-work-sans",
   subsets: ["latin", "latin-ext"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+});
+
+// Instrument Serif — editorial display face for headings (h1/h2/brand marks).
+// Single weight (400) by design; italic carried for emphasis.
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-instrument-serif",
+  subsets: ["latin", "latin-ext"],
+  weight: ["400"],
+  style: ["normal", "italic"],
+});
+
+// Instrument Sans — body / UI / navigation voice.
+const instrumentSans = Instrument_Sans({
+  variable: "--font-instrument-sans",
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500", "600", "700"],
 });
 
 // IBM Plex Mono is the "ledger" voice — reference numbers, corridor codes, spec
@@ -97,7 +113,7 @@ export default async function LocaleLayout({
     <html
       lang={locale}
       dir={isRtl(locale) ? "rtl" : "ltr"}
-      className={`${workSans.variable} ${ibmPlexMono.variable} ${lufga.variable} ${calisto.variable} ${notoArabic.variable} ${notoDevanagari.variable} ${notoCyrillic.variable} h-full antialiased`}
+      className={`${workSans.variable} ${instrumentSerif.variable} ${instrumentSans.variable} ${ibmPlexMono.variable} ${lufga.variable} ${calisto.variable} ${notoArabic.variable} ${notoDevanagari.variable} ${notoCyrillic.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full" suppressHydrationWarning>

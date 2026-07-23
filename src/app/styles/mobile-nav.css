@@ -71,7 +71,7 @@ body.nav-active .hamburger > div:nth-child(2) {
   line-height: 32px;
   letter-spacing: 1px;
   display: block;
-  font-family: var(--font-lufga);
+  font-family: var(--font-body);
   font-weight: 400;
   color: var(--text);
 }
@@ -125,7 +125,7 @@ li.opened .mobile-nav__caret {
   padding: 8px 0;
   font-size: 19px;
   line-height: 26px;
-  font-family: var(--font-lufga);
+  font-family: var(--font-body);
   font-weight: 400;
 }
 
@@ -140,7 +140,7 @@ li.opened .mobile-nav__caret {
   line-height: 28px;
   letter-spacing: 1px;
   margin-bottom: 6px;
-  font-family: var(--font-lufga);
+  font-family: var(--font-body);
   font-weight: 600;
   color: var(--gold-bright, var(--gold));
 }
@@ -185,7 +185,7 @@ li.opened .mobile-nav__caret {
   border: 1px solid color-mix(in srgb, var(--gold) 55%, transparent);
   background: color-mix(in srgb, var(--gold) 12%, transparent);
   color: var(--gold-bright, var(--gold));
-  font-family: var(--font-lufga);
+  font-family: var(--font-body);
   font-weight: 500;
   font-size: 17px;
   letter-spacing: 0.5px;

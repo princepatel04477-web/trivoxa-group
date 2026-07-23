@@ -141,7 +141,7 @@
 }
 
 .footer .tagline {
-  font-family: var(--font-lufga);
+  font-family: var(--font-body);
   font-weight: 500;
   font-size: 15px;
   line-height: 1.5;
@@ -195,7 +195,7 @@
 
 /* Column titles */
 .footer .footer-content .title {
-  font-family: var(--font-lufga);
+  font-family: var(--font-display);
   font-weight: 500;
   font-size: 15px;
   line-height: 1;
