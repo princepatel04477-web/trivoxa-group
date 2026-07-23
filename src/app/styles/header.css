@@ -51,11 +51,14 @@
 .header .header-wrapper .h-left ul {
   align-items: center;
   height: 100%;
+  flex-wrap: nowrap;
 }
 
 .header .header-wrapper .h-left ul li {
   line-height: 79px;
   position: relative;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .header .header-wrapper .h-left ul li.menu-active::before {
@@ -133,6 +136,7 @@
   font-size: 16px;
   line-height: 21px;
   margin-right: 26px;
+  white-space: nowrap;
   transition: transform 0.3s;
 }
 
