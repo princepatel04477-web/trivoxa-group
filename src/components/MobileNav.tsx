@@ -69,10 +69,17 @@ export default function MobileNav() {
     };
   }, []);
 
-  // Any navigation closes the overlay and collapses accordions.
+  // Any navigation collapses accordions — derived reset during render (the
+  // React-sanctioned pattern; avoids a cascading setState-in-effect)…
+  const [lastPath, setLastPath] = useState(pathname);
+  if (lastPath !== pathname) {
+    setLastPath(pathname);
+    setOpenSection(null);
+  }
+
+  // …while closing the overlay is a DOM side effect, so it stays an effect.
   useEffect(() => {
     document.body.classList.remove("nav-active");
-    setOpenSection(null);
   }, [pathname]);
 
   const closeNav = useCallback(() => {

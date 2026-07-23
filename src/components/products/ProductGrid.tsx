@@ -48,7 +48,10 @@ export default function ProductGrid({
   const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setSelected(readBasket());
+    // Hydrate the basket after paint — sessionStorage isn't available during
+    // SSR, and deferring the write keeps it out of the synchronous effect body.
+    const raf = requestAnimationFrame(() => setSelected(readBasket()));
+    return () => cancelAnimationFrame(raf);
   }, []);
 
   const industries = useMemo(

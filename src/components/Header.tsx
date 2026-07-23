@@ -68,10 +68,13 @@ export default function Header() {
     return () => document.removeEventListener("keydown", onKey);
   }, []);
 
-  // Route change always dismisses panels.
-  useEffect(() => {
+  // Route change always dismisses panels — derived reset during render (the
+  // React-sanctioned pattern; avoids a cascading setState-in-effect).
+  const [lastPath, setLastPath] = useState(pathname);
+  if (lastPath !== pathname) {
+    setLastPath(pathname);
     setOpenMenu(null);
-  }, [pathname]);
+  }
 
   /** Active-trail detection for the underline + aria-current. */
   const isActive = useCallback(

@@ -18,11 +18,12 @@ export default function PresenceStats({ stats }: { stats: StatItem[] }) {
   useEffect(() => {
     const el = rootRef.current;
     if (!el) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setProgress(1);
-      return;
-    }
     let raf = 0;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      // Async so the state write isn't a synchronous effect-body setState.
+      raf = requestAnimationFrame(() => setProgress(1));
+      return () => cancelAnimationFrame(raf);
+    }
     const io = new IntersectionObserver(
       (entries) => {
         if (!entries[0].isIntersecting) return;
