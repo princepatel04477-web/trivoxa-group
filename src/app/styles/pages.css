@@ -74,6 +74,33 @@
   }
 }
 
+/* Live GLSL shader background — same slot as .film-bg (fixed, above the gold-
+   glow ambient bg at z-index -2, below content). A navy scrim keeps copy
+   readable. Falls back to nothing (the ambient .tvx__bg shows) on low-end GPUs. */
+.shader-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.shader-bg canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.shader-bg__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--bg) 62%, transparent) 0%,
+    color-mix(in srgb, var(--bg) 16%, transparent) 22%,
+    color-mix(in srgb, var(--bg) 16%, transparent) 72%,
+    color-mix(in srgb, var(--bg) 72%, transparent) 100%
+  );
+}
+
 .tvx .container {
   width: 100%;
   max-width: 1240px;
