@@ -681,7 +681,9 @@ a, button {
   inset: 0;
   z-index: 9999;
   pointer-events: none;
-  opacity: 0.055;
+  /* Lifted from 0.055 so the film grain still reads over the brighter Remotion
+     background films (which sit at z-index -1). Still static — never animated. */
+  opacity: 0.09;
   mix-blend-mode: soft-light;
   background-repeat: repeat;
   background-size: 160px 160px;
