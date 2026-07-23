@@ -5,7 +5,7 @@ import { Grain, Vignette } from "../lib/Overlays";
 import { ground, driftParticles } from "../lib/fields";
 import { NAVY } from "../lib/palette";
 
-export const FOOTER_DRIFT_DURATION = 24 * 12; // 12s ambient loop
+export const FOOTER_DRIFT_DURATION = 60 * 12; // 12s ambient loop
 
 // Reusable, almost-still ambient: sparse gold particles float slowly.
 const draw: DrawFn = (ctx, frame, { width: W, height: H }) => {

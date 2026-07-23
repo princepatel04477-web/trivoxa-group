@@ -6,7 +6,7 @@ import { ground } from "../lib/fields";
 import { mulberry32 } from "../lib/rng";
 import { NAVY, GOLD, GOLD_SOFT, ROUTE, LINE, withAlpha, pulse01 } from "../lib/palette";
 
-export const ABOUT_DURATION = 24 * 15; // 15s
+export const ABOUT_DURATION = 60 * 11; // 15s
 
 // Origin story: woven thread close-up at the base rising to a horizon line, with
 // a slowly forming network above it — foundation to horizon.

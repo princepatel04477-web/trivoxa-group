@@ -6,7 +6,7 @@ import { ground } from "../lib/fields";
 import { mulberry32 } from "../lib/rng";
 import { NAVY, ROUTE, GOLD_SOFT, LINE, withAlpha, pulse01 } from "../lib/palette";
 
-export const SERVICE_DIGITAL_DURATION = 24 * 15; // 15s
+export const SERVICE_DIGITAL_DURATION = 60 * 10; // 15s
 
 // Calm blue data-stream: dot grid, nodes light and connect, data pulses travel
 // the links, faint software-window frames. No readable UI, no fake code.

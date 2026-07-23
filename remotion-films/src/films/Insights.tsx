@@ -6,7 +6,7 @@ import { ground } from "../lib/fields";
 import { mulberry32 } from "../lib/rng";
 import { NAVY, GOLD, ROUTE, LINE, INK, withAlpha } from "../lib/palette";
 
-export const INSIGHTS_DURATION = 24 * 14; // 14s
+export const INSIGHTS_DURATION = 60 * 10; // 14s
 
 // Editorial masthead: thin rules, abstract headline-fragment bars drifting
 // vertically, a faint data ticker. No readable text.

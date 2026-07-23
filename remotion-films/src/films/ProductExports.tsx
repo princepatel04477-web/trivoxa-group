@@ -6,7 +6,7 @@ import { ground } from "../lib/fields";
 import { mulberry32 } from "../lib/rng";
 import { NAVY, GOLD, GOLD_SOFT, ROUTE, withAlpha } from "../lib/palette";
 
-export const PRODUCT_EXPORTS_DURATION = 24 * 20; // 20s — 5 motifs, cross-dissolving
+export const PRODUCT_EXPORTS_DURATION = 60 * 15; // 20s — 5 motifs, cross-dissolving
 
 // Abstract macro montage of the export materials: fabric weave, pharma vial,
 // stone slab, agri produce, engineered component. No photos — geometric silhouettes.

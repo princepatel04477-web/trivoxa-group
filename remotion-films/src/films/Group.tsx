@@ -6,7 +6,7 @@ import { ground } from "../lib/fields";
 import { mulberry32 } from "../lib/rng";
 import { NAVY, GOLD, GOLD_SOFT, ROUTE, withAlpha, pulse01 } from "../lib/palette";
 
-export const GROUP_DURATION = 24 * 16; // 16s
+export const GROUP_DURATION = 60 * 11; // 16s
 
 // "Foundation to Future": woven gold threads that interlace, resolving into a
 // breathing network of nodes — foundation (weave) into future (network).

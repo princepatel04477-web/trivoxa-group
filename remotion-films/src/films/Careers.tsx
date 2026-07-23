@@ -5,7 +5,7 @@ import { Grain, Vignette } from "../lib/Overlays";
 import { ground } from "../lib/fields";
 import { NAVY, GOLD, GOLD_SOFT, ROUTE, withAlpha, pulse01 } from "../lib/palette";
 
-export const CAREERS_DURATION = 24 * 15; // 15s
+export const CAREERS_DURATION = 60 * 10; // 15s
 
 // "Build What's Next": loom threads on the left converge into a single forward
 // path that travels right toward a bright, growing network point.

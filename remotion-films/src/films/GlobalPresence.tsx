@@ -4,7 +4,7 @@ import { CanvasFilm, DrawFn } from "../lib/CanvasFilm";
 import { Grain, Vignette } from "../lib/Overlays";
 import { NAVY, NAVY_ELEV, GOLD, GOLD_SOFT, ROUTE, LINE, withAlpha, pulse01 } from "../lib/palette";
 
-export const GLOBAL_PRESENCE_DURATION = 24 * 15; // 15s seamless loop @ 24fps
+export const GLOBAL_PRESENCE_DURATION = 60 * 10; // 15s seamless loop @ 24fps
 
 // Ports laid out to loosely read as a world map (Americas · Europe/Africa · Asia),
 // abstract — no literal coastlines.

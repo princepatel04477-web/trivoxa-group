@@ -6,7 +6,7 @@ import { ground } from "../lib/fields";
 import { mulberry32 } from "../lib/rng";
 import { NAVY, GOLD, GOLD_SOFT, ROUTE, withAlpha } from "../lib/palette";
 
-export const CONTACT_DURATION = 24 * 16; // 16s
+export const CONTACT_DURATION = 60 * 12; // 16s
 
 // Minimal compass/routing loop: gold particles gather into a compass rose, one
 // route line draws outward, then dissolves and scatters — seamless.

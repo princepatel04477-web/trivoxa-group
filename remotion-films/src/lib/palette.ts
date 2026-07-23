@@ -12,15 +12,20 @@ export const GOLD_SOFT = "#D4AF5E"; // particles
 export const ROUTE = "#8FB4E8"; // pale-blue trade-route lines
 export const INK = "#EDF1F8";
 
-export const FPS = 24;
+export const FPS = 60;
 
-/** hex + alpha (0..1) -> rgba() string */
+/** Global brightness lever — bumps every film's line/fill alpha at once so the
+ *  motion reads clearly over the page scrim without editing each magic number. */
+export const BOOST = 1.85;
+
+/** hex + alpha (0..1) -> rgba() string, brightened by BOOST and clamped. */
 export function withAlpha(hex: string, a: number): string {
   const h = hex.replace("#", "");
   const r = parseInt(h.slice(0, 2), 16);
   const g = parseInt(h.slice(2, 4), 16);
   const b = parseInt(h.slice(4, 6), 16);
-  return `rgba(${r}, ${g}, ${b}, ${a})`;
+  const aa = Math.min(1, a * BOOST);
+  return `rgba(${r}, ${g}, ${b}, ${aa})`;
 }
 
 /** Ease a seamless 0..1 loop phase into a smooth 0..1..0 pulse. */

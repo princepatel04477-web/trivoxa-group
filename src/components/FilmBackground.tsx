@@ -3,59 +3,51 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Fixed, full-viewport ambient background film (Remotion-rendered loop) that
- * sits behind page content (see .film-bg z-index). Design constraints:
- *  - Lazy: the <video> mounts only after first idle, so it never blocks paint;
- *    a baked-navy poster shows instantly meanwhile.
- *  - prefers-reduced-motion: no video at all — just the still poster.
- *  - Pauses when the tab is hidden (battery/CPU) and resumes on return.
- * The Next app ships only the rendered .webm/.mp4/.jpg; it has no Remotion dep.
+ * Fixed, full-viewport ambient background film (Remotion-rendered loop) behind
+ * page content (see .film-bg z-index). It plays as soon as it mounts — a baked
+ * navy poster shows for the first paint, then the (small, 60fps) webm streams in
+ * and autoplays. prefers-reduced-motion serves the poster only (no video bytes),
+ * and playback pauses when the tab is hidden. The Next app ships only the
+ * rendered .webm/.mp4/.jpg — it has no Remotion dependency.
  */
 export default function FilmBackground({ film }: { film: string }) {
-  const [reduced, setReduced] = useState(true); // assume reduced until checked (SSR-safe: poster first)
-  const [ready, setReady] = useState(false);
+  const [mode, setMode] = useState<"poster" | "video">("poster");
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  // Decide poster-only vs video once mounted (client-only; SSR renders poster).
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReduced(mq.matches);
-    const onChange = () => setReduced(mq.matches);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
+    const apply = () => setMode(mq.matches ? "poster" : "video");
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
   }, []);
 
+  // Kick playback the moment the element exists / has data, and pause on hide.
   useEffect(() => {
-    if (reduced) return;
-    const w = window as typeof window & {
-      requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number;
-      cancelIdleCallback?: (id: number) => void;
+    if (mode !== "video") return;
+    const v = videoRef.current;
+    if (!v) return;
+    const play = () => {
+      if (!document.hidden) void v.play().catch(() => {});
     };
-    let idle = 0;
-    let timer = 0;
-    if (w.requestIdleCallback) idle = w.requestIdleCallback(() => setReady(true), { timeout: 1600 });
-    else timer = window.setTimeout(() => setReady(true), 700);
-    return () => {
-      if (idle && w.cancelIdleCallback) w.cancelIdleCallback(idle);
-      if (timer) window.clearTimeout(timer);
-    };
-  }, [reduced]);
-
-  useEffect(() => {
-    const onVis = () => {
-      const v = videoRef.current;
-      if (!v) return;
-      if (document.hidden) v.pause();
-      else void v.play().catch(() => {});
-    };
+    play();
+    v.addEventListener("loadeddata", play);
+    v.addEventListener("canplay", play);
+    const onVis = () => (document.hidden ? v.pause() : play());
     document.addEventListener("visibilitychange", onVis);
-    return () => document.removeEventListener("visibilitychange", onVis);
-  }, [ready]);
+    return () => {
+      v.removeEventListener("loadeddata", play);
+      v.removeEventListener("canplay", play);
+      document.removeEventListener("visibilitychange", onVis);
+    };
+  }, [mode]);
 
   const poster = `/videos/bg-${film}.jpg`;
 
   return (
     <div className="film-bg" aria-hidden="true">
-      {!reduced && ready ? (
+      {mode === "video" ? (
         <video
           ref={videoRef}
           className="film-bg__media"
@@ -63,7 +55,7 @@ export default function FilmBackground({ film }: { film: string }) {
           muted
           loop
           playsInline
-          preload="none"
+          preload="auto"
           poster={poster}
         >
           <source src={`/videos/bg-${film}.webm`} type="video/webm" />
