@@ -63,12 +63,19 @@ export async function POST(request: Request) {
     const catalogPath = industry ? path.join(process.cwd(), "public", "catalogs", `${industry.slug}.pdf`) : null;
     const hasCatalog = catalogPath ? fs.existsSync(catalogPath) : false;
 
+    // Buyer-supplied spec sheets / drawings ride to sales as attachments.
+    const buyerAttachments = (data.attachments ?? []).map((a) => ({
+      filename: a.filename,
+      content: Buffer.from(a.contentBase64, "base64"),
+    }));
+
     try {
       await resend.emails.send({
         from: "Trivoxa RFQ <rfq@trivoxagroup.com>",
         to: SALES_EMAIL,
         subject: `New RFQ ${reference} — ${industry?.name ?? "Unknown Industry"}`,
         html: salesNotificationHtml(data, reference, industry?.name ?? industrySlug, categoryName ?? data.categoryKey),
+        attachments: buyerAttachments.length > 0 ? buyerAttachments : undefined,
       });
       await resend.emails.send({
         from: "Trivoxa Group <rfq@trivoxagroup.com>",

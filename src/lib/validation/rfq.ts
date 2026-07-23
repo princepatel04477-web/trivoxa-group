@@ -21,12 +21,25 @@ export const rfqProductSchema = z.object({
   priceBand: z.string().trim().optional(),
 });
 
+/** Spec sheets / drawings riding along with the RFQ (spec §4 — Contact/RFQ).
+ * Base64 in JSON keeps the existing endpoint contract; the 4MB combined cap
+ * stays under serverless body limits. */
+export const MAX_ATTACHMENTS = 3;
+export const MAX_ATTACHMENT_BYTES = 4 * 1024 * 1024;
+
+export const rfqAttachmentSchema = z.object({
+  filename: z.string().trim().min(1).max(140),
+  mimeType: z.string().trim().max(100),
+  contentBase64: z.string().max(Math.ceil((MAX_ATTACHMENT_BYTES * 4) / 3) + 1024),
+});
+
 export const rfqTermsSchema = z.object({
   incoterm: z.enum(INCOTERMS),
   deliveryStart: z.string().min(1, "Select a start date"),
   deliveryEnd: z.string().min(1, "Select an end date"),
   sampleRequired: z.enum(["yes", "no"]),
   notes: z.string().trim().optional(),
+  attachments: z.array(rfqAttachmentSchema).max(MAX_ATTACHMENTS).optional(),
 });
 
 export const rfqSchema = rfqCompanySchema

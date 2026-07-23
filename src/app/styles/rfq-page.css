@@ -208,3 +208,185 @@
   .rfq-grid { grid-template-columns: 1fr; }
   .rfq-progress__step span:last-child { display: none; }
 }
+
+/* ---------- Path picker (spec §4 — product / service / partnership / career) ---------- */
+.rfq-paths {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+}
+
+.rfq-path-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 28px 26px 24px;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--text) 12%, transparent);
+  background: color-mix(in srgb, var(--bg-card, var(--bg)) 55%, transparent);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+.rfq-path-card:hover,
+.rfq-path-card:focus-visible {
+  border-color: var(--gold);
+  transform: translateY(-3px);
+}
+
+.rfq-path-card h3 {
+  font-family: var(--font-lufga);
+  font-size: 19px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.rfq-path-card p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--text) 55%, transparent);
+}
+
+.rfq-path-card span {
+  margin-top: auto;
+  align-self: flex-end;
+  color: var(--gold-bright, var(--gold));
+  font-size: 18px;
+  transition: transform 0.3s ease;
+}
+
+.rfq-path-card:hover span {
+  transform: translateX(5px);
+}
+
+.rfq-path-back {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-bottom: 26px;
+  font-size: 14px;
+  color: color-mix(in srgb, var(--text) 50%, transparent);
+  cursor: pointer;
+  transition: color 0.25s ease;
+}
+
+.rfq-path-back:hover {
+  color: var(--gold-bright, var(--gold));
+}
+
+/* ---------- Helpers, presets, attachments ---------- */
+.rfq-preset-note {
+  margin-bottom: 20px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--gold) 30%, transparent);
+  background: color-mix(in srgb, var(--gold) 6%, transparent);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.rfq-helper {
+  margin-top: 18px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.8;
+  letter-spacing: 0.02em;
+  color: color-mix(in srgb, var(--gold) 80%, transparent);
+}
+
+.rfq-files {
+  list-style: none;
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rfq-files li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
+  font-size: 13.5px;
+}
+
+.rfq-files li em {
+  font-style: normal;
+  color: color-mix(in srgb, var(--text) 40%, transparent);
+}
+
+.rfq-files li button {
+  background: none;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  color: color-mix(in srgb, var(--text) 50%, transparent);
+  cursor: pointer;
+}
+
+.rfq-files li button:hover {
+  color: var(--destructive, #e5484d);
+}
+
+.rfq-field input[type="file"] {
+  padding: 10px 0;
+  font-size: 13.5px;
+  color: color-mix(in srgb, var(--text) 60%, transparent);
+}
+
+/* ---------- Quick channels + map ---------- */
+.rfq-quicklinks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+  margin-top: 40px;
+  padding-top: 26px;
+  border-top: 1px solid color-mix(in srgb, var(--text) 8%, transparent);
+}
+
+.rfq-quicklinks__label {
+  font-size: 14px;
+  color: color-mix(in srgb, var(--text) 45%, transparent);
+}
+
+.rfq-quicklinks a {
+  padding: 9px 20px;
+  border-radius: 30px;
+  border: 1px solid color-mix(in srgb, var(--text) 16%, transparent);
+  font-size: 14px;
+  color: color-mix(in srgb, var(--text) 75%, transparent);
+  transition: border-color 0.3s ease, color 0.3s ease;
+}
+
+.rfq-quicklinks a:hover {
+  border-color: var(--gold);
+  color: var(--gold-bright, var(--gold));
+}
+
+.rfq-map iframe {
+  width: 100%;
+  height: 380px;
+  border: 1px solid color-mix(in srgb, var(--text) 12%, transparent);
+  border-radius: 14px;
+  filter: grayscale(0.85) contrast(0.9);
+}
+
+.rfq-map__note {
+  margin-top: 16px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: color-mix(in srgb, var(--text) 55%, transparent);
+  max-width: 60ch;
+}
+
+/* Success crane sits above the confirmation copy */
+.rfq-confirm .crane {
+  max-width: 300px;
+  margin-bottom: 10px;
+}
