@@ -685,13 +685,14 @@ a, button {
   inset: 0;
   z-index: 9999;
   pointer-events: none;
-  /* 0.09 keeps the grain reading over the brighter Remotion films (z-index -1)
-     while staying subtle — text stays crisp. */
-  opacity: 0.09;
-  mix-blend-mode: soft-light;
+  /* Visible film grain on a dark ground: `screen` only lifts the light noise
+     specks (black noise adds nothing), so we get flickering grain without
+     graying the navy. The noise is contrast-boosted to punchy speckles. */
+  opacity: 0.5;
+  mix-blend-mode: screen;
   background-repeat: repeat;
-  background-size: 160px 160px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 170px 170px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='3' intercept='-1.05'/%3E%3CfeFuncG type='linear' slope='3' intercept='-1.05'/%3E%3CfeFuncB type='linear' slope='3' intercept='-1.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   animation: grain-shift 0.7s steps(1) infinite;
   will-change: background-position;
 }
