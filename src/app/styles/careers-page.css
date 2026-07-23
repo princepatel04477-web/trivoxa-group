@@ -150,3 +150,116 @@
     border-top: 1px solid var(--color-rule);
   }
 }
+
+/* ---------- Culture photo essay + leadership voices (spec §4) ---------- */
+.careers-photo-essay {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-md, 18px);
+}
+
+.careers-photo-essay figure {
+  margin: 0;
+}
+
+.careers-photo-essay img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
+  filter: saturate(0.85);
+  transition: filter 0.4s ease, transform 0.4s ease;
+}
+
+.careers-photo-essay figure:hover img {
+  filter: saturate(1);
+  transform: translateY(-3px);
+}
+
+.careers-photo-essay figcaption {
+  margin-top: 10px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  color: color-mix(in srgb, var(--text) 45%, transparent);
+}
+
+.careers-voices {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-lg, 28px);
+  margin-top: var(--space-2xl, 48px);
+}
+
+.careers-voice {
+  margin: 0;
+  padding: 24px 26px;
+  border-left: 2px solid color-mix(in srgb, var(--gold) 55%, transparent);
+  background: color-mix(in srgb, var(--bg-card, var(--bg)) 45%, transparent);
+  border-radius: 0 10px 10px 0;
+}
+
+.careers-voice p {
+  font-size: 15.5px;
+  line-height: 1.7;
+  font-style: italic;
+  color: color-mix(in srgb, var(--text) 80%, transparent);
+}
+
+.careers-voice footer {
+  margin-top: 14px;
+  font-size: 13px;
+  color: color-mix(in srgb, var(--text) 50%, transparent);
+}
+
+.careers-voice footer strong {
+  color: var(--gold-bright, var(--gold));
+  font-weight: 500;
+}
+
+/* Statement cards (shared pattern, duplicated from global-presence so this
+   page stays self-contained). */
+.tvx-statements {
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--space-2xl, 48px);
+}
+
+.tvx-statement {
+  padding: var(--space-xl, 36px) 0;
+}
+
+.tvx-statement:first-child {
+  padding-top: 0;
+}
+
+.tvx-statement__rule {
+  display: block;
+  width: 56px;
+  height: 1px;
+  background: var(--color-accent, var(--gold));
+  margin-bottom: var(--space-sm, 14px);
+  transition: width 0.3s ease;
+}
+
+.tvx-statement:hover .tvx-statement__rule {
+  width: 96px;
+}
+
+.tvx-statement__title {
+  font-family: var(--font-display, var(--font-lufga));
+  font-weight: 600;
+  font-size: clamp(1.5rem, 2.4vw, 2.25rem);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  margin: 0 0 var(--space-2xs, 8px);
+}
+
+.tvx-statement__desc {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: color-mix(in srgb, var(--text) 60%, transparent);
+  max-width: 640px;
+  margin: 0;
+}

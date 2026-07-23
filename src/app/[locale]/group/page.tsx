@@ -6,6 +6,7 @@ import SplitScreenSticky from "@/components/patterns/SplitScreenSticky";
 import EditorialPanel from "@/components/patterns/EditorialPanel";
 import NumberedList from "@/components/patterns/NumberedList";
 import SectionGrain from "@/components/patterns/SectionGrain";
+import HorizontalTimeline from "@/components/patterns/HorizontalTimeline";
 import LeadershipPanel from "@/components/leadership/LeadershipPanel";
 import EcosystemDiagram from "@/components/ecosystem/EcosystemDiagram";
 import "@/app/styles/patterns.css";
@@ -70,6 +71,17 @@ const founders = [
     message:
       "As Trivoxa grows, our leadership will continue to uphold the principles that define our organization while embracing innovation and new opportunities across global markets.",
   },
+];
+
+/** The journey as stages, not invented dates — the master content doc
+ * records the sequence of the group's growth, not a year-by-year ledger,
+ * and we don't fabricate one. */
+const journey = [
+  { title: "Manufacturing Foundations", description: "Shiveshwar Textiles builds deep expertise in woven textile production and quality-focused operations." },
+  { title: "An International Vision", description: "The founders recognize global demand for a trusted partner into India's manufacturing capability." },
+  { title: "Trivoxa Group Established", description: "The international business arm is founded to bridge global buyers and Indian production." },
+  { title: "Two Export Divisions", description: "Product Exports and Service Exports (Trivoxa Digital) launch as the group's operating arms." },
+  { title: "Growing Global Partnerships", description: "The network expands across industries, regions, and long-term client relationships." },
 ];
 
 const commitments = [
@@ -185,6 +197,11 @@ export default function GroupPage() {
           "Guided by this purpose, Trivoxa was created to build long-term relationships that extend beyond commerce and contribute to sustainable business growth for partners across the world.",
         ]}
       />
+
+      {/* 4b. THE JOURNEY — visual timeline (spec §4, The Group) */}
+      <Section eyebrow="The Journey" title="How the Group Took Shape.">
+        <HorizontalTimeline steps={journey} />
+      </Section>
 
       {/* 5. OUR VISION */}
       <section className="group-vision" id="vision">

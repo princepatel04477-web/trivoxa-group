@@ -25,6 +25,43 @@ const areas = [
   { icon: "📈", title: "Business & Partnerships", description: "Growth, client relationships, and long-term partnership development." },
 ];
 
+/** What working here actually offers — growth mechanics, not perks theatre. */
+const benefits = [
+  { title: "International Exposure", description: "Work directly with buyers, manufacturers, and partners across six global regions from day one." },
+  { title: "Ownership Early", description: "Small teams and a growing group mean real responsibility — corridors, clients, and products you own." },
+  { title: "Two Worlds, One Company", description: "Physical trade and digital services under one roof — move between them as your interests grow." },
+  { title: "Learning as Default", description: "Export compliance, technology, negotiation — the group invests in the skills the work demands." },
+  { title: "A Clear Growth Path", description: "Contributor → coordinator → corridor or practice lead, reviewed openly against the work, not tenure." },
+  { title: "Built to Endure", description: "A long-term company, deliberately grown — careers here are measured in years, not projects." },
+];
+
+/** Real leadership voices from the master content doc — not invented
+ * employee testimonials. */
+const voices = [
+  {
+    quote: "Leadership at Trivoxa is driven by a commitment to long-term thinking, responsible decision-making, and continuous improvement.",
+    name: "Parth Mangukiya",
+    role: "Founder & Managing Director",
+  },
+  {
+    quote: "We are building an organization founded on trust, guided by integrity, and dedicated to creating meaningful value for our customers, partners, and communities.",
+    name: "Dhruv Patel",
+    role: "Co-Founder, Business Development",
+  },
+  {
+    quote: "As Trivoxa grows, our leadership will continue to uphold the principles that define our organization while embracing innovation and new opportunities.",
+    name: "Tirth Kalathiya",
+    role: "Co-Founder, Technology & Innovation",
+  },
+];
+
+/** Where the work happens — the group's real manufacturing floor. */
+const culturePhotos = [
+  { src: "/images/foundation/exterior.jpg", caption: "Factory exterior — Shiveshwar Textiles" },
+  { src: "/images/foundation/weaving.jpg", caption: "The weaving floor" },
+  { src: "/images/foundation/inspection.jpg", caption: "Quality inspection" },
+];
+
 export default function CareersPage() {
   return (
     <TrivoxaShell>
@@ -50,6 +87,28 @@ export default function CareersPage() {
         </div>
       </Section>
 
+      {/* Culture photo essay + leadership voices (spec §4 — Careers) */}
+      <Section eyebrow="Where the Work Happens" title="From the Factory Floor to Global Markets.">
+        <div className="careers-photo-essay">
+          {culturePhotos.map((p) => (
+            <figure key={p.src}>
+              <img src={p.src} alt={p.caption} loading="lazy" />
+              <figcaption>{p.caption}</figcaption>
+            </figure>
+          ))}
+        </div>
+        <div className="careers-voices">
+          {voices.map((v) => (
+            <blockquote key={v.name} className="careers-voice">
+              <p>&ldquo;{v.quote}&rdquo;</p>
+              <footer>
+                <strong>{v.name}</strong> — {v.role}
+              </footer>
+            </blockquote>
+          ))}
+        </div>
+      </Section>
+
       <Section id="areas" eyebrow="Where You Fit" title="Areas We're Growing." lead="As Trivoxa expands across industries and markets, we're building teams across trade, technology, and partnerships.">
         <div className="careers-dept-strip">
           {areas.map((a, i) => (
@@ -57,6 +116,19 @@ export default function CareersPage() {
               <span className="careers-dept__index">{String(i + 1).padStart(2, "0")}</span>
               <h3 className="careers-dept__name">{a.title}</h3>
               <p className="careers-dept__desc">{a.description}</p>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      {/* Benefits & growth paths (spec §4 — Careers) */}
+      <Section eyebrow="What You Get" title="Benefits Built Around Growth.">
+        <div className="tvx-statements">
+          {benefits.map((b) => (
+            <div className="tvx-statement" key={b.title}>
+              <span className="tvx-statement__rule" aria-hidden="true" />
+              <h3 className="tvx-statement__title">{b.title}</h3>
+              <p className="tvx-statement__desc">{b.description}</p>
             </div>
           ))}
         </div>
