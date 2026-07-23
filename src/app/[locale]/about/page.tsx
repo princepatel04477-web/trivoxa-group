@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <TrivoxaShell>
+    <TrivoxaShell film="about">
       <PageHero
         eyebrow="About"
         title="Built From a Manufacturing Floor in Surat."

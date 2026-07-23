@@ -23,7 +23,7 @@ const nextSteps = [
 
 export default function RfqPage() {
   return (
-    <TrivoxaShell>
+    <TrivoxaShell film="contact">
       <PageHero
         eyebrow="Request For Quote"
         title="Send Us Your RFQ"

@@ -41,7 +41,7 @@ export default async function ServiceCategoryPage(props: PageProps<"/[locale]/bu
   const related = getRelatedServices(cat.slug);
 
   return (
-    <TrivoxaShell>
+    <TrivoxaShell film="service-digital">
       {/* 1. HERO */}
       <PageHero
         crumb={[

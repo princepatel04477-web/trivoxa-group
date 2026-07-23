@@ -23,7 +23,7 @@ export default function FabricsPage() {
   const fabrics = getSubCategory("textile-apparel", "fabrics")!;
 
   return (
-    <TrivoxaShell>
+    <TrivoxaShell film="product-exports">
       <PageHero
         crumb={[
           { label: "Businesses", href: "/businesses/" },

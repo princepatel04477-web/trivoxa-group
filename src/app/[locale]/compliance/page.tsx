@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function CompliancePage() {
   return (
-    <TrivoxaShell>
+    <TrivoxaShell film="footer-drift">
       <PageHero
         eyebrow="Compliance"
         title="Certifications & Standards."

@@ -62,7 +62,7 @@ const strengths = [
 
 export default function BusinessesPage() {
   return (
-    <TrivoxaShell>
+    <TrivoxaShell film="product-exports">
       {/* 1. HERO */}
       <PageHero
         eyebrow="Our Businesses"

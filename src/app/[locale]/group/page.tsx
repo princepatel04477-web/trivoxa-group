@@ -114,7 +114,7 @@ const jsonLd = {
 
 export default function GroupPage() {
   return (
-    <TrivoxaShell>
+    <TrivoxaShell film="group">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       {/* 1. HERO */}

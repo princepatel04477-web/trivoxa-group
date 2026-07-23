@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function ThankYouPage() {
   return (
-    <TrivoxaShell>
+    <TrivoxaShell film="footer-drift">
       <PageHero
         eyebrow="Message Received"
         title="Thank You for Reaching Out."

@@ -13,6 +13,7 @@ import ContactModal from "@/components/ContactModal";
 import SiteFooter from "@/components/SiteFooter";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import MobileStickyCta from "@/components/MobileStickyCta";
+import FilmBackground from "@/components/FilmBackground";
 
 /**
  * Shell for every non-home route: fixed header, mobile nav, contact modal,
@@ -20,10 +21,18 @@ import MobileStickyCta from "@/components/MobileStickyCta";
  * scroll (from the root layout) applies here too — it's site-wide, not
  * home-only.
  */
-export default function TrivoxaShell({ children }: { children: ReactNode }) {
+export default function TrivoxaShell({
+  children,
+  film,
+}: {
+  children: ReactNode;
+  /** Optional Remotion background-film id (see /public/videos + FilmBackground). */
+  film?: string;
+}) {
   return (
     <div className="tvx">
       <div className="tvx__bg" aria-hidden />
+      {film ? <FilmBackground film={film} /> : null}
       <Header />
       <MobileNav />
       <ContactModal />

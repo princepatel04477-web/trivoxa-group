@@ -64,7 +64,7 @@ const culturePhotos = [
 
 export default function CareersPage() {
   return (
-    <TrivoxaShell>
+    <TrivoxaShell film="careers">
       <PageHero
         eyebrow="Careers"
         title="Build What's Next With Us."

@@ -48,7 +48,7 @@ export default async function IndustryPage(props: PageProps<"/[locale]/industrie
   const related = industries.filter((i) => i.slug !== industry.slug).slice(0, 3);
 
   return (
-    <TrivoxaShell>
+    <TrivoxaShell film="footer-drift">
       <PageHero
         crumb={[{ label: "Industries", href: "/industries/" }, { label: industry.name }]}
         eyebrow={`Industry — ${industry.name}`}

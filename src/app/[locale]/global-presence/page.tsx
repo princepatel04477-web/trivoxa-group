@@ -91,7 +91,7 @@ const why = [
 
 export default function GlobalPresencePage() {
   return (
-    <TrivoxaShell>
+    <TrivoxaShell film="global-presence">
       <PageHero
         eyebrow="Global Presence"
         title="Connecting Opportunities Across Borders."

@@ -29,7 +29,7 @@ const upcomingTopics = [
 
 export default function InsightsPage() {
   return (
-    <TrivoxaShell>
+    <TrivoxaShell film="insights">
       <PageHero
         eyebrow="Insights"
         title="Perspectives That Drive Global Business."
