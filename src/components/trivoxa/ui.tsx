@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import ActionButtons, { type Action } from "@/components/trivoxa/ActionButtons";
+import SectionGrain from "@/components/patterns/SectionGrain";
 
 export type { Action };
 
@@ -34,6 +35,7 @@ export function PageHero({
 }) {
   return (
     <section className="tvx-hero">
+      <SectionGrain className="hero-grain" />
       <div className="container">
         <div className="tvx-hero__inner">
           {crumb && (

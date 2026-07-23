@@ -670,60 +670,25 @@ a, button {
 }
 
 /* ---------- Global film/paper grain (Task 1) ---------- */
-/* One layer mounted once (GrainOverlay, last child of <body>). soft-light makes
-   a single grayscale-noise tile read correctly over the navy ground and any
-   lighter surface. It now ANIMATES as a subtle film shimmer — but cheaply: the
-   noise tile repeats, so we only jitter `background-position` in discrete steps
-   (~11/sec). No per-pixel canvas, no animated feTurbulence, no re-generated
-   noise — just the same tile shown at a shifting offset, so the compositor cost
-   stays low enough to hold the 60fps floor alongside the home WebGL field.
-   Reduced-motion and small screens fall back below. Interactive chrome (header,
-   mobile nav, cursor, modals) is raised above z-index 9999 so grain never dims
-   what the user reads/clicks; pointer-events:none keeps every click through. */
+/* One STATIC layer mounted once (GrainOverlay, last child of <body>). soft-light
+   makes a single grayscale-noise tile read correctly over the navy ground and
+   any lighter surface. Kept quiet and still — the only ANIMATED grain is the
+   scoped canvas grain behind each page's hero (.hero-grain). Interactive chrome
+   (header, mobile nav, cursor, modals) is raised above z-index 9999 so grain
+   never dims what the user reads/clicks; pointer-events:none passes clicks. */
 .grain-overlay {
   position: fixed;
   inset: 0;
   z-index: 9999;
   pointer-events: none;
-  /* Visible film grain on a dark ground: `screen` only lifts the light noise
-     specks (black noise adds nothing), so we get flickering grain without
-     graying the navy. The noise is contrast-boosted to punchy speckles. */
-  opacity: 0.5;
-  mix-blend-mode: screen;
+  opacity: 0.06;
+  mix-blend-mode: soft-light;
   background-repeat: repeat;
-  background-size: 170px 170px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='3' intercept='-1.05'/%3E%3CfeFuncG type='linear' slope='3' intercept='-1.05'/%3E%3CfeFuncB type='linear' slope='3' intercept='-1.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  animation: grain-shift 0.7s steps(1) infinite;
-  will-change: background-position;
+  background-size: 160px 160px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
-/* Discrete offsets within one repeating 160px tile — every stop shows full,
-   gap-free noise, so the pattern reads as a flickering film grain. */
-@keyframes grain-shift {
-  0%   { background-position: 0 0; }
-  12%  { background-position: -13px 9px; }
-  24%  { background-position: 11px -14px; }
-  36%  { background-position: -7px -11px; }
-  48%  { background-position: 15px 6px; }
-  60%  { background-position: -12px 13px; }
-  72%  { background-position: 8px -9px; }
-  84%  { background-position: -15px -5px; }
-  100% { background-position: 6px 12px; }
-}
-/* Decorative texture, not information: hold it static when the user asks for
-   reduced motion, and drop it entirely under forced-colors so it can't wash out
-   high-contrast modes. */
-@media (prefers-reduced-motion: reduce) {
-  .grain-overlay {
-    animation: none;
-  }
-}
-/* Mobile GPUs pay more for the full-viewport soft-light re-blend — slow the
-   flicker so it stays cheap. */
-@media (max-width: 767px) {
-  .grain-overlay {
-    animation-duration: 1.4s;
-  }
-}
+/* Decorative texture, not information — drop it under forced-colors so it can't
+   wash out high-contrast modes. */
 @media (forced-colors: active) {
   .grain-overlay {
     display: none;

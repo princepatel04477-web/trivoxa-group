@@ -119,6 +119,7 @@ export default function GroupPage() {
 
       {/* 1. HERO */}
       <section className="group-hero">
+        <SectionGrain className="hero-grain" />
         <div className="container group-hero__inner">
           <Eyebrow>The Group</Eyebrow>
           <h1 className="group-hero__title">Building an Organization Designed to Endure.</h1>
