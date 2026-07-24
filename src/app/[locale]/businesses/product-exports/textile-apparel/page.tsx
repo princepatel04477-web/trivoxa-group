@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, Checklist, CtaBand } from "@/components/trivoxa/ui";
+import { PageAccent } from "@/components/visuals/PageAccent";
 import "@/app/styles/textile-apparel-page.css";
 
 export const metadata: Metadata = {
@@ -43,6 +44,7 @@ export default function TextileApparelPage() {
         title="Textile & Apparel Exports."
         description="Supporting manufacturers, brands, wholesalers, and sourcing companies with fabrics, home textiles, apparel accessories, and customized sourcing solutions — built on the woven-textile expertise of Shiveshwar Textiles."
         actions={[{ label: "Request a Quote", modal: true }, { label: "Explore Fabrics", href: `${BASE}/fabrics/`, variant: "ghost" }]}
+        accent={<PageAccent variant="trade-routes" seed="textile-apparel" />}
       />
 
       <Section

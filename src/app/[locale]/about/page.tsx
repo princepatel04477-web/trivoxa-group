@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, CtaBand } from "@/components/trivoxa/ui";
+import { PageAccent } from "@/components/visuals/PageAccent";
 
 export const metadata: Metadata = {
   title: "About | Trivoxa Group",
@@ -15,6 +16,7 @@ export default function AboutPage() {
         eyebrow="About"
         title="Built From a Manufacturing Floor in Surat."
         description="Trivoxa Group didn't start as a trading company. It started on the production floor of a textile manufacturer — and carried that discipline into international trade."
+        accent={<PageAccent variant="pulse-origin" seed="about" />}
       />
 
       <Section

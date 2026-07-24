@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, Steps } from "@/components/trivoxa/ui";
 import RfqForm from "@/components/rfq/RfqForm";
+import { PageAccent } from "@/components/visuals/PageAccent";
 import "@/app/styles/rfq-page.css";
 
 export const metadata: Metadata = {
@@ -28,6 +29,7 @@ export default function RfqPage() {
         eyebrow="Request For Quote"
         title="Send Us Your RFQ"
         description="Pick your path — product sourcing, services, or partnership. Real HS codes, real lead times. Our team responds within 24 business hours (IST)."
+        accent={<PageAccent variant="trade-routes" seed="rfq" />}
       />
 
       <section className="tvx-section tvx-section--tight">

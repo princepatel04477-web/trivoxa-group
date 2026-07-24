@@ -5,6 +5,8 @@ import { PageHero, Section, Checklist, CtaBand } from "@/components/trivoxa/ui";
 import GlobalPresenceMap from "@/components/presence/GlobalPresenceMap";
 import PresenceStats from "@/components/presence/PresenceStats";
 import LazyCrane from "@/components/LazyCrane";
+import { PageAccent } from "@/components/visuals/PageAccent";
+import { AnimatedCard } from "@/components/motion/AnimatedCard";
 
 export const metadata: Metadata = {
   title: "Global Presence | Trivoxa Group",
@@ -97,6 +99,7 @@ export default function GlobalPresencePage() {
         title="Connecting Opportunities Across Borders."
         description="International business is built on trust, collaboration, and strong relationships. Through an expanding network of suppliers, partners, and clients, Trivoxa Group is building meaningful connections that enable organizations to grow confidently across international markets."
         actions={[{ label: "Start a Conversation", href: "/contact/" }, { label: "Request a Quote", modal: true, variant: "ghost" }]}
+        accent={<PageAccent variant="map-corridors" seed="global-presence" />}
       />
 
       <Section
@@ -130,15 +133,15 @@ export default function GlobalPresencePage() {
           <LazyCrane variant="subtle" />
         </div>
         <div className="presence-ports presence-ports--cards">
-          {exportPorts.map((p) => (
-            <div className="presence-port presence-port--card" key={p.code}>
+          {exportPorts.map((p, i) => (
+            <AnimatedCard index={i} className="presence-port presence-port--card" key={p.code}>
               <div className="presence-port__head">
                 <span className="presence-port__name">{p.name}</span>
                 <span className="presence-port__code">{p.code}</span>
               </div>
               <span className="presence-port__role">{p.role}</span>
               <p className="presence-port__detail">{p.detail}</p>
-            </div>
+            </AnimatedCard>
           ))}
         </div>
       </Section>

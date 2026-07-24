@@ -6,6 +6,7 @@ import "@/app/styles/mobile-nav.css";
 import "@/app/styles/contact-modal.css";
 import "@/app/styles/footer.css";
 import "@/app/styles/pages.css";
+import "@/app/styles/motion.css";
 
 import Header from "@/components/Header";
 import MobileNav from "@/components/MobileNav";

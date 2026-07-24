@@ -8,6 +8,8 @@ import NumberedList from "@/components/patterns/NumberedList";
 import IndustryManifest from "@/components/industries/IndustryManifest";
 import { industries, getIndustryBySlug } from "@/lib/data/industries";
 import { getExportCategory } from "@/lib/data/product-categories";
+import { PageAccent } from "@/components/visuals/PageAccent";
+import { AnimatedCard } from "@/components/motion/AnimatedCard";
 import "@/app/styles/patterns.css";
 import "@/app/styles/industries-page.css";
 import "@/app/styles/industry-page.css";
@@ -58,26 +60,27 @@ export default async function IndustryPage(props: PageProps<"/[locale]/industrie
           { label: `Request Quote for ${industry.name}`, href: `/rfq/?category=${industry.slug}` },
           { label: "Contact Team", href: "/contact/", variant: "ghost" },
         ]}
+        accent={<PageAccent variant="orbital-rings" seed={industry.slug} />}
       />
 
       {(industry.buyerTypes || industry.complianceNote) && (
         <Section eyebrow="Industry Context" title={`Who We Serve in ${industry.name}`}>
           <div className="industry-context">
             {industry.buyerTypes && (
-              <div className="industry-context__buyers">
+              <AnimatedCard index={0} className="industry-context__buyers">
                 <h3>Typical Buyers</h3>
                 <ul>
                   {industry.buyerTypes.map((b) => (
                     <li key={b}>{b}</li>
                   ))}
                 </ul>
-              </div>
+              </AnimatedCard>
             )}
             {industry.complianceNote && (
-              <div className="industry-context__compliance">
+              <AnimatedCard index={1} className="industry-context__compliance">
                 <h3>What Buyers Should Know</h3>
                 <p>{industry.complianceNote}</p>
-              </div>
+              </AnimatedCard>
             )}
           </div>
         </Section>

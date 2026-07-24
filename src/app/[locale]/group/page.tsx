@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { Eyebrow, Section, CtaBand } from "@/components/trivoxa/ui";
+import { PageAccent } from "@/components/visuals/PageAccent";
+import { PageReveal } from "@/components/motion/PageReveal";
 import SplitScreenSticky from "@/components/patterns/SplitScreenSticky";
 import EditorialPanel from "@/components/patterns/EditorialPanel";
 import NumberedList from "@/components/patterns/NumberedList";
@@ -119,20 +121,27 @@ export default function GroupPage() {
 
       {/* 1. HERO */}
       <section className="group-hero">
+        <PageAccent variant="constellation" seed="group" />
         <div className="container group-hero__inner">
-          <Eyebrow>The Group</Eyebrow>
-          <h1 className="group-hero__title">Building an Organization Designed to Endure.</h1>
-          <p className="group-hero__desc">
+          <PageReveal as="div">
+            <Eyebrow>The Group</Eyebrow>
+          </PageReveal>
+          <PageReveal as="h1" className="group-hero__title" delay={0.08}>
+            Building an Organization Designed to Endure.
+          </PageReveal>
+          <PageReveal as="p" className="group-hero__desc" delay={0.16}>
             Trivoxa Group is an international business group built on a strong manufacturing foundation and driven
             by a global vision. Through trusted partnerships, strategic sourcing, and professional services, we
             connect businesses with opportunities while creating lasting value across international markets.
-          </p>
-          <Link href="#our-story" className="tvx-btn tvx-btn--primary group-hero__scroll">
-            <span>Discover Our Story</span>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <path d="M8 2.5v11M3 9l5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </Link>
+          </PageReveal>
+          <PageReveal as="div" delay={0.22}>
+            <Link href="#our-story" className="tvx-btn tvx-btn--primary group-hero__scroll">
+              <span>Discover Our Story</span>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M8 2.5v11M3 9l5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </Link>
+          </PageReveal>
         </div>
       </section>
 

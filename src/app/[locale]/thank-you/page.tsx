@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section } from "@/components/trivoxa/ui";
 import { Link } from "@/i18n/navigation";
+import { PageAccent } from "@/components/visuals/PageAccent";
 import "@/app/styles/patterns.css";
 
 export const metadata: Metadata = {
@@ -17,6 +18,7 @@ export default function ThankYouPage() {
         eyebrow="Message Received"
         title="Thank You for Reaching Out."
         description="An export specialist will respond within one business day. In the meantime, explore what we source and where we operate."
+        accent={<PageAccent variant="pulse-origin" seed="thank-you" />}
       />
 
       <Section eyebrow="What Happens Next" title="Here's What to Expect.">

@@ -3,6 +3,7 @@ import Link from "next/link";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section } from "@/components/trivoxa/ui";
 import ContactForm from "@/components/ContactForm";
+import { PageAccent } from "@/components/visuals/PageAccent";
 import "@/app/styles/industries-page.css";
 
 export const metadata: Metadata = {
@@ -29,6 +30,7 @@ export default function ContactPage() {
         title="Let's Build the Future Together."
         description="Whether you're looking to source products, expand into international markets, or establish a long-term business partnership, our team is ready to help you move forward with confidence."
         actions={[{ label: "Contact Us", href: "#message" }, { label: "Request a Quote", href: "/rfq/", variant: "ghost" }]}
+        accent={<PageAccent variant="radiating-ping" seed="contact" />}
       />
 
       <Section eyebrow="How Can We Help?" title="Choose Where to Start.">

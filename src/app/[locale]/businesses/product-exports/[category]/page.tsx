@@ -8,6 +8,7 @@ import StickyCategoryCta from "@/components/products/StickyCategoryCta";
 import OnePagerButton from "@/components/products/OnePagerButton";
 import { exportCategories, getExportCategory } from "@/lib/data/product-categories";
 import { getIndustryBySlug } from "@/lib/data/industries";
+import { PageAccent } from "@/components/visuals/PageAccent";
 import "@/app/styles/patterns.css";
 import "@/app/styles/product-grid.css";
 
@@ -68,6 +69,7 @@ export default async function ExportCategoryPage(props: PageProps<"/[locale]/bus
           { label: "Request a Quote", href: industry ? `/rfq/?category=${industry.slug}` : "/rfq/" },
           { label: "Contact Our Team", href: "/contact/", variant: "ghost" },
         ]}
+        accent={<PageAccent variant="trade-routes" seed={cat.slug} />}
       />
 
       {products.length > 0 ? (

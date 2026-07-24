@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, Pills, CtaBand } from "@/components/trivoxa/ui";
+import { PageAccent } from "@/components/visuals/PageAccent";
 
 export const metadata: Metadata = {
   title: "Home Textiles | Trivoxa Group",
@@ -25,6 +26,7 @@ export default function HomeTextilesPage() {
         title="Textiles That Furnish the Home."
         description="Bed linen, towels, curtains, cushions, rugs, and upholstery — sourced through trusted manufacturing partners and coordinated to your specifications."
         actions={[{ label: "Request a Quote", modal: true }, { label: "Back to Textile & Apparel", href: `${BASE}/`, variant: "ghost" }]}
+        accent={<PageAccent variant="trade-routes" seed="home-textiles" />}
       />
 
       <Section

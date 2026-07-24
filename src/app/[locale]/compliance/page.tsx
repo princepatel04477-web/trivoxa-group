@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero } from "@/components/trivoxa/ui";
 import CertificationsStrip from "@/components/sections/CertificationsStrip";
+import { PageAccent } from "@/components/visuals/PageAccent";
 import "@/app/styles/flagship-sections.css";
 
 export const metadata: Metadata = {
@@ -17,6 +18,7 @@ export default function CompliancePage() {
         eyebrow="Compliance"
         title="Certifications & Standards."
         description="Operational licensing is active. Sector-specific certifications are being secured on a public timeline, listed here as they progress."
+        accent={<PageAccent variant="grid-ledger" seed="compliance" />}
       />
       <CertificationsStrip />
     </TrivoxaShell>

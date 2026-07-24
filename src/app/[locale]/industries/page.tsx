@@ -7,6 +7,7 @@ import NumberedList from "@/components/patterns/NumberedList";
 import HorizontalTimeline from "@/components/patterns/HorizontalTimeline";
 import IndustryManifest from "@/components/industries/IndustryManifest";
 import { industries } from "@/lib/data/industries";
+import { PageAccent } from "@/components/visuals/PageAccent";
 import "@/app/styles/patterns.css";
 import "@/app/styles/industries-page.css";
 
@@ -52,6 +53,7 @@ export default function IndustriesPage() {
         title="Industry Expertise. Global Opportunities."
         description="Every industry has unique challenges, standards, and opportunities. Trivoxa Group combines manufacturing expertise, strategic sourcing, and professional services to deliver solutions tailored to the evolving needs of businesses across international markets."
         actions={[{ label: "Explore Industries", href: "#industries" }, { label: "Request a Quote", modal: true, variant: "ghost" }]}
+        accent={<PageAccent variant="orbital-rings" seed="industries" />}
       />
 
       {/* 2. INDUSTRIES OVERVIEW — split-screen sticky */}

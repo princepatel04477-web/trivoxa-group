@@ -6,6 +6,7 @@ import SplitScreenSticky from "@/components/patterns/SplitScreenSticky";
 import ProcessLoader from "@/components/patterns/ProcessLoader";
 import NumberedList from "@/components/patterns/NumberedList";
 import { serviceCategories } from "@/lib/data/services";
+import { PageAccent } from "@/components/visuals/PageAccent";
 import "@/app/styles/patterns.css";
 import "@/app/styles/industries-page.css";
 import "@/app/styles/service-exports-page.css";
@@ -45,6 +46,7 @@ export default function ServiceExportsPage() {
         title="Global Service Exports."
         description="We help organizations accelerate growth through technology, software development, artificial intelligence, branding, digital marketing, and business support services. By connecting businesses with India's skilled professionals, we deliver practical solutions tailored to modern business challenges."
         actions={[{ label: "Request a Consultation", modal: true }, { label: "Explore Services", href: "#services", variant: "ghost" }]}
+        accent={<PageAccent variant="pixel-grid" seed="service-exports" />}
       />
 
       {/* 2. ABOUT — split-screen sticky, talent-network positioning */}
