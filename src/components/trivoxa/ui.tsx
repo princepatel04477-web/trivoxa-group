@@ -4,6 +4,7 @@ import ActionButtons, { type Action } from "@/components/trivoxa/ActionButtons";
 import { PageReveal } from "@/components/motion/PageReveal";
 import { HeadingReveal } from "@/components/motion/HeadingReveal";
 import { AnimatedCard } from "@/components/motion/AnimatedCard";
+import SectionGrain from "@/components/patterns/SectionGrain";
 
 export type { Action };
 
@@ -29,6 +30,7 @@ export function PageHero({
   actions,
   crumb,
   accent,
+  grain,
 }: {
   eyebrow?: string;
   title: string;
@@ -37,10 +39,13 @@ export function PageHero({
   crumb?: { label: string; href?: string }[];
   /** Per-page hero background decoration — pass `<PageAccent variant="..." />`. */
   accent?: ReactNode;
+  /** Home hero's film-grain + vignette + scroll-scale atmosphere, opt-in. */
+  grain?: boolean;
 }) {
   return (
     <section className="tvx-hero">
       {accent}
+      {grain && <SectionGrain className="tvx-hero__grain" vignette scrollScale />}
       <div className="container">
         <div className="tvx-hero__inner">
           {crumb && (

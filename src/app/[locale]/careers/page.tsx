@@ -76,6 +76,7 @@ export default function CareersPage() {
         }
         actions={[{ label: "Explore Opportunities", href: "#opportunities" }, { label: "Get in Touch", href: "/contact/", variant: "ghost" }]}
         accent={<PageAccent variant="orbital-rings" seed="careers" />}
+        grain
       />
 
       <Section eyebrow="Our Culture" title="A Culture Built for Ambitious People." lead="We combine the discipline of a manufacturing heritage with the energy of a growing international business — a place to do meaningful, lasting work.">

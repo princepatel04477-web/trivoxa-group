@@ -100,6 +100,7 @@ export default function GlobalPresencePage() {
         description="International business is built on trust, collaboration, and strong relationships. Through an expanding network of suppliers, partners, and clients, Trivoxa Group is building meaningful connections that enable organizations to grow confidently across international markets."
         actions={[{ label: "Start a Conversation", href: "/contact/" }, { label: "Request a Quote", modal: true, variant: "ghost" }]}
         accent={<PageAccent variant="map-corridors" seed="global-presence" />}
+        grain
       />
 
       <Section

@@ -40,6 +40,7 @@ export default function InsightsPage() {
         }
         actions={[{ label: "Explore Insights", href: "#featured" }, { label: "Contact Our Team", href: "/contact/", variant: "ghost" }]}
         accent={<PageAccent variant="paper-layers" seed="insights" />}
+        grain
       />
 
       <Section eyebrow="Categories" title="Knowledge Across Global Trade." lead="Three focused streams of thinking, built to help partners make confident decisions.">

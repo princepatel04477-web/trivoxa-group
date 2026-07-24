@@ -123,6 +123,7 @@ export default function GroupPage() {
       {/* 1. HERO */}
       <section className="group-hero">
         <PageAccent variant="constellation" seed="group" />
+        <SectionGrain className="tvx-hero__grain" vignette scrollScale />
         <div className="container group-hero__inner">
           <PageReveal as="div">
             <Eyebrow>The Group</Eyebrow>
