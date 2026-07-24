@@ -114,11 +114,11 @@ export default function GlobalPresencePage() {
       <Section eyebrow="Regions We Serve" title="Building Presence Across Six Global Regions." lead="Rather than counting borders, we focus on building durable relationships across the regions where our partners operate and grow.">
         <GlobalPresenceMap regions={regions.map((r) => ({ title: r.title, categories: r.categories }))} />
         <div className="tvx-lanes">
-          {regions.map((r) => (
-            <div className="tvx-lane" key={r.title}>
+          {regions.map((r, i) => (
+            <AnimatedCard as="div" className="tvx-lane" key={r.title} index={i}>
               <span className="tvx-lane__name">{r.title}</span>
               <span className="tvx-lane__desc">{r.description}</span>
-            </div>
+            </AnimatedCard>
           ))}
         </div>
       </Section>

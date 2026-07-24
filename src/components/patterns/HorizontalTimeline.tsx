@@ -24,6 +24,30 @@ export default function HorizontalTimeline({ steps }: { steps: TimelineStep[] })
     if (!ref.current || !railRef.current) return;
     const ctx = gsap.context(() => {
       const mm = gsap.matchMedia();
+      // Entrance reveal for step content — one-time fade+rise as the section
+      // first scrolls into view (not tied to the pin/scrub or to which step
+      // is "active", so it can't fight the horizontal scrub or flicker as
+      // `active` changes). Applies on both the pinned desktop rail and the
+      // plain vertical mobile fallback below. clearProps on complete hands
+      // opacity back to CSS so the existing .is-active dim/undim keeps
+      // working afterward — same idiom as useScrollAnimations.ts's
+      // releaseReveal.
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        const stepEls = railRef.current!.querySelectorAll(".h-timeline__step");
+        gsap.fromTo(
+          stepEls,
+          { opacity: 0, y: 24 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.7,
+            ease: "power2.out",
+            stagger: 0.08,
+            scrollTrigger: { trigger: ref.current, start: "top 85%" },
+            onComplete: () => gsap.set(stepEls, { clearProps: "opacity,transform" }),
+          }
+        );
+      });
       mm.add("(prefers-reduced-motion: no-preference) and (min-width: 900px)", () => {
         const rail = railRef.current!;
         const distance = () => Math.max(0, rail.scrollWidth - ref.current!.clientWidth);

@@ -7,6 +7,7 @@ const TAGS = {
   div: motion.div,
   li: motion.li,
   article: motion.article,
+  figure: motion.figure,
 } as const;
 
 type Tag = keyof typeof TAGS;

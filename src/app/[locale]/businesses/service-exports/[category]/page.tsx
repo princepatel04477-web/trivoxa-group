@@ -7,6 +7,7 @@ import NumberedList from "@/components/patterns/NumberedList";
 import DeliveryModelDiagram from "@/components/services/DeliveryModelDiagram";
 import { serviceCategories, getServiceCategory, getRelatedServices } from "@/lib/data/services";
 import { PageAccent } from "@/components/visuals/PageAccent";
+import { AnimatedCard } from "@/components/motion/AnimatedCard";
 import "@/app/styles/patterns.css";
 import "@/app/styles/industries-page.css";
 import "@/app/styles/service-exports-page.css";
@@ -61,7 +62,7 @@ export default async function ServiceCategoryPage(props: PageProps<"/[locale]/bu
       <Section eyebrow="What We Deliver" title="Capabilities in This Category.">
         <div className="subservice-list">
           {cat.subServices.map((sub, i) => (
-            <div key={sub.name} className="subservice-row">
+            <AnimatedCard key={sub.name} index={i} className="subservice-row">
               <span className="subservice-row__index">{String(i + 1).padStart(2, "0")}</span>
               <div className="subservice-row__body">
                 <h3 className="subservice-row__name">{sub.name}</h3>
@@ -74,7 +75,7 @@ export default async function ServiceCategoryPage(props: PageProps<"/[locale]/bu
                   ))}
                 </div>
               </div>
-            </div>
+            </AnimatedCard>
           ))}
         </div>
       </Section>

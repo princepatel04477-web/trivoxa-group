@@ -4,6 +4,7 @@ import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { Eyebrow, Section, CtaBand } from "@/components/trivoxa/ui";
 import { PageAccent } from "@/components/visuals/PageAccent";
 import { PageReveal } from "@/components/motion/PageReveal";
+import { AnimatedCard } from "@/components/motion/AnimatedCard";
 import SplitScreenSticky from "@/components/patterns/SplitScreenSticky";
 import EditorialPanel from "@/components/patterns/EditorialPanel";
 import NumberedList from "@/components/patterns/NumberedList";
@@ -182,13 +183,13 @@ export default function GroupPage() {
               </p>
             </div>
             <div className="foundation-split__photos">
-              {foundationPhotos.map((photo) => (
-                <figure key={photo.src} className="foundation-photo">
+              {foundationPhotos.map((photo, i) => (
+                <AnimatedCard as="figure" key={photo.src} index={i} className="foundation-photo">
                   <div className="foundation-photo__frame">
                     <img src={photo.src} alt={`Shiveshwar Textiles — ${photo.caption}`} loading="lazy" />
                   </div>
                   <figcaption className="foundation-photo__caption">Shiveshwar Textiles — {photo.caption}</figcaption>
-                </figure>
+                </AnimatedCard>
               ))}
             </div>
           </div>
@@ -263,7 +264,7 @@ export default function GroupPage() {
             <p>Strong partnerships are the foundation of sustainable business.</p>
           </div>
           <div className="partners-grid">
-            <div className="partners-grid__founding">
+            <AnimatedCard as="div" className="partners-grid__founding" variant="scale">
               <figure className="foundation-photo__frame" />
               <h3>Founding Manufacturing Partner — Shiveshwar Textiles</h3>
               <p>
@@ -274,34 +275,39 @@ export default function GroupPage() {
                 Alongside our parent company, we continue building relationships with trusted manufacturers,
                 logistics providers, technology partners, and industry specialists who share our values.
               </p>
-            </div>
-            <p className="partners-grid__growth-note">
+            </AnimatedCard>
+            <PageReveal as="p" className="partners-grid__growth-note" delay={0.1}>
               Our partner network continues to grow across manufacturing, logistics, and technology.
-            </p>
+            </PageReveal>
           </div>
         </div>
       </section>
 
       {/* 10. OUR COMMITMENTS */}
       <Section id="commitments" eyebrow="Our Commitments" title="Our Commitment to Every Relationship." lead="Every partnership begins with trust and is strengthened through consistent action. We are committed to conducting business responsibly, delivering reliable solutions, and continuously improving the way we serve our partners around the world.">
-        <table className="commitments-table">
-          <thead>
-            <tr>
-              <th className="commitments-table__num" scope="col">#</th>
-              <th scope="col">Commitment</th>
-              <th scope="col">Brief Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            {commitments.map((item, i) => (
-              <tr key={item.name}>
-                <td className="commitments-table__num" data-label="#">{String(i + 1).padStart(2, "0")}</td>
-                <td className="commitments-table__name" data-label="Commitment">{item.name}</td>
-                <td className="commitments-table__desc" data-label="Brief Description">{item.description}</td>
+        {/* Whole-table reveal, not per-row: CSS transform/box-shadow support
+            on <tr> is inconsistent across browsers, so this avoids animating
+            table-row elements individually. */}
+        <PageReveal as="div">
+          <table className="commitments-table">
+            <thead>
+              <tr>
+                <th className="commitments-table__num" scope="col">#</th>
+                <th scope="col">Commitment</th>
+                <th scope="col">Brief Description</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {commitments.map((item, i) => (
+                <tr key={item.name}>
+                  <td className="commitments-table__num" data-label="#">{String(i + 1).padStart(2, "0")}</td>
+                  <td className="commitments-table__name" data-label="Commitment">{item.name}</td>
+                  <td className="commitments-table__desc" data-label="Brief Description">{item.description}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </PageReveal>
       </Section>
 
       {/* 11. LOOKING AHEAD */}

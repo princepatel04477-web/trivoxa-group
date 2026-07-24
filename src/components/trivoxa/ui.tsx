@@ -176,8 +176,10 @@ export function CtaBand({
 export function Split({ children, media }: { children: ReactNode; media?: ReactNode }) {
   return (
     <div className="tvx-split">
-      <div>{children}</div>
-      <div className="tvx-split--media">{media ?? <img src="/images/trivoxa-eagle.png" alt="" />}</div>
+      <PageReveal as="div">{children}</PageReveal>
+      <AnimatedCard as="div" className="tvx-split--media" variant="scale">
+        {media ?? <img src="/images/trivoxa-eagle.png" alt="" />}
+      </AnimatedCard>
     </div>
   );
 }

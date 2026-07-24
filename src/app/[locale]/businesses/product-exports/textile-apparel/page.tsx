@@ -3,6 +3,7 @@ import Link from "next/link";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, Checklist, CtaBand } from "@/components/trivoxa/ui";
 import { PageAccent } from "@/components/visuals/PageAccent";
+import { PageReveal } from "@/components/motion/PageReveal";
 import "@/app/styles/textile-apparel-page.css";
 
 export const metadata: Metadata = {
@@ -64,12 +65,12 @@ export default function TextileApparelPage() {
               href={c.href}
               className={`tvx-lookbook-row${i % 2 === 1 ? " tvx-lookbook-row--reverse" : ""}`}
             >
-              <div className="tvx-lookbook-row__content">
+              <PageReveal as="div" className="tvx-lookbook-row__content" delay={Math.min(i * 0.08, 0.24)}>
                 <span className="tvx-lookbook-row__index">{String(i + 1).padStart(2, "0")}</span>
                 <h3 className="tvx-lookbook-row__title">{c.title}</h3>
                 <p className="tvx-lookbook-row__desc">{c.description}</p>
                 <span className="tvx-lookbook-row__link">{c.cta}</span>
-              </div>
+              </PageReveal>
               <div className="tvx-lookbook-row__media" aria-hidden="true" />
             </Link>
           ))}
