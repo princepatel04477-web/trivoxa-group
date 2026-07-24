@@ -1,10 +1,88 @@
 /* Businesses page — cinematic division panels + pinned process timeline.
-   Panel base styles (.arm-panel*) live in flagship-sections.css; this file
-   adds the businesses-page variants. */
+   Panel base styles (.arm-panel*) live here — the homepage's version of
+   this section was redesigned into card layout (.biz-arm, in
+   flagship-sections.css) but CinematicPanel.tsx (used only on this page)
+   still renders the original full-bleed .arm-panel markup, so the base
+   styles have to be defined in this file instead. */
 
-/* ---------- Cinematic panels: right-aligned variant, video bg, corner chips ---------- */
+/* ---------- Cinematic panels: base full-bleed division panel ---------- */
+.arm-panel {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  color: var(--color-ink);
+}
+
 .business-arms .arm-panel + .arm-panel {
   margin-top: 0; /* panels butt directly against each other */
+}
+
+.arm-panel__bg {
+  position: absolute;
+  inset: -8% 0;
+  background-size: cover;
+  background-position: center;
+  will-change: transform;
+}
+
+.arm-panel__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-paper) 80%, transparent) 0%,
+    color-mix(in srgb, var(--color-paper) 52%, transparent) 45%,
+    color-mix(in srgb, var(--color-paper) 88%, transparent) 100%
+  );
+}
+
+.arm-panel__content {
+  position: relative;
+  z-index: 1;
+  max-width: 780px;
+  padding: 0 clamp(24px, 6vw, 96px);
+}
+
+.arm-panel__eyebrow {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.arm-panel__title {
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: clamp(2.75rem, 8vw, 7rem);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  margin: var(--space-sm) 0;
+}
+
+.arm-panel__thesis {
+  font-size: clamp(1rem, 1.4vw, 1.25rem);
+  line-height: 1.7;
+  color: var(--color-ink-2);
+  max-width: 56ch;
+}
+
+.arm-panel__cats {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.arm-panel__cat {
+  display: inline;
+}
+
+.arm-panel__pipe {
+  margin-inline-end: var(--space-2xs);
+  color: var(--color-rule);
 }
 
 .arm-panel--right .arm-panel__content {
