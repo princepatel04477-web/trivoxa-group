@@ -52,7 +52,7 @@ export default function BusinessArmsPanels() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.utils.toArray<HTMLElement>(".biz-arm").forEach((panel) => {
+      gsap.utils.toArray<HTMLElement>(".biz-arm").forEach((panel, i) => {
         gsap.fromTo(
           panel.querySelectorAll(".word_inner"),
           { opacity: 0, filter: "blur(6px)" },
@@ -63,10 +63,13 @@ export default function BusinessArmsPanels() {
           { opacity: 0 },
           { opacity: 1, stagger: 0.012, scrollTrigger: { trigger: panel, start: "top 80%" } }
         );
+        // Directional variety: alternate x by panel column instead of a
+        // uniform y-rise, so the two-arm grid doesn't read as one repeated
+        // motion. Title/thesis char-reveal above is untouched.
         gsap.fromTo(
           panel.querySelectorAll(".biz-arm__cat, .biz-arm__cta"),
-          { opacity: 0, y: 16 },
-          { opacity: 1, y: 0, stagger: 0.05, ease: "power2.out", scrollTrigger: { trigger: panel, start: "top 75%" } }
+          { opacity: 0, x: i % 2 === 0 ? -24 : 24 },
+          { opacity: 1, x: 0, stagger: 0.05, ease: "power2.out", scrollTrigger: { trigger: panel, start: "top 75%" } }
         );
       });
       ScrollTrigger.refresh();

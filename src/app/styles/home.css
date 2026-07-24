@@ -442,6 +442,16 @@
   transition: border-color 0.4s var(--ease-out, ease),
     transform 0.3s var(--ease-out, ease);
 }
+/* Entrance direction override: .home-reveal's shared translateY doesn't
+   apply here — trust-cards slide in on x instead, alternating by column,
+   so the 2x2 grid doesn't repeat one motion four times (see
+   WhyBuyersTrust.tsx, which tweens x instead of y for this selector). */
+.hp-trust .trust-card.home-reveal {
+  transform: translateX(-24px);
+}
+.hp-trust .trust-card.home-reveal:nth-child(even) {
+  transform: translateX(24px);
+}
 .hp-trust .trust-card:hover {
   border-color: var(--advida-accent, var(--gold));
   transform: translateY(-3px);

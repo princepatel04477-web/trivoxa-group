@@ -68,18 +68,24 @@ export default function CertificationsStrip() {
   useEffect(() => {
     if (!sectionRef.current) return;
     const ctx = gsap.context(() => {
-      gsap.fromTo(
-        ".cert-mark",
-        { opacity: 0, y: 16 },
-        {
-          opacity: 1,
-          y: 0,
-          stagger: 0.05,
-          duration: 0.6,
-          ease: "power2.out",
-          scrollTrigger: { trigger: sectionRef.current, start: "top 78%" },
-        }
-      );
+      // Alternating x by index instead of a uniform y-rise — .cert-mark sits
+      // in a flex-wrap row (no fixed column count to key off), so parity is
+      // the simplest stand-in for "alternate by position."
+      const marks = gsap.utils.toArray<HTMLElement>(".cert-mark");
+      marks.forEach((mark, i) => {
+        gsap.fromTo(
+          mark,
+          { opacity: 0, x: i % 2 === 0 ? -20 : 20 },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 0.6,
+            ease: "power2.out",
+            scrollTrigger: { trigger: sectionRef.current, start: "top 78%" },
+            delay: Math.min(i * 0.05, 0.5),
+          }
+        );
+      });
     }, sectionRef);
     ScrollTrigger.refresh();
     return () => ctx.revert();
