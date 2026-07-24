@@ -68,23 +68,29 @@ export default function CertificationsStrip() {
   useEffect(() => {
     if (!sectionRef.current) return;
     const ctx = gsap.context(() => {
-      // Alternating x by index instead of a uniform y-rise — .cert-mark sits
-      // in a flex-wrap row (no fixed column count to key off), so parity is
-      // the simplest stand-in for "alternate by position."
-      const marks = gsap.utils.toArray<HTMLElement>(".cert-mark");
-      marks.forEach((mark, i) => {
-        gsap.fromTo(
-          mark,
-          { opacity: 0, x: i % 2 === 0 ? -20 : 20 },
-          {
-            opacity: 1,
-            x: 0,
-            duration: 0.6,
-            ease: "power2.out",
-            scrollTrigger: { trigger: sectionRef.current, start: "top 78%" },
-            delay: Math.min(i * 0.05, 0.5),
-          }
-        );
+      // .cert-mark has no CSS-declared hidden state, so gating this under
+      // "no-preference" is sufficient on its own: reduced-motion users
+      // simply never get the fromTo's immediate opacity:0 applied, and the
+      // marks stay at their natural, fully-visible default.
+      gsap.matchMedia().add("(prefers-reduced-motion: no-preference)", () => {
+        // Alternating x by index instead of a uniform y-rise — .cert-mark
+        // sits in a flex-wrap row (no fixed column count to key off), so
+        // parity is the simplest stand-in for "alternate by position."
+        const marks = gsap.utils.toArray<HTMLElement>(".cert-mark");
+        marks.forEach((mark, i) => {
+          gsap.fromTo(
+            mark,
+            { opacity: 0, x: i % 2 === 0 ? -20 : 20 },
+            {
+              opacity: 1,
+              x: 0,
+              duration: 0.6,
+              ease: "power2.out",
+              scrollTrigger: { trigger: sectionRef.current, start: "top 78%" },
+              delay: Math.min(i * 0.05, 0.5),
+            }
+          );
+        });
       });
     }, sectionRef);
     ScrollTrigger.refresh();
