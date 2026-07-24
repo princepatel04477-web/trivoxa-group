@@ -2,10 +2,16 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import type { SceneConfig } from "@/lib/particle-scene";
 
 const ParticleCanvas = dynamic(() => import("@/components/ParticleCanvas"), { ssr: false });
 
-export default function ParticleCanvasWrapper() {
+interface ParticleCanvasWrapperProps {
+  /** This page's choreography — see src/lib/choreography.ts. */
+  config: Omit<SceneConfig, "onDegrade">;
+}
+
+export default function ParticleCanvasWrapper({ config }: ParticleCanvasWrapperProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -14,5 +20,5 @@ export default function ParticleCanvasWrapper() {
 
   if (!mounted) return null;
 
-  return <ParticleCanvas />;
+  return <ParticleCanvas config={config} />;
 }
