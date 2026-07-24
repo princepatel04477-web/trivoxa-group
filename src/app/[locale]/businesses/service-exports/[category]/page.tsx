@@ -6,6 +6,8 @@ import { PageHero, Section, CtaBand } from "@/components/trivoxa/ui";
 import NumberedList from "@/components/patterns/NumberedList";
 import DeliveryModelDiagram from "@/components/services/DeliveryModelDiagram";
 import { serviceCategories, getServiceCategory, getRelatedServices } from "@/lib/data/services";
+import { PageAccent } from "@/components/visuals/PageAccent";
+import { AnimatedCard } from "@/components/motion/AnimatedCard";
 import "@/app/styles/patterns.css";
 import "@/app/styles/industries-page.css";
 import "@/app/styles/service-exports-page.css";
@@ -53,13 +55,14 @@ export default async function ServiceCategoryPage(props: PageProps<"/[locale]/bu
         title={`${cat.name}.`}
         description={cat.description}
         actions={[{ label: "Book a Call", modal: true }, { label: "All Services", href: `${BASE}/`, variant: "ghost" }]}
+        accent={<PageAccent variant="pixel-grid" seed={cat.slug} />}
       />
 
       {/* 2-3. SUB-SERVICES — vertical manifest with capability chips */}
       <Section eyebrow="What We Deliver" title="Capabilities in This Category.">
         <div className="subservice-list">
           {cat.subServices.map((sub, i) => (
-            <div key={sub.name} className="subservice-row">
+            <AnimatedCard key={sub.name} index={i} className="subservice-row">
               <span className="subservice-row__index">{String(i + 1).padStart(2, "0")}</span>
               <div className="subservice-row__body">
                 <h3 className="subservice-row__name">{sub.name}</h3>
@@ -72,7 +75,7 @@ export default async function ServiceCategoryPage(props: PageProps<"/[locale]/bu
                   ))}
                 </div>
               </div>
-            </div>
+            </AnimatedCard>
           ))}
         </div>
       </Section>

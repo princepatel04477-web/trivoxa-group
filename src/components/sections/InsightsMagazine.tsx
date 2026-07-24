@@ -31,7 +31,35 @@ export default function InsightsMagazine() {
   useEffect(() => {
     if (!ref.current) return;
     const ctx = gsap.context(() => {
-      initSectionReveals(ref.current!);
+      initSectionReveals(ref.current!); // handles its own reduced-motion internally
+      // Card-grid entrance, handled separately from the heading/lead reveal
+      // above: the feature card scales in (it's the sole "hero" item), the
+      // secondary list alternates x by index instead of a uniform rise, so
+      // the grid doesn't read as one repeated motion. Neither class has a
+      // CSS-declared hidden state, so gating under "no-preference" alone is
+      // enough — reduced-motion users just never get fromTo's immediate
+      // opacity:0 applied, and the cards stay at their natural default.
+      gsap.matchMedia().add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.fromTo(
+          ".magazine-feature",
+          { opacity: 0, scale: 0.96 },
+          { opacity: 1, scale: 1, duration: 0.7, ease: "power2.out", scrollTrigger: { trigger: ref.current, start: "top 75%" } }
+        );
+        gsap.utils.toArray<HTMLElement>(".magazine-secondary__item").forEach((item, i) => {
+          gsap.fromTo(
+            item,
+            { opacity: 0, x: i % 2 === 0 ? -20 : 20 },
+            {
+              opacity: 1,
+              x: 0,
+              duration: 0.6,
+              ease: "power2.out",
+              delay: i * 0.08,
+              scrollTrigger: { trigger: ref.current, start: "top 75%" },
+            }
+          );
+        });
+      });
     }, ref);
     return () => ctx.revert();
   }, []);
@@ -56,7 +84,7 @@ export default function InsightsMagazine() {
         {/* Article bodies don't exist yet — each card is a non-interactive
             preview (not a link to itself) rather than a dead link to the
             listing page, and is labelled accordingly. */}
-        <div className="magazine-grid" data-reveal-body>
+        <div className="magazine-grid">
           <div className="magazine-feature magazine-feature--pending">
             <div className="magazine-feature__image" data-reveal-image />
             <span className="magazine-feature__tag">{featured.tag}</span>

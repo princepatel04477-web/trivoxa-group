@@ -54,6 +54,34 @@
 .tvx-hero__inner {
   max-width: 900px;
 }
+/* Film-grain + vignette atmosphere (PageHero's `grain` prop) — same recipe
+   as the home hero's .hp-sec-1 .grain-globe* in hero.css. Painted after
+   .page-accent in DOM order (see ui.tsx) so it blends on top via
+   mix-blend-mode, same layering the home hero already has over its
+   particle canvas. */
+.tvx-hero__grain {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.tvx-hero__grain .grain-globe__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.05;
+  mix-blend-mode: screen;
+}
+.tvx-hero__grain .grain-globe__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 45%,
+    transparent 40%,
+    color-mix(in srgb, var(--bg) 40%, transparent) 100%
+  );
+}
 .tvx-hero h1 {
   font-family: var(--font-heading, sans-serif);
   font-weight: 600;

@@ -10,6 +10,7 @@ import IndustryManifest from "@/components/industries/IndustryManifest";
 import ProductGrid from "@/components/products/ProductGrid";
 import { exportCategories } from "@/lib/data/product-categories";
 import { industries } from "@/lib/data/industries";
+import { PageAccent } from "@/components/visuals/PageAccent";
 
 // Furniture & Interiors and Jewellery & Precious Products are withheld from
 // this listing (and site navigation) until real product data exists — see
@@ -55,6 +56,7 @@ export default function ProductExportsPage() {
         title="Global Product Exports."
         description="We connect international buyers with carefully selected manufacturing partners across India to deliver quality products through dependable sourcing and export solutions."
         actions={[{ label: "Request a Quote", modal: true }, { label: "Contact Our Team", href: "/contact/", variant: "ghost" }]}
+        accent={<PageAccent variant="trade-routes" seed="product-exports" />}
       />
 
       {/* 2. ABOUT PRODUCT EXPORTS */}

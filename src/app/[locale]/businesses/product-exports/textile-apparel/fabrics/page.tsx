@@ -3,6 +3,7 @@ import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, Pills, CtaBand } from "@/components/trivoxa/ui";
 import ProductTable from "@/components/products/ProductTable";
 import { getSubCategory } from "@/lib/data/product-categories";
+import { PageAccent } from "@/components/visuals/PageAccent";
 import "@/app/styles/patterns.css";
 
 export const metadata: Metadata = {
@@ -35,6 +36,7 @@ export default function FabricsPage() {
         title="Fabrics Portfolio."
         description="From polyester greige to finished fabric, we supply a broad range of woven and knitted textiles built on genuine manufacturing expertise."
         actions={[{ label: "Request a Quote", modal: true }, { label: "Back to Textile & Apparel", href: `${BASE}/`, variant: "ghost" }]}
+        accent={<PageAccent variant="trade-routes" seed="fabrics" />}
       />
 
       <Section

@@ -1,9 +1,16 @@
 /* ---------- Hero: bespoke display headline + scroll-to button ---------- */
 .group-hero {
+  position: relative;
+  isolation: isolate;
   min-height: 100vh;
   display: flex;
   align-items: center;
   padding: 160px 0 80px;
+}
+
+.group-hero > .container {
+  position: relative;
+  z-index: 1;
 }
 
 .group-hero__inner {

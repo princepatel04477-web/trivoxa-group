@@ -3,6 +3,7 @@ import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, Checklist, CtaBand } from "@/components/trivoxa/ui";
 import ProductTable from "@/components/products/ProductTable";
 import { getSubCategory } from "@/lib/data/product-categories";
+import { PageAccent } from "@/components/visuals/PageAccent";
 import "@/app/styles/patterns.css";
 
 export const metadata: Metadata = {
@@ -35,6 +36,7 @@ export default function AccessoriesPage() {
         title="Every Detail That Finishes a Garment."
         description="From elastics and trims to labels, fastenings, and sewing materials — we supply the accessories that complete apparel and textile production."
         actions={[{ label: "Request a Quote", modal: true }, { label: "Back to Textile & Apparel", href: `${BASE}/`, variant: "ghost" }]}
+        accent={<PageAccent variant="trade-routes" seed="accessories" />}
       />
 
       <Section

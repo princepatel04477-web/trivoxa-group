@@ -1,0 +1,276 @@
+/* ============================================================
+   Inner-page motion system: card hover treatment + hero accents.
+   Loaded once via TrivoxaShell, so it covers every non-home route.
+   Motion (PageReveal / AnimatedCard) handles entrances in JS; every
+   loop here is a CSS animation — cheap, GPU-friendly, and fully
+   disabled under prefers-reduced-motion below.
+   ============================================================ */
+
+/* ---------- AnimatedCard hover treatment ---------- */
+/* box-shadow only — never touches `border`/`border-radius` so it layers
+   cleanly on top of whatever the host class (.tvx-pill, .tvx-step, ...)
+   already defines. The inset ring reads as a "brightening border" and
+   automatically follows the host's own corner radius. */
+.motion-card {
+  transition: box-shadow 0.35s ease;
+}
+.motion-card:hover,
+.motion-card:focus-within {
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--gold, #c9a24b) 55%, transparent),
+    0 20px 44px -24px color-mix(in srgb, var(--gold, #c9a24b) 50%, transparent);
+}
+
+/* ---------- Hero accent host ---------- */
+.tvx-hero {
+  isolation: isolate;
+}
+.tvx-hero > .container {
+  position: relative;
+  z-index: 1;
+}
+.page-accent {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.page-accent svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------- Shared primitives ---------- */
+.pa-dot {
+  fill: var(--gold-particle, var(--gold, #c9a24b));
+  opacity: 0.35;
+  animation: pa-twinkle 4.5s ease-in-out infinite;
+}
+.pa-hairline {
+  stroke: color-mix(in srgb, var(--text, #edf1f8) 22%, transparent);
+  stroke-width: 1;
+}
+.pa-drift {
+  animation: pa-drift-slow 22s ease-in-out infinite alternate;
+  transform-origin: center;
+}
+.pa-route {
+  fill: none;
+  stroke: color-mix(in srgb, var(--gold, #c9a24b) 45%, transparent);
+  stroke-width: 1.25;
+  stroke-dasharray: 3 9;
+  animation: pa-flow 5s linear infinite;
+}
+.pa-port {
+  fill: var(--gold-particle, var(--gold, #c9a24b));
+  opacity: 0.6;
+}
+.pa-pulse-ring {
+  fill: none;
+  stroke: var(--gold, #c9a24b);
+  stroke-width: 1;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pa-pulse 3.6s ease-out infinite;
+}
+.pa-ring-static {
+  fill: none;
+  stroke: color-mix(in srgb, var(--gold, #c9a24b) 30%, transparent);
+  stroke-width: 1;
+}
+.pa-corridor {
+  fill: none;
+  stroke: color-mix(in srgb, var(--gold, #c9a24b) 32%, transparent);
+  stroke-width: 1.25;
+  opacity: 0.7;
+}
+
+/* ---------- Digital: pixel grid + orb ---------- */
+.pa-orb {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--gold, #c9a24b) 30%, transparent), transparent 70%);
+  filter: blur(6px);
+  animation: pa-orb-float 12s ease-in-out infinite;
+}
+.pa-pixel-grid {
+  position: absolute;
+  inset: 8% 4%;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+  gap: 10px;
+}
+.pa-pixel-grid span {
+  background: color-mix(in srgb, var(--gold, #c9a24b) 55%, transparent);
+  opacity: 0;
+  border-radius: 1px;
+  animation: pa-pixel-pulse 4.5s ease-in-out infinite;
+}
+
+/* ---------- Industries: orbital rings ---------- */
+.pa-orbit-field {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+.pa-orbit {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 1px solid color-mix(in srgb, var(--gold, #c9a24b) 20%, transparent);
+  border-radius: 50%;
+  animation: pa-spin linear infinite;
+}
+.pa-orbit--reverse {
+  animation-direction: reverse;
+}
+.pa-orbit i {
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  border-radius: 50%;
+  background: var(--gold-particle, var(--gold, #c9a24b));
+  font-style: normal;
+}
+.pa-orbit-core {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 9px;
+  height: 9px;
+  margin: -4.5px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--gold, #c9a24b) 70%, transparent);
+}
+
+/* ---------- Insights: paper layers ---------- */
+.pa-paper-field {
+  position: absolute;
+  inset: 0;
+}
+.pa-paper {
+  position: absolute;
+  border: 1px solid color-mix(in srgb, var(--gold, #c9a24b) 22%, transparent);
+  background: color-mix(in srgb, var(--bg-card, #16233e) 70%, transparent);
+  border-radius: 10px;
+  transform: rotate(var(--pa-rot, 0deg));
+  animation: pa-float 9s ease-in-out infinite;
+}
+
+/* ---------- About / Thank-you: pulse origin ---------- */
+.pa-pulse-field {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+.pa-pulse-core {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  margin: -4px;
+  border-radius: 50%;
+  background: var(--gold-particle, var(--gold, #c9a24b));
+}
+.pa-pulse-ring-css {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  margin: -8px;
+  border-radius: 50%;
+  border: 1px solid var(--gold, #c9a24b);
+  opacity: 0;
+  animation: pa-pulse-css 3.3s ease-out infinite;
+}
+
+/* ---------- Compliance / RFQ: ledger grid ---------- */
+.pa-ledger {
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(to right, color-mix(in srgb, var(--text, #edf1f8) 6%, transparent) 0 1px, transparent 1px 40px),
+    repeating-linear-gradient(to bottom, color-mix(in srgb, var(--text, #edf1f8) 6%, transparent) 0 1px, transparent 1px 40px);
+}
+.pa-ledger-mark {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background: color-mix(in srgb, var(--gold, #c9a24b) 14%, transparent);
+  animation: pa-ledger-pulse 3.8s ease-in-out infinite;
+}
+
+/* ---------- Keyframes ---------- */
+@keyframes pa-twinkle {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.65; }
+}
+@keyframes pa-drift-slow {
+  from { transform: translate(0, 0); }
+  to { transform: translate(-10px, 8px); }
+}
+@keyframes pa-flow {
+  to { stroke-dashoffset: -48; }
+}
+@keyframes pa-pulse {
+  0% { r: 4; opacity: 0.55; }
+  100% { r: 26; opacity: 0; }
+}
+@keyframes pa-pulse-css {
+  0% { transform: scale(1); opacity: 0.55; }
+  100% { transform: scale(3.6); opacity: 0; }
+}
+@keyframes pa-orb-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-14px, 14px) scale(1.05); }
+}
+@keyframes pa-pixel-pulse {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 0.55; }
+}
+@keyframes pa-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes pa-float {
+  0%, 100% { transform: translateY(0) rotate(var(--pa-rot, 0deg)); }
+  50% { transform: translateY(-10px) rotate(var(--pa-rot, 0deg)); }
+}
+@keyframes pa-ledger-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.9; }
+}
+
+/* ---------- Reduced motion: keep the shapes, drop every loop ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .page-accent *,
+  .motion-card {
+    animation: none !important;
+    transition: none !important;
+  }
+  .pa-dot,
+  .pa-port {
+    opacity: 0.4;
+  }
+  .pa-pulse-ring,
+  .pa-pulse-ring-css {
+    opacity: 0;
+  }
+}
+
+@media (forced-colors: active) {
+  .page-accent {
+    display: none;
+  }
+}

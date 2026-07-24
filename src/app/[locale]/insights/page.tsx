@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, Pills, CtaBand } from "@/components/trivoxa/ui";
 import InsightsTeaser from "@/components/insights/InsightsTeaser";
+import { PageAccent } from "@/components/visuals/PageAccent";
 import "@/app/styles/insights-page.css";
 
 export const metadata: Metadata = {
@@ -38,6 +39,8 @@ export default function InsightsPage() {
           "Our insights explore global trade, sourcing strategies, emerging industries, market intelligence, and business innovation to help organizations make informed decisions."
         }
         actions={[{ label: "Explore Insights", href: "#featured" }, { label: "Contact Our Team", href: "/contact/", variant: "ghost" }]}
+        accent={<PageAccent variant="paper-layers" seed="insights" />}
+        grain
       />
 
       <Section eyebrow="Categories" title="Knowledge Across Global Trade." lead="Three focused streams of thinking, built to help partners make confident decisions.">

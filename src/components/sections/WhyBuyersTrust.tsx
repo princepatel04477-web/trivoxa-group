@@ -18,13 +18,34 @@ export default function WhyBuyersTrust() {
   useEffect(() => {
     if (!ref.current) return;
     const ctx = gsap.context(() => {
-      gsap.to(".home-reveal", {
-        opacity: 1,
-        y: 0,
-        duration: 0.9,
-        ease: "power3.out",
-        stagger: 0.09,
-        scrollTrigger: { trigger: ref.current, start: "top 78%" },
+      const mm = gsap.matchMedia();
+      // .home-reveal has no CSS reduced-motion fallback (unlike
+      // [data-reveal-body]/.word_inner, which do), so reduced-motion needs
+      // its own branch here to release content immediately rather than
+      // leaving it stuck at the CSS-declared opacity:0.
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        // Text elements keep the shared y-rise; trust-cards get their own
+        // alternating x-slide (initial x set per nth-child in home.css) so
+        // the 2x2 grid doesn't repeat the same motion four times.
+        gsap.to(".home-reveal:not(.trust-card)", {
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          ease: "power3.out",
+          stagger: 0.09,
+          scrollTrigger: { trigger: ref.current, start: "top 78%" },
+        });
+        gsap.to(".trust-card.home-reveal", {
+          opacity: 1,
+          x: 0,
+          duration: 0.9,
+          ease: "power3.out",
+          stagger: 0.09,
+          scrollTrigger: { trigger: ref.current, start: "top 78%" },
+        });
+      });
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        gsap.set(".home-reveal", { opacity: 1, x: 0, y: 0 });
       });
     }, ref);
     return () => ctx.revert();

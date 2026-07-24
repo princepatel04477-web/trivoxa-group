@@ -3,6 +3,8 @@ import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, CtaBand } from "@/components/trivoxa/ui";
 import HorizontalTimeline from "@/components/patterns/HorizontalTimeline";
 import JobBoard from "@/components/careers/JobBoard";
+import { PageAccent } from "@/components/visuals/PageAccent";
+import { AnimatedCard } from "@/components/motion/AnimatedCard";
 import "@/app/styles/patterns.css";
 import "@/app/styles/careers-page.css";
 
@@ -73,6 +75,8 @@ export default function CareersPage() {
           "At Trivoxa, we're building a culture driven by curiosity, integrity, innovation, and continuous growth — where ambitious people come together to create meaningful impact across global industries."
         }
         actions={[{ label: "Explore Opportunities", href: "#opportunities" }, { label: "Get in Touch", href: "/contact/", variant: "ghost" }]}
+        accent={<PageAccent variant="orbital-rings" seed="careers" />}
+        grain
       />
 
       <Section eyebrow="Our Culture" title="A Culture Built for Ambitious People." lead="We combine the discipline of a manufacturing heritage with the energy of a growing international business — a place to do meaningful, lasting work.">
@@ -112,11 +116,16 @@ export default function CareersPage() {
       <Section id="areas" eyebrow="Where You Fit" title="Areas We're Growing." lead="As Trivoxa expands across industries and markets, we're building teams across trade, technology, and partnerships.">
         <div className="careers-dept-strip">
           {areas.map((a, i) => (
-            <div className="careers-dept" key={a.title}>
+            <AnimatedCard
+              index={i}
+              className="careers-dept"
+              key={a.title}
+              variant={i === 0 ? "left" : i === areas.length - 1 ? "right" : "up"}
+            >
               <span className="careers-dept__index">{String(i + 1).padStart(2, "0")}</span>
               <h3 className="careers-dept__name">{a.title}</h3>
               <p className="careers-dept__desc">{a.description}</p>
-            </div>
+            </AnimatedCard>
           ))}
         </div>
       </Section>

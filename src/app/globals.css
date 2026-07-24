@@ -500,7 +500,8 @@ a, button {
   }
   .word_inner,
   .p_inner,
-  .testimonial_inner {
+  .testimonial_inner,
+  .heading-reveal-char {
     opacity: 1 !important;
     filter: none !important;
     transform: none !important;

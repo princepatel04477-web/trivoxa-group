@@ -104,3 +104,63 @@
     grid-template-rows: 1fr;
   }
 }
+
+/* ---------- Service category detail: sub-service capability rows ---------- */
+/* Bordered card (unlike .capability-index above) — each row is wrapped in
+   AnimatedCard, whose .motion-card hover glow needs a real card boundary to
+   read against, so this gets a border/radius instead of the ledger style. */
+.subservice-list {
+  display: grid;
+  gap: var(--space-md);
+  margin-top: var(--space-2xl);
+}
+
+.subservice-row {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  align-items: start;
+  column-gap: var(--space-lg);
+  padding: var(--space-lg) var(--space-xl);
+  border: 1px solid var(--color-rule);
+  border-radius: 12px;
+}
+
+.subservice-row__index {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  letter-spacing: 0.04em;
+  color: var(--color-accent);
+  opacity: 0.7;
+  padding-top: 0.2em;
+}
+
+.subservice-row__body {
+  min-width: 0;
+}
+
+.subservice-row__name {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+  margin: 0 0 var(--space-xs);
+}
+
+.subservice-row__chips {
+  font-size: 0.9375rem;
+  color: var(--color-ink-2);
+  line-height: 1.6;
+}
+
+.subservice-row__sep {
+  margin: 0 0.5em;
+  color: var(--color-rule);
+}
+
+@media (max-width: 780px) {
+  .subservice-row {
+    grid-template-columns: 2.5rem 1fr;
+    padding: var(--space-md) var(--space-lg);
+  }
+}

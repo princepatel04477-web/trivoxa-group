@@ -7,6 +7,7 @@ import SplitScreenSticky from "@/components/patterns/SplitScreenSticky";
 import CinematicPanel from "@/components/patterns/CinematicPanel";
 import HorizontalTimeline from "@/components/patterns/HorizontalTimeline";
 import NumberedList from "@/components/patterns/NumberedList";
+import { PageAccent } from "@/components/visuals/PageAccent";
 
 export const metadata: Metadata = {
   title: "Businesses | Trivoxa Group",
@@ -69,6 +70,8 @@ export default function BusinessesPage() {
         title="Global Solutions for Modern Business."
         description="Trivoxa Group delivers integrated product sourcing and professional service solutions that help businesses expand across international markets. Through trusted partnerships, manufacturing expertise, and a commitment to excellence, we connect organizations with the products, services, and opportunities they need to grow with confidence."
         actions={[{ label: "Request a Quote", modal: true }, { label: "Explore Our Divisions", href: "#divisions", variant: "ghost" }]}
+        accent={<PageAccent variant="diverging-paths" seed="businesses" />}
+        grain
       />
 
       {/* 2. BUSINESS OVERVIEW — split-screen sticky */}
