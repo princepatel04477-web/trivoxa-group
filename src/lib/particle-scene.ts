@@ -3,6 +3,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { latLonToVec3 } from "./geo-sphere";
 import { buildGlobeShape, buildShapes, type Shape, type ShapeKey } from "./shapes";
+import { createPerfHud, isPerfHudEnabled } from "./perf-hud";
 import {
   EffectComposer,
   RenderPass,
@@ -44,12 +45,6 @@ const PARALLAX_MAX = (4 * Math.PI) / 180; // max ±4° mouse parallax offset
 // overrunning it. Both are applied via points.scale in the render loop.
 const FORMATION_SCALE = 1.6;
 const PORTS_SCALE = 1.22;
-
-interface ProxyVertex {
-  x: number;
-  y: number;
-  z: number;
-}
 
 /** One trade lane on the ports globe: a bulging arc from Surat to a hub plus a
  * light "packet" sprite that travels along it, looping. */
@@ -189,8 +184,28 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
   const globeBuilt = shapeKeys.has("globe") ? buildGlobeShape(shapeCtx) : null;
 
   const geometry = new THREE.BufferGeometry();
-  const positions = new Float32Array(count * 3);
+
+  // GPU morph (see morphTo): the field interpolates between two stage buffers
+  // inside the vertex shader, driven by a single uProgress uniform. `position`
+  // is the FROM stage and aTo is the TO stage; the CPU writes one float per
+  // frame instead of count*3, and only rewrites the attributes when a new morph
+  // begins (rare) rather than every frame.
+  const positions = new Float32Array(count * 3); // FROM stage
+  const targets = new Float32Array(count * 3); // TO stage
   geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute("aTo", new THREE.BufferAttribute(targets, 3));
+
+  // Per-particle arrival delay, used only by the hero assemble (uStagger=1) so
+  // the form coalesces like settling dust instead of snapping in on one
+  // synchronized keyframe. Zero-cost for ordinary morphs, which run uStagger=0.
+  const delays = new Float32Array(count);
+  geometry.setAttribute("aDelay", new THREE.BufferAttribute(delays, 1));
+
+  // The field is always on screen and its bounds are driven by a shader-side
+  // mix that Three can't see, so the auto-computed bounding sphere (derived
+  // from `position` alone) would be wrong and could cull the whole cloud
+  // mid-morph. One draw call, always visible — just skip culling.
+  geometry.boundingSphere = new THREE.Sphere(new THREE.Vector3(), Infinity);
 
   // Per-particle random phase drives the idle shimmer entirely on the GPU —
   // each grain's opacity oscillates on its own phase (no synchronized "flat"
@@ -212,6 +227,12 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
   // 1 while the field is the globe, 0 for flat formations — gates the globe-only
   // depth cueing and Layer-B dimming. Lerped in the render loop for smoothness.
   const uGlobeUniform = { value: 1 };
+  // GPU morph drivers. uProgress is the ONLY thing the CPU touches per frame —
+  // GSAP tweens it for a discrete morph, ScrollTrigger scrubs it for a staged
+  // sequence. uStagger blends between a uniform lerp (0) and the per-particle
+  // delayed arrival used by the hero assemble (1).
+  const uProgress = { value: 1 };
+  const uStagger = { value: 0 };
   const material = new THREE.PointsMaterial({
     color: 0xffffff,
     size: 0.2,
@@ -223,10 +244,23 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
   material.onBeforeCompile = (shader) => {
     shader.uniforms.uTime = shimmerUniform;
     shader.uniforms.uGlobe = uGlobeUniform;
+    shader.uniforms.uProgress = uProgress;
+    shader.uniforms.uStagger = uStagger;
     shader.vertexShader = shader.vertexShader
       .replace(
         "#include <common>",
-        "#include <common>\nattribute float aPhase;\nattribute float aLayer;\nuniform float uTime;\nuniform float uGlobe;\nvarying float vAlpha;"
+        "#include <common>\nattribute float aPhase;\nattribute float aLayer;\nattribute vec3 aTo;\nattribute float aDelay;\nuniform float uTime;\nuniform float uGlobe;\nuniform float uProgress;\nuniform float uStagger;\nvarying float vAlpha;"
+      )
+      // THE morph. `position` is the FROM stage, aTo the TO stage. Ordinary
+      // morphs run uStagger=0 so t == uProgress and the easing curve stays
+      // wholly owned by whatever drives the uniform (GSAP tween or scroll
+      // scrub). The hero assemble runs uStagger=1, giving each grain its own
+      // 0–400ms-delayed arrival window.
+      .replace(
+        "#include <begin_vertex>",
+        `float staggered = smoothstep(aDelay, aDelay + 0.55, uProgress);
+        float t = mix(uProgress, staggered, uStagger);
+        vec3 transformed = mix(position, aTo, t);`
       )
       .replace(
         "#include <project_vertex>",
@@ -303,15 +337,52 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
   let side = computeSide();
   scene.position.x = side; // hero: globe sits opposite the left-aligned headline
 
-  const proxy: ProxyVertex[] = Array.from({ length: count }, () => ({ x: 0, y: 0, z: 0 }));
-  const sourceX = new Float32Array(count);
-  const sourceY = new Float32Array(count);
-  const sourceZ = new Float32Array(count);
-  const morphProgress = { value: 0 };
+  const posAttr = geometry.attributes.position as THREE.BufferAttribute;
+  const toAttr = geometry.attributes.aTo as THREE.BufferAttribute;
+  const delayAttr = geometry.attributes.aDelay as THREE.BufferAttribute;
+
+  /**
+   * Freeze the field's CURRENT on-screen positions into the FROM buffer and
+   * point the TO buffer at `target`, so a morph that interrupts one already in
+   * flight starts from where the grains actually are rather than snapping back
+   * to the last stage.
+   *
+   * This is the only place the position buffers are rewritten — once per morph,
+   * not once per frame. Everything between morphs is a single uniform write.
+   */
+  function setStage(target: Float32Array, stagger = false) {
+    const t = uProgress.value;
+    const wasStaggered = uStagger.value > 0.5;
+    for (let i = 0; i < count; i++) {
+      // Mirror the vertex shader's blend exactly, or an interrupted morph
+      // would visibly jump.
+      const local = wasStaggered ? smoothstep(delays[i], delays[i] + 0.55, t) : t;
+      const idx = i * 3;
+      positions[idx] += (targets[idx] - positions[idx]) * local;
+      positions[idx + 1] += (targets[idx + 1] - positions[idx + 1]) * local;
+      positions[idx + 2] += (targets[idx + 2] - positions[idx + 2]) * local;
+    }
+    targets.set(target);
+    posAttr.needsUpdate = true;
+    toAttr.needsUpdate = true;
+    uStagger.value = stagger ? 1 : 0;
+    uProgress.value = 0;
+  }
+
+  /** Drop the field onto `stage` with no travel — used under reduced motion. */
+  function snapTo(stage: Float32Array) {
+    positions.set(stage);
+    targets.set(stage);
+    posAttr.needsUpdate = true;
+    toAttr.needsUpdate = true;
+    uStagger.value = 0;
+    uProgress.value = 1;
+  }
+
+  const morphProgress = uProgress; // GSAP tweens the uniform directly
 
   let animId = 0;
   let paused = false;
-  let needsUpdate = false;
   let currentFlat = false; // hero starts on the spinning globe
   let currentIsGlobe = true; // drives axial tilt, parallax and depth cueing
   // Named-port overlay for the Global Presence globe. Declared before the render
@@ -331,10 +402,6 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
   }
   window.addEventListener("pointermove", handlePointer);
 
-  function writeIntoBufferAttribute() {
-    needsUpdate = true;
-  }
-
   const clock = new THREE.Clock();
 
   // Frame-budget monitor (perf gate): tracks real, unclamped frame time.
@@ -347,6 +414,16 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
   let warmupElapsed = 0;
   let degraded = false;
 
+  // Opt-in only (?perf=1) — the 60fps budget can only be confirmed on real
+  // hardware, so this is the readout for doing that. Null in normal sessions.
+  const perfHud = isPerfHudEnabled()
+    ? createPerfHud({
+        particles: count,
+        dpr: renderer.getPixelRatio(),
+        tier: isMobile ? "mobile" : width > 1024 ? "desktop" : "tablet",
+      })
+    : null;
+
   function renderLoop() {
     // Delta-time normalization: every idle motion below is scaled by real
     // elapsed seconds, so speed is identical at 30, 60, or 144fps. Clamp the
@@ -354,6 +431,7 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
     // keep the raw value too, for the frame-budget monitor below, which needs
     // to see genuinely slow frames rather than a clamped-away view of them.
     const rawDelta = clock.getDelta();
+    perfHud?.sample(rawDelta);
     const delta = Math.min(rawDelta, 0.05);
     const dt60 = delta * 60; // frames-equivalent, for the old per-frame rates
 
@@ -423,17 +501,10 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
     if (reducedMotion) points.scale.setScalar(targetScale);
     else points.scale.setScalar(points.scale.x + (targetScale - points.scale.x) * kSettle);
 
-    if (needsUpdate) {
-      const posArr = geometry.attributes.position.array as Float32Array;
-      for (let i = 0; i < count; i++) {
-        const idx = i * 3;
-        posArr[idx] = proxy[i].x;
-        posArr[idx + 1] = proxy[i].y;
-        posArr[idx + 2] = proxy[i].z;
-      }
-      geometry.attributes.position.needsUpdate = true;
-      needsUpdate = false;
-    }
+    // No per-frame position write: the morph is a vertex-shader mix of the two
+    // stage buffers, so the only per-frame CPU cost is the uProgress uniform
+    // that GSAP or the scroll scrub already set.
+
     // Port labels: fade each toward its target only when it faces the camera
     // (front hemisphere), so labels on the far side of the globe don't show
     // through. Cheap — at most ~7 sprites. Hides the group once fully faded.
@@ -668,40 +739,18 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
     if (reducedMotion) {
       // Jump-cut: land on the target shape immediately, no elastic travel
       // and no speed pulse — the object stays static between scroll steps.
-      for (let i = 0; i < count; i++) {
-        const idx = i * 3;
-        proxy[i].x = shape.data[idx];
-        proxy[i].y = shape.data[idx + 1];
-        proxy[i].z = shape.data[idx + 2];
-      }
-      writeIntoBufferAttribute();
+      snapTo(shape.data);
       onProgress?.(1); // jump-cut still resolves any blend the caller drives off this call
       return;
     }
 
-    for (let i = 0; i < count; i++) {
-      sourceX[i] = proxy[i].x;
-      sourceY[i] = proxy[i].y;
-      sourceZ[i] = proxy[i].z;
-    }
-
-    morphProgress.value = 0;
     gsap.killTweensOf(morphProgress);
+    setStage(shape.data);
     gsap.to(morphProgress, {
       value: 1,
       duration: 4,
       ease: "elastic.out(1, 0.75)",
-      onUpdate: () => {
-        const easeVal = morphProgress.value;
-        for (let i = 0; i < count; i++) {
-          const idx = i * 3;
-          proxy[i].x = sourceX[i] + (shape.data[idx] - sourceX[i]) * easeVal;
-          proxy[i].y = sourceY[i] + (shape.data[idx + 1] - sourceY[i]) * easeVal;
-          proxy[i].z = sourceZ[i] + (shape.data[idx + 2] - sourceZ[i]) * easeVal;
-        }
-        writeIntoBufferAttribute();
-        onProgress?.(easeVal);
-      },
+      onUpdate: onProgress ? () => onProgress(morphProgress.value) : undefined,
     });
   }
 
@@ -720,49 +769,35 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
     currentFlat = !!shape.flat;
     currentIsGlobe = shape.name === "globe";
     if (reducedMotion) {
-      for (let i = 0; i < count; i++) {
-        proxy[i].x = shape.data[i * 3];
-        proxy[i].y = shape.data[i * 3 + 1];
-        proxy[i].z = shape.data[i * 3 + 2];
-      }
+      snapTo(shape.data);
       material.opacity = heroOpacity;
-      writeIntoBufferAttribute();
       return;
     }
-    const delays = new Float32Array(count);
+
+    // Scatter shell — written straight into the FROM buffer, with each grain
+    // given its own arrival delay in aDelay. uStagger=1 makes the shader honour
+    // those delays, so the form settles like dust instead of snapping in.
     for (let i = 0; i < count; i++) {
       const r = R * 2.6 + Math.random() * R * 3.2;
       const th = Math.random() * Math.PI * 2;
       const ph = Math.acos(2 * Math.random() - 1);
-      sourceX[i] = r * Math.sin(ph) * Math.cos(th);
-      sourceY[i] = r * Math.sin(ph) * Math.sin(th);
-      sourceZ[i] = r * Math.cos(ph);
-      proxy[i].x = sourceX[i];
-      proxy[i].y = sourceY[i];
-      proxy[i].z = sourceZ[i];
+      const idx = i * 3;
+      positions[idx] = r * Math.sin(ph) * Math.cos(th);
+      positions[idx + 1] = r * Math.sin(ph) * Math.sin(th);
+      positions[idx + 2] = r * Math.cos(ph);
       delays[i] = Math.random() * 0.4; // 0–400ms per-particle stagger
     }
+    targets.set(shape.data);
+    posAttr.needsUpdate = true;
+    toAttr.needsUpdate = true;
+    delayAttr.needsUpdate = true;
+    uStagger.value = 1;
+    uProgress.value = 0;
+
     material.opacity = 0;
-    writeIntoBufferAttribute();
     gsap.to(material, { opacity: heroOpacity, duration: 1.4, ease: "power1.out" });
-    morphProgress.value = 0;
     gsap.killTweensOf(morphProgress);
-    gsap.to(morphProgress, {
-      value: 1,
-      duration: 2.1,
-      ease: "none",
-      onUpdate: () => {
-        const g = morphProgress.value;
-        for (let i = 0; i < count; i++) {
-          const lt = smoothstep(delays[i], delays[i] + 0.55, g);
-          const idx = i * 3;
-          proxy[i].x = sourceX[i] + (shape.data[idx] - sourceX[i]) * lt;
-          proxy[i].y = sourceY[i] + (shape.data[idx + 1] - sourceY[i]) * lt;
-          proxy[i].z = sourceZ[i] + (shape.data[idx + 2] - sourceZ[i]) * lt;
-        }
-        writeIntoBufferAttribute();
-      },
-    });
+    gsap.to(morphProgress, { value: 1, duration: 2.1, ease: "none" });
   }
 
   // Assemble the hero shape. (Caller signals preloader-done once this
@@ -919,6 +954,7 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
         }
       });
       texture.dispose();
+      perfHud?.dispose();
       gsap.killTweensOf(morphProgress);
       instanceScrollTriggers.forEach((st) => st.kill());
     },
