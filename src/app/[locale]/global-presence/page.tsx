@@ -134,7 +134,12 @@ export default function GlobalPresencePage() {
         </div>
         <div className="presence-ports presence-ports--cards">
           {exportPorts.map((p, i) => (
-            <AnimatedCard index={i} className="presence-port presence-port--card" key={p.code}>
+            <AnimatedCard
+              index={i}
+              className="presence-port presence-port--card"
+              key={p.code}
+              variant={i === 0 ? "left" : i === exportPorts.length - 1 ? "right" : "up"}
+            >
               <div className="presence-port__head">
                 <span className="presence-port__name">{p.name}</span>
                 <span className="presence-port__code">{p.code}</span>

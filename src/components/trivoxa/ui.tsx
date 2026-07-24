@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import ActionButtons, { type Action } from "@/components/trivoxa/ActionButtons";
 import { PageReveal } from "@/components/motion/PageReveal";
+import { HeadingReveal } from "@/components/motion/HeadingReveal";
 import { AnimatedCard } from "@/components/motion/AnimatedCard";
 
 export type { Action };
@@ -57,9 +58,7 @@ export function PageHero({
               <Eyebrow>{eyebrow}</Eyebrow>
             </PageReveal>
           )}
-          <PageReveal as="h1" delay={0.1}>
-            {title}
-          </PageReveal>
+          <HeadingReveal as="h1" text={title} delay={0.1} />
           {description && (
             <PageReveal as="div" className="tvx-hero-desc" delay={0.16}>
               <Paragraphs text={description} />
@@ -99,11 +98,7 @@ export function Section({
             <Eyebrow>{eyebrow}</Eyebrow>
           </PageReveal>
         )}
-        {title && (
-          <PageReveal as="h2" delay={0.05}>
-            {title}
-          </PageReveal>
-        )}
+        {title && <HeadingReveal as="h2" text={title} delay={0.05} />}
         {lead && (
           <PageReveal as="div" className="tvx-lead" delay={0.1}>
             <Paragraphs text={lead} />
@@ -131,7 +126,7 @@ export function Steps({ items, row }: { items: { title: string; desc?: string }[
   return (
     <div className={`tvx-steps${row ? " tvx-steps--row" : ""}`}>
       {items.map((s, i) => (
-        <AnimatedCard key={i} index={i} className="tvx-step">
+        <AnimatedCard key={i} index={i} className="tvx-step" variant={row ? (i % 2 === 0 ? "left" : "right") : "up"}>
           <div className="tvx-step__n">{String(i + 1).padStart(2, "0")}</div>
           <h4>{s.title}</h4>
           {s.desc && <p>{s.desc}</p>}
@@ -145,7 +140,7 @@ export function Pills({ items }: { items: string[] }) {
   return (
     <div className="tvx-pills">
       {items.map((p, i) => (
-        <AnimatedCard key={i} index={i} as="div" className="tvx-pill">
+        <AnimatedCard key={i} index={i} as="div" className="tvx-pill" variant="scale">
           {p}
         </AnimatedCard>
       ))}
@@ -168,7 +163,7 @@ export function CtaBand({
     <section className="tvx-cta">
       <div className="container">
         {eagle && <img className="tvx-cta__eagle" src="/images/trivoxa-eagle.png" alt="" />}
-        <PageReveal as="h2">{title}</PageReveal>
+        <HeadingReveal as="h2" text={title} />
         {description && <PageReveal as="p" delay={0.06}>{description}</PageReveal>}
         <PageReveal as="div" delay={0.12}>
           <ActionButtons actions={actions} />

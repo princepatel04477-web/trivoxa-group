@@ -115,7 +115,12 @@ export default function CareersPage() {
       <Section id="areas" eyebrow="Where You Fit" title="Areas We're Growing." lead="As Trivoxa expands across industries and markets, we're building teams across trade, technology, and partnerships.">
         <div className="careers-dept-strip">
           {areas.map((a, i) => (
-            <AnimatedCard index={i} className="careers-dept" key={a.title}>
+            <AnimatedCard
+              index={i}
+              className="careers-dept"
+              key={a.title}
+              variant={i === 0 ? "left" : i === areas.length - 1 ? "right" : "up"}
+            >
               <span className="careers-dept__index">{String(i + 1).padStart(2, "0")}</span>
               <h3 className="careers-dept__name">{a.title}</h3>
               <p className="careers-dept__desc">{a.description}</p>

@@ -67,7 +67,7 @@ export default async function IndustryPage(props: PageProps<"/[locale]/industrie
         <Section eyebrow="Industry Context" title={`Who We Serve in ${industry.name}`}>
           <div className="industry-context">
             {industry.buyerTypes && (
-              <AnimatedCard index={0} className="industry-context__buyers">
+              <AnimatedCard index={0} className="industry-context__buyers" variant="left">
                 <h3>Typical Buyers</h3>
                 <ul>
                   {industry.buyerTypes.map((b) => (
@@ -77,7 +77,7 @@ export default async function IndustryPage(props: PageProps<"/[locale]/industrie
               </AnimatedCard>
             )}
             {industry.complianceNote && (
-              <AnimatedCard index={1} className="industry-context__compliance">
+              <AnimatedCard index={1} className="industry-context__compliance" variant="right">
                 <h3>What Buyers Should Know</h3>
                 <p>{industry.complianceNote}</p>
               </AnimatedCard>
