@@ -48,4 +48,9 @@ export async function buildShapes(
 }
 
 export { buildGlobeShape };
-export { GOLD, type Shape, type ShapeContext } from "./types";
+export { buildEagleStage, withEagleFinale } from "./eagle";
+export { buildBusinessesStages } from "./businesses";
+export { buildGroupStages } from "./group";
+export { buildInsightsStages, buildInsightsPhase } from "./insights";
+export { buildCareersStages, buildCareersPhase } from "./careers";
+export { type Shape, type ShapeContext } from "./types";

@@ -10,13 +10,39 @@ export interface Shape {
   name: string;
   /** Interleaved xyz target positions, length count*3. */
   data: Float32Array;
-  color: number;
   /**
    * Flat silhouettes (the eagle, fanned planes, concentric rings) breathe and
    * follow the cursor instead of spinning on Y — a side-on spin would collapse
    * them to a line.
    */
   flat?: boolean;
+  /**
+   * Per-particle accent mask, length `count`. 1 renders the particle in the
+   * accent hue, 0 in the primary. Interpolated alongside position across a
+   * morph, so a node can warm into the accent tone as the form arrives. Omit for a
+   * single-hue shape.
+   */
+  accent?: Float32Array;
+  /**
+   * Straight connections drawn between node centres while this stage is on
+   * screen, as line geometry rather than particles. Interleaved pairs:
+   * [ax,ay,az, bx,by,bz, …].
+   */
+  links?: Float32Array;
+  /**
+   * Ambient positional drift amplitude in world units (0 = still). Raised on a
+   * deliberately loose stage so the form reads as dispersing.
+   */
+  drift?: number;
+  /**
+   * Y-axis rotation rate in radians/sec while this stage is settled, interpolated
+   * across a morph like `drift`.
+   *
+   * A volumetric form (a cube) has to turn in 3D to read as one; a form that is
+   * essentially planar (a left-to-right process chain) must not, or it turns
+   * edge-on and collapses. So the rate belongs to the stage, not the scene.
+   */
+  spinY?: number;
 }
 
 export interface ShapeContext {
@@ -28,6 +54,6 @@ export interface ShapeContext {
   S: number;
 }
 
-/** All particle rendering uses --gold-particle. Layer B is dimmed via opacity
- * in the shader, never a different hue. */
-export const GOLD = 0xd4af5e;
+/* Colour deliberately lives nowhere in this module. A Shape carries geometry and
+ * an accent MASK only; the hues come from the scene's palette tokens (see
+ * design-tokens.ts), so a shape can never pin a colour of its own. */

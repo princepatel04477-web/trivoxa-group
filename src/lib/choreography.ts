@@ -4,13 +4,47 @@
  * The scene's beat list, kept here rather than inline in the route file so the
  * sequence is legible in one place.
  *
- * Only the home page runs a particle field. The inner pages carry bespoke GLSL
- * shader backgrounds instead (see ShaderBackground and src/shaders), which sit
- * on the same fixed z-index:-1 layer — running both would mean two WebGL
- * contexts and two ambient systems competing per page.
+ * Five routes run a particle field: home (discrete beats) plus Group, Global
+ * Presence, Insights and Careers (scrubbed stages). Those four no longer mount a
+ * GLSL shader background — it sits on the same fixed z-index:-1 layer, and running
+ * both would mean two WebGL contexts competing per page.
  */
 
+import {
+  withEagleFinale,
+  buildBusinessesStages,
+  buildGroupStages,
+  buildInsightsStages,
+  buildInsightsPhase,
+  buildCareersStages,
+  buildCareersPhase,
+} from "./shapes";
+import { buildPresenceGeo, REGION } from "./shapes/presence";
 import type { SceneConfig } from "./particle-scene";
+
+/**
+ * Two-tone particle palette for the site's canonical Midnight Navy ground.
+ *
+ * The signature forms all need two tones — focal nodes, an HQ marker, an origin,
+ * accented heads — so a single-hue field can't express them. The split follows the
+ * site's existing colour logic rather than inventing one: gold is what marks the
+ * focal and active everywhere else in the app, so it stays the accent, and the
+ * supporting-copy slate carries the structure.
+ *
+ * Both are existing tokens, and no value is written here — the scene resolves
+ * them from the live CSS custom properties at mount.
+ *
+ * `ground: "dark"` is the default, but it is stated explicitly here because it
+ * decides the blend mode and the whole post-processing stack — additive glow plus
+ * bloom on dark, normal compositing with no bloom on light.
+ */
+export const PARTICLE_PALETTE = {
+  // The token globals.css designates for ALL particle rendering.
+  primary: "--gold-particle",
+  // Focal nodes run a touch hotter, still inside the documented gold family.
+  accent: "--gold-hover",
+  ground: "dark",
+} as const;
 
 /**
  * Home — a deliberate, sparse sequence:
@@ -24,6 +58,9 @@ import type { SceneConfig } from "./particle-scene";
 export const HOME: Omit<SceneConfig, "onDegrade"> = {
   hero: "globe",
   ports: true,
+  // Home already closes on the eagle through its beat list (.hp-cta), so it needs
+  // no finale appended — but it resolves its colour from the same tokens.
+  palette: PARTICLE_PALETTE,
   beats: [
     // Trust ("A sourcing partner, not just a supplier directory") — a cargo
     // vessel. The hero globe flies straight into the ship. Sits to the side.
@@ -56,4 +93,259 @@ export const HOME: Omit<SceneConfig, "onDegrade"> = {
       onLeaveBack: { opacity: 1, fadeDuration: 0.5 },
     },
   ],
+};
+
+/**
+ * Group — interlocking hexagonal cells, the group as one connected organism.
+ *
+ * Unlike HOME (discrete beats that fire and ease), every morph here is scrubbed:
+ * the reader's scroll position IS the animation's playhead, so the structure
+ * subdivides under their hand rather than snapping between states. Each segment
+ * spans the two sections named in its binding, so a morph resolves exactly as
+ * the reader crosses from one idea to the next.
+ *
+ *   one cell (hero, Who We Are)
+ *     → three interlocked, accent on the founding node (Foundation → Our Story)
+ *     → six in an orbital ring (The Trivoxa Way → Leadership)
+ *     → the complete mesh, connections drawn in (Business Ecosystem — the climax,
+ *       held through the section rather than passed through)
+ *     → relaxed drift, hex silhouette persisting (Looking Ahead → CTA)
+ *
+ * The stage buffers come from buildGroupStages, called by the scene with the pool
+ * size it settled on for this device tier.
+ */
+export const GROUP: Omit<SceneConfig, "onDegrade"> = {
+  buildStages: withEagleFinale(buildGroupStages),
+  // Bound to the page's own section ids rather than to added marker elements, so
+  // a trigger boundary is always exactly a section boundary.
+  stageBindings: [
+    // → three interlocked cells
+    { trigger: "#foundation", start: "top center", endTrigger: "#our-story", end: "center center" },
+    // → six cells, orbital ring
+    { trigger: "#trivoxa-way", start: "top center", endTrigger: "#leadership", end: "center center" },
+    // → complete mesh. Resolves by the time the ecosystem diagram is centred,
+    //   then holds: nothing starts again until Looking Ahead.
+    { trigger: "#ecosystem", start: "top bottom", end: "center center" },
+    // → the shared eagle finale, converging behind the CTA
+    { trigger: "#looking-ahead", start: "top center", endTrigger: ".group-cta-wrap", end: "top center" },
+  ],
+  motion: "planar",
+  palette: PARTICLE_PALETTE,
+  // The lattice sits behind body copy for most of the page, so it is held well
+  // below full strength — it is a watermark, not an illustration.
+  fieldOpacity: 0.5,
+  // Well under the home globe's 1.6. The brief asks for generous open space
+  // around each form rather than a filled frame, so the lattice is held compact
+  // and the page breathes around it.
+  formationScale: 0.82,
+  // The page root — the orbit is scrubbed across the entire scroll, not a section.
+  cameraOrbit: { trigger: ".tvx", sweepDeg: 26, dolly: 5 },
+  mobileOpacityCap: 0.3,
+};
+
+/**
+ * Global Presence — the globe unwraps into the world map.
+ *
+ * This page runs the engine's GEO mode rather than its stage-buffer mode: every
+ * stage is the same points at the same lat/lon, and a single `bend` uniform turns
+ * them into a sphere (1) or a flat equirectangular map (0). So the signature
+ * unwrap ships no position buffers and costs one float per frame — which is what
+ * makes holding 60fps THROUGH the unwrap a property of the design rather than
+ * something to tune afterwards.
+ *
+ *   globe (hero, Global Overview)
+ *     → UNWRAP to the flat map (Interactive Global Network) — the signature moment
+ *     → held flat while the regional clusters illuminate in sequence (Regions)
+ *     → held flat while the trade-route arcs draw between hubs (Trade & Operations)
+ *     → routes settle, particles relax to drift (Growing Across Borders → CTA)
+ *
+ * The globe hero is locked: stage 0 is spherical, slow-spinning and draggable, and
+ * nothing here flattens it before the reader reaches the Network section.
+ */
+export const GLOBAL_PRESENCE: Omit<SceneConfig, "onDegrade"> = {
+  buildGeoField: ({ count }) => buildPresenceGeo(count),
+  geoStages: [
+    // Hero + Global Overview — the globe, spherical and spinning.
+    { name: "globe", bend: 1 },
+    // THE unwrap. Everything after this is the map.
+    { name: "map", bend: 0 },
+    // Regions: held flat. The illumination is driven by regionCues, not by bend.
+    { name: "map-regions", bend: 0 },
+    // Trade & Operations: still flat, routes drawn.
+    { name: "map-routes", bend: 0, routes: true },
+    // Close: routes settle out and the flat map converges into the shared eagle.
+    // `eagle: true` blends the analytic unwrap toward the sampled mark (see the
+    // uEagleBlend path in particle-scene) — geo mode has no position buffers of
+    // its own, so this is how the finale reaches it.
+    { name: "eagle", bend: 0, drift: 0.2, eagle: true },
+  ],
+  stageBindings: [
+    // → unwrap, scrubbed across the Overview→Network span. The longest binding on
+    //   the page on purpose: this is the moment worth giving room to.
+    { trigger: "#global-overview", start: "top center", endTrigger: "#global-network", end: "bottom center" },
+    // → hold flat into the Regions section
+    { trigger: "#regions", start: "top bottom", end: "top center" },
+    // → hold flat into Trade & Operations
+    { trigger: "#trade-operations", start: "top bottom", end: "top center" },
+    // → relax
+    { trigger: "#growing", start: "top center", endTrigger: ".tvx-cta", end: "top center" },
+  ],
+  // One cue per region row, fired as each scrolls up into view.
+  regionCues: [
+    { trigger: "#region-europe", region: REGION.EUROPE },
+    { trigger: "#region-middle-east", region: REGION.MIDDLE_EAST },
+    { trigger: "#region-africa", region: REGION.AFRICA },
+    { trigger: "#region-north-america", region: REGION.NORTH_AMERICA },
+    { trigger: "#region-south-america", region: REGION.SOUTH_AMERICA },
+    { trigger: "#region-asia-pacific", region: REGION.ASIA_PACIFIC },
+    // Clear the highlight once the reader is past the regional breakdown, so the
+    // routes section starts from an evenly-lit map.
+    { trigger: "#trade-operations", region: REGION.NONE },
+  ],
+  motion: "geo",
+  routes: true,
+  draggable: true,
+  palette: PARTICLE_PALETTE,
+  fieldOpacity: 0.55,
+  // Compact form, generous open space around it (see the brief's density note).
+  formationScale: 0.82,
+  mobileOpacityCap: 0.32,
+};
+
+/**
+ * Insights — a single point of light expanding into an intelligence network.
+ *
+ *   one dense point of light, accent-token core (hero)
+ *     → the point emits; particles fan into scattered knowledge nodes (Categories)
+ *     → nodes organise into an interconnected web, connections drawing between
+ *       related nodes (Featured, first half)
+ *     → full density: a calm editorial lattice (Featured, second half)
+ *     → the lattice converges into the shared eagle behind the CTA (CTA)
+ *
+ * SECTION MAPPING NOTE. The brief lists five sections; this page has four blocks.
+ * There is no "All Insights" listing — no articles are published yet, and the page
+ * deliberately carries no dead links (see the comment on upcomingTopics). So the
+ * full-density stage is bound to the BACK HALF of the Featured section rather than
+ * to a section invented to hold it: the web organises as the reader enters the
+ * topic list and reaches full density as they work down it. The Categories section
+ * is this page's intro/label beat, which is also the only place it can be — it
+ * sits before Featured in the DOM, so it cannot carry a later stage.
+ *
+ * Motion is deliberately slow: "planar" is a 150s/revolution in-plane drift with a
+ * ±1.8% breath, and buildInsightsPhase makes the nodes pulse as units rather than
+ * letting individual grains twinkle. Nothing here is energetic.
+ */
+export const INSIGHTS: Omit<SceneConfig, "onDegrade"> = {
+  buildStages: withEagleFinale(buildInsightsStages),
+  // Coherent per-node pulse phase — the nodes breathe, the grains don't twinkle.
+  buildPhase: buildInsightsPhase,
+  stageBindings: [
+    // → the point emits into scattered nodes
+    { trigger: "#categories", start: "top 80%", end: "bottom center" },
+    // → nodes organise into the connected web
+    { trigger: "#featured", start: "top 75%", end: "center center" },
+    // → full density lattice, across the back half of the same section
+    { trigger: "#featured", start: "center center", end: "bottom 70%" },
+    // → the shared eagle finale, converging behind the CTA
+    { trigger: ".tvx-cta", start: "top bottom", end: "center center" },
+  ],
+  // The strokes start arriving as the web organises (mid-stage-2) and are still
+  // completing through the densification (stage 3), then fade out as the eagle
+  // takes over — the closing mark stands alone. The default envelope would have
+  // finished the strokes before the lattice even formed.
+  linkEnvelope: { drawFrom: 1.55, drawTo: 3.0, fadeFrom: 3.45, fadeTo: 4.0 },
+  motion: "planar",
+  palette: PARTICLE_PALETTE,
+  // The lowest of the five: article cards sit directly in front of this one, and
+  // the network is behind them as texture, not as competition.
+  fieldOpacity: 0.42,
+  // Compact form, generous open space around it (see the brief's density note).
+  formationScale: 0.82,
+  cameraOrbit: { trigger: ".tvx", sweepDeg: 16, dolly: 3 },
+  mobileOpacityCap: 0.26,
+};
+
+/**
+ * Careers — abstract human silhouettes assembling into a team.
+ *
+ *   one silhouette, centred, breathing (hero)
+ *     → a second forms and connects to it (Our Culture)
+ *     → silhouettes multiply into a connected cluster (Areas We're Growing)
+ *     → full formation: a network of figures as one organisation (Open Roles)
+ *     → the team converges into the shared eagle behind the CTA, then faint drift
+ *
+ * SECTION MAPPING NOTE. The brief's "Values / life-at-Trivoxa" beat has no section
+ * on this page — values live on the Group page, and Careers runs Culture → Where
+ * the Work Happens → Areas → Benefits → Open Roles → Hiring Process. The full
+ * formation is therefore bound to `#opportunities` (Open Roles), which is both the
+ * right DOM position and the strongest available beat for it: the whole team stands
+ * assembled behind the list of roles you could join. Benefits and Where the Work
+ * Happens fall inside the holds either side, so nothing is left unaccompanied.
+ *
+ * This page runs warmer strictly through accent PRESENCE, not a shifted palette:
+ * the accent lands on every figure's head (~14% of a figure by area, ~11% of
+ * the pool) against Insights' ~7%. No value is named here: PARTICLE_PALETTE is the
+ * same token pair every other page resolves.
+ */
+export const CAREERS: Omit<SceneConfig, "onDegrade"> = {
+  buildStages: withEagleFinale(buildCareersStages),
+  buildPhase: buildCareersPhase,
+  stageBindings: [
+    // → a second silhouette forms and connects
+    { trigger: "#culture", start: "top 80%", end: "bottom center" },
+    // → multiply into a connected cluster
+    { trigger: "#areas", start: "top 80%", end: "bottom center" },
+    // → full formation, behind the open roles
+    { trigger: "#opportunities", start: "top bottom", end: "center center" },
+    // → the shared eagle finale, converging behind the CTA
+    { trigger: ".tvx-cta", start: "top bottom", end: "center center" },
+  ],
+  // The first connection draws as the second figure arrives (mid-morph into stage
+  // 1) and the network keeps completing all the way to the full formation, so the
+  // organisation visibly wires itself together rather than appearing pre-wired.
+  linkEnvelope: { drawFrom: 0.6, drawTo: 3.0, fadeFrom: 3.4, fadeTo: 4.0 },
+  motion: "planar",
+  palette: PARTICLE_PALETTE,
+  fieldOpacity: 0.46,
+  // Compact form, generous open space around it (see the brief's density note).
+  formationScale: 0.82,
+  cameraOrbit: { trigger: ".tvx", sweepDeg: 18, dolly: 3.5 },
+  mobileOpacityCap: 0.28,
+};
+
+/**
+ * Businesses — a cube that unfolds into sectors.
+ *
+ *   solid cube, turning on Y (hero)
+ *     → edges loosen, grains redistribute (Business Overview)
+ *     → cleaves into TWO divisions: Product Exports dense, Service Exports
+ *       lighter and networked, with the accent marking the divide (Our Divisions)
+ *     → resolves into a left-to-right PROCESS CHAIN: source → coordinate →
+ *       verify → deliver (How We Work)
+ *     → converges into the shared eagle behind the CTA (Why Trivoxa → CTA)
+ *
+ * The continuity requirement is met in the geometry rather than here: the cube's
+ * points are sorted by x once, and every later stage partitions that ordering into
+ * contiguous left-to-right ranges, so the cube cleaves and subdivides without any
+ * grain crossing another. See src/lib/shapes/businesses.ts.
+ */
+export const BUSINESSES: Omit<SceneConfig, "onDegrade"> = {
+  buildStages: withEagleFinale(buildBusinessesStages),
+  stageBindings: [
+    // → the cube loosens
+    { trigger: "#overview", start: "top 80%", end: "bottom center" },
+    // → cleaves into the two divisions
+    { trigger: "#divisions", start: "top 80%", end: "center center" },
+    // → resolves into the process chain
+    { trigger: "#process", start: "top 80%", end: "center center" },
+    // → the shared eagle finale, converging behind the CTA
+    { trigger: "#why", start: "top center", endTrigger: ".tvx-cta", end: "top center" },
+  ],
+  motion: "planar",
+  palette: PARTICLE_PALETTE,
+  fieldOpacity: 0.46,
+  // Compact form, generous open space around it (see the brief's density note).
+  formationScale: 0.82,
+  cameraOrbit: { trigger: ".tvx", sweepDeg: 20, dolly: 4 },
+  mobileOpacityCap: 0.28,
 };

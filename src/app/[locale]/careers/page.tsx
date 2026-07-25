@@ -3,8 +3,10 @@ import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, CtaBand } from "@/components/trivoxa/ui";
 import HorizontalTimeline from "@/components/patterns/HorizontalTimeline";
 import JobBoard from "@/components/careers/JobBoard";
+import CareersTeam from "@/components/careers/CareersTeam";
 import "@/app/styles/patterns.css";
 import "@/app/styles/careers-page.css";
+import "@/app/styles/signature-canvas.css";
 
 export const metadata: Metadata = {
   title: "Careers | Trivoxa Group",
@@ -64,7 +66,16 @@ const culturePhotos = [
 
 export default function CareersPage() {
   return (
-    <TrivoxaShell film="careers">
+    <TrivoxaShell>
+      {/* Signature animation: one persistent canvas behind every section. A single
+          abstract silhouette in the hero is joined by a second, then multiplies into
+          a connected team formation behind the open roles, then relaxes. Replaces
+          the GLSL shader background this page used to carry — one WebGL context
+          per page. */}
+      <div className="gp-canvas" aria-hidden="true">
+        <CareersTeam />
+      </div>
+
       <PageHero
         eyebrow="Careers"
         title="Build What's Next With Us."
@@ -75,7 +86,7 @@ export default function CareersPage() {
         actions={[{ label: "Explore Opportunities", href: "#opportunities" }, { label: "Get in Touch", href: "/contact/", variant: "ghost" }]}
       />
 
-      <Section eyebrow="Our Culture" title="A Culture Built for Ambitious People." lead="We combine the discipline of a manufacturing heritage with the energy of a growing international business — a place to do meaningful, lasting work.">
+      <Section id="culture" eyebrow="Our Culture" title="A Culture Built for Ambitious People." lead="We combine the discipline of a manufacturing heritage with the energy of a growing international business — a place to do meaningful, lasting work.">
         <div className="careers-values-list">
           {values.map((v, i) => (
             <div className="careers-value-row" key={v.title}>

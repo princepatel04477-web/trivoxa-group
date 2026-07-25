@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import "@/app/styles/patterns.css";
 import "@/app/styles/businesses-page.css";
+import "@/app/styles/signature-canvas.css";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
+import BusinessesCube from "@/components/businesses/BusinessesCube";
 import { PageHero, Section, CtaBand } from "@/components/trivoxa/ui";
 import SplitScreenSticky from "@/components/patterns/SplitScreenSticky";
 import CinematicPanel from "@/components/patterns/CinematicPanel";
@@ -62,7 +64,15 @@ const strengths = [
 
 export default function BusinessesPage() {
   return (
-    <TrivoxaShell film="product-exports">
+    <TrivoxaShell>
+      {/* Signature animation: one persistent canvas behind every section. A solid
+          cube loosens, cleaves into the two divisions, resolves into the process
+          chain, then converges into the shared eagle. Replaces the GLSL shader
+          background this page used to carry — one WebGL context per page. */}
+      <div className="gp-canvas" aria-hidden="true">
+        <BusinessesCube />
+      </div>
+
       {/* 1. HERO */}
       <PageHero
         eyebrow="Our Businesses"
@@ -72,7 +82,7 @@ export default function BusinessesPage() {
       />
 
       {/* 2. BUSINESS OVERVIEW — split-screen sticky */}
-      <div className="container">
+      <div className="container" id="overview">
         <SplitScreenSticky
           eyebrow="Our Businesses"
           title="Two Divisions. One Shared Commitment to Excellence."
@@ -85,19 +95,19 @@ export default function BusinessesPage() {
       </div>
 
       {/* 3. OUR BUSINESS DIVISIONS — full-bleed cinematic panels, no gap */}
-      <section className="business-arms" aria-label="Our Business Divisions">
+      <section className="business-arms" id="divisions" aria-label="Our Business Divisions">
         {divisions.map((d) => (
           <CinematicPanel key={d.title} {...d} />
         ))}
       </section>
 
       {/* 4. HOW WE WORK — pinned horizontal process timeline */}
-      <Section eyebrow="Our Process" title="A Structured Approach to Global Business." lead="Every successful partnership begins with understanding. Our process is designed to ensure clarity, quality, and confidence at every stage of the journey.">
+      <Section id="process" eyebrow="Our Process" title="A Structured Approach to Global Business." lead="Every successful partnership begins with understanding. Our process is designed to ensure clarity, quality, and confidence at every stage of the journey.">
         <HorizontalTimeline steps={steps} />
       </Section>
 
       {/* 5. WHY BUSINESSES CHOOSE TRIVOXA — numbered list */}
-      <Section eyebrow="Why Trivoxa" title="Built on Experience. Focused on Partnership.">
+      <Section id="why" eyebrow="Why Trivoxa" title="Built on Experience. Focused on Partnership.">
         <NumberedList items={strengths} />
       </Section>
 

@@ -7,7 +7,8 @@
 import * as THREE from "three";
 import { buildGlobeGeometry } from "../globe-geometry";
 import { sampleParts } from "./sample";
-import { GOLD, type Shape, type ShapeContext } from "./types";
+import { buildEagleStage } from "./eagle";
+import type { Shape, ShapeContext } from "./types";
 
 /**
  * The two-layer Fibonacci globe. Returns the per-particle layer attribute
@@ -23,7 +24,7 @@ export function buildGlobeShape({ count, R }: ShapeContext): {
 } {
   const geo = buildGlobeGeometry(count, R);
   return {
-    shape: { name: "globe", data: geo.positions, color: GOLD },
+    shape: { name: "globe", data: geo.positions },
     layer: geo.layer,
   };
 }
@@ -55,7 +56,7 @@ export function buildCargoShip({ count, R }: ShapeContext): Shape {
   const bridge = new THREE.BoxGeometry(R * 0.5, R * 0.75, R * 0.52, 6, 12, 6);
   bridge.translate(R * 1.2, R * 0.42, 0);
   parts.push(bridge);
-  const shape = sampleParts(parts, "cargo-ship", GOLD, count);
+  const shape = sampleParts(parts, "cargo-ship", count);
   shape.flat = true;
   return shape;
 }
@@ -75,7 +76,7 @@ export function buildContainer({ count, R }: ShapeContext): Shape {
     rib.translate(-R * 0.82 + (i / (ribs - 1)) * R * 1.64, 0, 0);
     parts.push(rib);
   }
-  const shape = sampleParts(parts, "container", GOLD, count);
+  const shape = sampleParts(parts, "container", count);
   shape.flat = true;
   return shape;
 }
@@ -84,55 +85,7 @@ export function buildContainer({ count, R }: ShapeContext): Shape {
  * The Trivoxa eagle, built from the mark's PNG alpha channel — the brand
  * itself rendered in grains. Every page resolves into this at its CTA beat.
  */
-export function buildEagle({ count, S }: ShapeContext): Promise<Shape> {
-  return loadAlphaMask("/images/trivoxa-eagle.png", "eagle", 20 * S, GOLD, count);
+export function buildEagle(ctx: ShapeContext): Promise<Shape> {
+  return buildEagleStage(ctx);
 }
 
-function loadAlphaMask(
-  url: string,
-  name: string,
-  targetWidth: number,
-  color: number,
-  count: number
-): Promise<Shape> {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.onload = () => {
-      const maxW = 260;
-      const scale = Math.min(1, maxW / img.width);
-      const w = Math.max(1, Math.round(img.width * scale));
-      const h = Math.max(1, Math.round(img.height * scale));
-      const cv = document.createElement("canvas");
-      cv.width = w;
-      cv.height = h;
-      const cx = cv.getContext("2d");
-      const data = new Float32Array(count * 3);
-      if (!cx) {
-        resolve({ name, data, color, flat: true });
-        return;
-      }
-      cx.drawImage(img, 0, 0, w, h);
-      const px = cx.getImageData(0, 0, w, h).data;
-      const opaque: number[] = [];
-      for (let y = 0; y < h; y++) {
-        for (let x = 0; x < w; x++) {
-          if (px[(y * w + x) * 4 + 3] > 128) opaque.push(x, y);
-        }
-      }
-      const unit = targetWidth / w;
-      const n = opaque.length / 2 || 1;
-      for (let i = 0; i < count; i++) {
-        const s = (Math.floor((i / count) * n) % n) * 2;
-        const jx = opaque[s] + Math.random();
-        const jy = opaque[s + 1] + Math.random();
-        data[i * 3] = (jx - w / 2) * unit;
-        data[i * 3 + 1] = -(jy - h / 2) * unit;
-        data[i * 3 + 2] = (Math.random() - 0.5) * targetWidth * 0.04;
-      }
-      resolve({ name, data, color, flat: true });
-    };
-    img.onerror = () => resolve({ name, data: new Float32Array(count * 3), color, flat: true });
-    img.src = url;
-  });
-}

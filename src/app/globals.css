@@ -80,6 +80,13 @@
   --gold:          #C9A24B;  /* CTAs, labels, links, active states */
   --gold-hover:    #E0BC6A;  /* hover/focus on gold */
   --gold-particle: #D4AF5E;  /* ALL particle rendering: globe, plane, map, compass */
+  --gold-packet:   #FFE3A6;  /* travelling shipment packets on the trade-route arcs */
+  /* Named-port labels on the particle globe. Exact prior values, exported so the
+     particle system can reference tokens instead of carrying its own hex. */
+  --port-origin-dot:  #F2C24A;
+  --port-origin-text: #F3D488;
+  --port-dest-dot:    #8894AC;
+  --port-dest-text:   #9BA6BC;
   --route:         #8FB4E8;  /* trade-route arc lines ONLY */
   --success:       #5FA97C;  /* DELIVERED ticker state */
 
@@ -681,12 +688,52 @@ a, button {
   inset: 0;
   z-index: 9999;
   pointer-events: none;
-  opacity: 0.06;
+  opacity: 0.05;
   mix-blend-mode: soft-light;
+  overflow: hidden; /* clips the oversized inner layer as it shifts */
+}
+
+/* The grain itself, on an inner layer inset far enough that it can be shifted
+   in any direction without exposing an edge.
+
+   It animates by STEPPING the whole tiled noise field to a new offset ~8×/sec —
+   the field is reseeded visually, but the only thing changing is a transform, so
+   this is compositor-only: no repaint, no canvas, no per-frame JS, at any
+   viewport size. A stepped shift (rather than a smooth translate) is also what
+   makes it read as analog film grain instead of a sliding texture, and 8/sec
+   rather than 60/sec is what keeps it from looking like TV static.
+
+   The offsets are deliberately irregular so the 8-frame loop isn't perceptible
+   as a cycle. */
+.grain-overlay__layer {
+  position: absolute;
+  inset: -180px;
   background-repeat: repeat;
   background-size: 160px 160px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  will-change: transform;
+  animation: grain-shift 1.05s steps(1, end) infinite;
 }
+
+@keyframes grain-shift {
+  0%     { transform: translate3d(0, 0, 0); }
+  12.5%  { transform: translate3d(-43px, 27px, 0); }
+  25%    { transform: translate3d(31px, -58px, 0); }
+  37.5%  { transform: translate3d(-71px, -19px, 0); }
+  50%    { transform: translate3d(54px, 63px, 0); }
+  62.5%  { transform: translate3d(-17px, -84px, 0); }
+  75%    { transform: translate3d(79px, 11px, 0); }
+  87.5%  { transform: translate3d(-62px, 47px, 0); }
+}
+
+/* Grain is a permanent brand texture, but it is still a non-essential
+   animation — hold a single static field when reduced motion is asked for. */
+@media (prefers-reduced-motion: reduce) {
+  .grain-overlay__layer {
+    animation: none;
+  }
+}
+
 /* Decorative texture, not information — drop it under forced-colors so it can't
    wash out high-contrast modes. */
 @media (forced-colors: active) {

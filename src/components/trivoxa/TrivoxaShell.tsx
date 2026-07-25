@@ -26,7 +26,10 @@ export default function TrivoxaShell({
   film,
 }: {
   children: ReactNode;
-  /** Live GLSL shader-background variant (see ShaderBackground + src/shaders). */
+  /**
+   * Live GLSL shader-background variant (see ShaderBackground + src/shaders).
+   * Omit on a route that runs its own particle field — one WebGL context per page.
+   */
   film?: string;
 }) {
   return (

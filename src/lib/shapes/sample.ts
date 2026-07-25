@@ -8,12 +8,7 @@ import type { Shape } from "./types";
  *
  * Disposes the geometry it is handed — callers pass a throwaway.
  */
-export function sampleGeometry(
-  geo: THREE.BufferGeometry,
-  name: string,
-  color: number,
-  count: number
-): Shape {
+export function sampleGeometry(geo: THREE.BufferGeometry, name: string, count: number): Shape {
   const mesh = new THREE.Mesh(geo);
   const sampler = new MeshSurfaceSampler(mesh).build();
   const data = new Float32Array(count * 3);
@@ -25,7 +20,7 @@ export function sampleGeometry(
     data[i * 3 + 2] = tmp.z;
   }
   geo.dispose();
-  return { name, data, color };
+  return { name, data };
 }
 
 /**
@@ -33,13 +28,8 @@ export function sampleGeometry(
  * every part. All parts must be indexed (every THREE primitive is), or
  * mergeGeometries returns null.
  */
-export function sampleParts(
-  parts: THREE.BufferGeometry[],
-  name: string,
-  color: number,
-  count: number
-): Shape {
+export function sampleParts(parts: THREE.BufferGeometry[], name: string, count: number): Shape {
   const merged = mergeGeometries(parts, false)!;
   parts.forEach((g) => g.dispose());
-  return sampleGeometry(merged, name, color, count);
+  return sampleGeometry(merged, name, count);
 }

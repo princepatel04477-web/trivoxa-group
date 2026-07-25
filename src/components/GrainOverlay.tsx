@@ -1,14 +1,21 @@
 /**
- * Global film/paper grain layer.
+ * Global film/paper grain layer — the permanent brand texture.
  *
- * A single STATIC overlay mounted once at the root (last child of <body>) so a
- * uniform grain sits over every page. `mix-blend-mode: soft-light` lets one
- * layer read correctly over the navy ground and any lighter surface without a
- * per-section variant. It is intentionally still — the only animated grain is
- * the scoped canvas grain behind each page's hero (SectionGrain / `.hero-grain`,
- * which is IntersectionObserver-gated and reduced-motion aware). All styling
- * lives in `.grain-overlay` (globals.css).
+ * A single overlay mounted once at the root (last child of <body>) so a uniform
+ * grain sits over every page. `mix-blend-mode: soft-light` lets one layer read
+ * correctly over the navy ground and every surface above it, without needing a
+ * per-section variant.
+ *
+ * The inner layer animates: the tiled noise field steps to a new offset roughly
+ * 8×/second, which reseeds the grain visually while changing nothing but a
+ * transform — compositor-only, so it costs the same at any viewport size and
+ * needs no JS. Reduced motion holds one static field. All styling and the step
+ * cadence live in `.grain-overlay` (globals.css).
  */
 export function GrainOverlay() {
-  return <div className="grain-overlay" aria-hidden="true" />;
+  return (
+    <div className="grain-overlay" aria-hidden="true">
+      <div className="grain-overlay__layer" />
+    </div>
+  );
 }
