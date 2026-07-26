@@ -1,0 +1,44 @@
+/* ============================================================
+   Signature particle canvas — layout only, no colour.
+
+   The four signature-animation routes (Group, Global Presence, Insights,
+   Careers) mount their WebGL field into a fixed, full-viewport, input-transparent
+   layer behind all page content. The canvas positions itself (see the inline
+   style in particle-scene.ts); this wrapper only guarantees it never intercepts a
+   click and never creates scroll.
+
+   Deliberately carries no palette: the field's colours come from the scene's
+   `palette` config (see NAVY_GROUND_PALETTE in src/lib/choreography.ts), which
+   resolves against the site's canonical Midnight Navy tokens like everything else.
+   ============================================================ */
+
+.gp-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Global Presence — the section the globe→map unwrap resolves into. Tall on
+   purpose: the unwrap is scrubbed from the Overview section's centre to this
+   section's bottom, so this height IS the animation's duration. Sparse on purpose
+   too — the particle field flattening behind it is the content. */
+.presence-network {
+  min-height: 92vh;
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 767px) {
+  .presence-network {
+    min-height: 70vh;
+  }
+}
+
+/* Decorative motion, not information — drop it under forced-colors so it can't
+   interfere with a high-contrast rendering. */
+@media (forced-colors: active) {
+  .gp-canvas {
+    display: none;
+  }
+}

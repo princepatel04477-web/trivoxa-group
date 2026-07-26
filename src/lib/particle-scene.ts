@@ -1,10 +1,20 @@
 import * as THREE from "three";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { MeshSurfaceSampler } from "three/examples/jsm/math/MeshSurfaceSampler.js";
-import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
-import { buildGlobeGeometry } from "./globe-geometry";
 import { latLonToVec3 } from "./geo-sphere";
+import {
+  buildGlobeShape,
+  buildShapes,
+  type Shape,
+  type ShapeContext,
+  type ShapeKey,
+} from "./shapes";
+import { TradeArcs } from "./trade-arcs";
+import { readToken, tokenColor, type ColorToken } from "./design-tokens";
+import { buildEagleStage } from "./shapes/eagle";
+import { TRADE_CITIES } from "@/data/trade-cities";
+import type { GeoField } from "./shapes/presence";
+import { createPerfHud, isPerfHudEnabled } from "./perf-hud";
 import {
   EffectComposer,
   RenderPass,
@@ -21,10 +31,20 @@ import {
 // the prior density exceeded frame budget on mid-range hardware, producing an
 // unresponsive tab under sustained load. See the frame-budget monitor below
 // for the runtime fallback if this still isn't enough on a given device.
-const COUNT_DESKTOP = 7000;
-const COUNT_MOBILE = 3000;
-const MAX_DPR_DESKTOP = 1.5;
-const MAX_DPR_MOBILE = 1.5;
+// Three device tiers, detected once on mount and never resized mid-session.
+//
+// The DPR ceilings are the specified ones. The COUNTS sit deliberately BELOW the
+// 32k desktop cap for two reasons: the brief asks for lower fill density and
+// generous open space over denser forms, and the note below records that 14k/6k
+// already exceeded the frame budget on mid-range hardware. Raise toward the caps
+// only once ?perf=1 shows headroom on real devices — the frame-budget monitor
+// further down is the safety net, not a substitute for measuring.
+const COUNT_DESKTOP = 18000;
+const COUNT_TABLET = 12000;
+const COUNT_MOBILE = 8000;
+const MAX_DPR_DESKTOP = 2;
+const MAX_DPR_TABLET = 1.5;
+const MAX_DPR_MOBILE = 1.25;
 
 // Frame-budget gate: 20ms/frame is the 50fps floor. 10 consecutive frames
 // over budget (not one-off jank from GC or a tab switch) triggers the static
@@ -47,20 +67,6 @@ const PARALLAX_MAX = (4 * Math.PI) / 180; // max ±4° mouse parallax offset
 const FORMATION_SCALE = 1.6;
 const PORTS_SCALE = 1.22;
 
-interface ProxyVertex {
-  x: number;
-  y: number;
-  z: number;
-}
-
-interface Shape {
-  name: string;
-  data: Float32Array;
-  color: number;
-  /** Flat silhouettes (the eagle) breathe + follow the cursor instead of spinning. */
-  flat?: boolean;
-}
-
 /** One trade lane on the ports globe: a bulging arc from Surat to a hub plus a
  * light "packet" sprite that travels along it, looping. */
 interface ArcAnim {
@@ -76,77 +82,218 @@ export interface ParticleScene {
   dispose(): void;
 }
 
-// All particle rendering uses --gold-particle (#D4AF5E). Layer B is dimmed via
-// opacity in the shader, never a different hue.
-const GOLD = 0xd4af5e;
-
-/** Sample `count` points off any BufferGeometry surface (for procedural import/export shapes). */
-function sampleGeometry(geo: THREE.BufferGeometry, name: string, color: number, count: number): Shape {
-  const mesh = new THREE.Mesh(geo);
-  const sampler = new MeshSurfaceSampler(mesh).build();
-  const data = new Float32Array(count * 3);
-  const tmp = new THREE.Vector3();
-  for (let i = 0; i < count; i++) {
-    sampler.sample(tmp);
-    data[i * 3] = tmp.x;
-    data[i * 3 + 1] = tmp.y;
-    data[i * 3 + 2] = tmp.z;
-  }
-  geo.dispose();
-  return { name, data, color };
+/**
+ * One beat of a page's scroll choreography: at `trigger`, morph the field into
+ * `shape` (or fade it out if `shape` is omitted) and sweep it to `sweep`.
+ *
+ * The field forms a shape at a handful of narrative beats and is faded to 0
+ * everywhere else — that sparseness is deliberate, so it never competes with
+ * content-dense sections.
+ */
+export interface Beat {
+  /** CSS selector the ScrollTrigger hangs off. */
+  trigger: string;
+  /** Shape to morph into. Omit to hold the current shape (usually with opacity 0). */
+  shape?: ShapeKey;
+  /**
+   * Horizontal placement as a multiple of the computed side offset: 1 parks it
+   * at the edge, 0 centres it. Omit to leave the field where it is. Always 0 on
+   * mobile, where computeSide() returns 0.
+   */
+  sweep?: number;
+  /** Target field opacity (default 1). */
+  opacity?: number;
+  /** Fade duration in seconds (default 0.7). */
+  fadeDuration?: number;
+  /** Show the named-port overlay. Requires ports:true on the scene config. */
+  ports?: boolean;
+  /** ScrollTrigger start (default "top center"). */
+  start?: string;
+  /** Applied on scroll-up past the trigger, if the beat needs to undo itself. */
+  onLeaveBack?: Pick<Beat, "opacity" | "ports" | "fadeDuration">;
 }
 
-/** Build the Trivoxa eagle logo as a flat point cloud from the mark's PNG alpha
- * channel — the brand mark itself, rendered in grains, for the final CTA. */
-function loadEagle(url: string, name: string, targetWidth: number, color: number, count: number): Promise<Shape> {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.onload = () => {
-      const maxW = 260;
-      const scale = Math.min(1, maxW / img.width);
-      const w = Math.max(1, Math.round(img.width * scale));
-      const h = Math.max(1, Math.round(img.height * scale));
-      const cv = document.createElement("canvas");
-      cv.width = w;
-      cv.height = h;
-      const cx = cv.getContext("2d");
-      const data = new Float32Array(count * 3);
-      if (!cx) {
-        resolve({ name, data, color, flat: true });
-        return;
-      }
-      cx.drawImage(img, 0, 0, w, h);
-      const px = cx.getImageData(0, 0, w, h).data;
-      const opaque: number[] = [];
-      for (let y = 0; y < h; y++) {
-        for (let x = 0; x < w; x++) {
-          if (px[(y * w + x) * 4 + 3] > 128) opaque.push(x, y);
-        }
-      }
-      const unit = targetWidth / w;
-      const n = opaque.length / 2 || 1;
-      for (let i = 0; i < count; i++) {
-        const s = (Math.floor((i / count) * n) % n) * 2;
-        const jx = opaque[s] + Math.random();
-        const jy = opaque[s + 1] + Math.random();
-        data[i * 3] = (jx - w / 2) * unit;
-        data[i * 3 + 1] = -(jy - h / 2) * unit;
-        data[i * 3 + 2] = (Math.random() - 0.5) * targetWidth * 0.04;
-      }
-      resolve({ name, data, color, flat: true });
-    };
-    img.onerror = () => resolve({ name, data: new Float32Array(count * 3), color, flat: true });
-    img.src = url;
-  });
+/**
+ * One transition in a scrubbed stage sequence: the scroll range across which the
+ * field morphs INTO stage N. Two selectors are allowed so a single morph can
+ * span a pair of sections (e.g. Foundation → Our Story) with the start pinned to
+ * the first section's boundary and the end to the second's.
+ */
+export interface StageBinding {
+  /** Section the range starts from. */
+  trigger: string;
+  /** Section the range ends on. Defaults to `trigger`. */
+  endTrigger?: string;
+  /** ScrollTrigger start (default "top center"). */
+  start?: string;
+  /** ScrollTrigger end (default "center center"). */
+  end?: string;
 }
 
-export async function createParticleScene(onDegrade?: () => void): Promise<ParticleScene> {
+/**
+ * One stage of a GEO sequence. Every geo stage is the same point set at the same
+ * lat/lon — only `bend` changes, and the vertex shader derives position from it.
+ * So a geo page ships no position buffers at all, and the globe→map unwrap costs
+ * a single float per frame no matter how many particles are in flight.
+ */
+export interface GeoStage {
+  name: string;
+  /** 1 = sphere, 0 = flat equirectangular map. Interpolated across a scrub. */
+  bend: number;
+  /** Ambient positional drift amplitude in world units. */
+  drift?: number;
+  /** Trade-route overlay visible while this stage is settled. */
+  routes?: boolean;
+  /**
+   * Converge into the shared eagle finale. Geo mode derives position analytically
+   * and has no stage buffers, so the closing mark arrives as a separate target
+   * buffer (aEagle) blended in by uEagleBlend — see the vertex shader.
+   */
+  eagle?: boolean;
+}
+
+/** Region highlight bound to a scroll position — one entry per regional cluster. */
+export interface RegionCue {
+  trigger: string;
+  /** Region id to illuminate (see REGION in shapes/presence.ts); 0 clears. */
+  region: number;
+  start?: string;
+}
+
+export interface SceneConfig {
+  /** Shape assembled on load, behind the hero. Omit when using `stages`. */
+  hero?: ShapeKey;
+  beats?: Beat[];
+  /**
+   * Scrubbed stage sequence — the alternative to `beats`. The field settles on
+   * stage 0 at load and morphs through the rest, each transition scrubbed across
+   * the matching entry in `stageBindings` (so there is one binding fewer than
+   * there are stages). Position buffers are only rewritten when the reader
+   * crosses a stage boundary; within a segment the CPU writes a single float.
+   *
+   * A builder rather than prebuilt buffers because the pool size and world scale
+   * are the scene's to decide (they depend on the device tier detected on mount),
+   * and every stage must be built at exactly that count to be morphable.
+   */
+  buildStages?: (ctx: ShapeContext) => Shape[] | Promise<Shape[]>;
+  stageBindings?: StageBinding[];
+  /**
+   * When the connection lines draw in and fade out, in timeline units (a value of
+   * 2.5 is halfway through the morph from stage 2 to stage 3). Defaults to drawing
+   * across the last 38% of the morph INTO the linking stage and fading over the
+   * 0.55 after it — right when a form's connections appear with the form.
+   *
+   * Override when the network is meant to keep completing across more than one
+   * stage: an editorial lattice that organises and then densifies wants its
+   * strokes still arriving through the second of those, not finished before it.
+   */
+  linkEnvelope?: { drawFrom: number; drawTo: number; fadeFrom: number; fadeTo: number };
+  /**
+   * Per-particle shimmer phase. The default is random per particle, which reads
+   * as fine grain twinkling. Supply this to make particles that share a cluster
+   * share a phase, so the CLUSTERS pulse as units instead — the difference between
+   * a shimmering dust field and a network of breathing nodes.
+   */
+  buildPhase?: (ctx: ShapeContext) => Float32Array;
+  /**
+   * Geo mode: supply one lat/lon pair per particle and the scene derives every
+   * position analytically from `bend`. Mutually exclusive with `buildStages`.
+   * `geoStages` uses the same `stageBindings` scrub machinery.
+   */
+  buildGeoField?: (ctx: ShapeContext) => GeoField | Promise<GeoField>;
+  geoStages?: GeoStage[];
+  /** Regional clusters illuminated in sequence as they scroll into view. */
+  regionCues?: RegionCue[];
+  /**
+   * Build the trade-route overlay (line geometry with an animated draw, plus
+   * travelling packets and hub markers). Geo mode only — the arcs' sphere↔flat
+   * blend is driven from the same `bend` that unwraps the particles, so the
+   * overlay stays attached to the point cloud through the whole morph.
+   */
+  routes?: boolean;
+  /** Let the reader spin the globe by dragging. Geo mode only. */
+  draggable?: boolean;
+  /**
+   * Idle motion character. "globe" spins on Y with an axial tilt (the home
+   * globe); "planar" spins slowly in-plane on Z and breathes, which is the only
+   * safe idle for a flat lattice — a Y spin would collapse it edge-on. "geo"
+   * spins while spherical and eases to still as it flattens, because a spinning
+   * flat map is nonsense.
+   */
+  motion?: "globe" | "planar" | "geo";
+  /** Formation size multiplier (default 1.6, tuned for the home globe). */
+  formationScale?: number;
+  /** Ceiling on field opacity, so a dense form can sit behind body copy. */
+  fieldOpacity?: number;
+  /**
+   * Per-particle colour, driven by each stage's accent mask.
+   *
+   * `primary` and `accent` are DESIGN TOKEN NAMES, not colour values — the scene
+   * resolves them from the live CSS custom properties at mount (see design-tokens).
+   * The animation therefore holds no colour of its own and cannot drift from the
+   * site palette. Passing a hex here is not possible by design.
+   *
+   * `ground` says what the field is composited over, and it decides more than the
+   * blend mode. On a DARK ground (the default, and the site's canonical Midnight
+   * Navy) particles glow additively and the bloom/aberration pass applies. On a
+   * LIGHT ground additive blending is impossible — it can only brighten toward
+   * white, so a dark particle would vanish — and bloom would blow the page out, so
+   * the field composites normally and the effect stack is trimmed.
+   */
+  palette?: { primary: ColorToken; accent: ColorToken; ground?: "light" | "dark" };
+  /**
+   * Slow orbital camera dolly scrubbed across one element's full scroll range
+   * (normally the page wrapper).
+   */
+  cameraOrbit?: { trigger: string; sweepDeg?: number; dolly?: number };
+  /** Build the named-port overlay + trade arcs. Home / global-presence only. */
+  ports?: boolean;
+  /**
+   * Cap on field opacity below 576px, where the field centres *behind* the
+   * headline copy instead of parking beside it. Defaults to 1 (no cap).
+   */
+  mobileOpacityCap?: number;
+  onDegrade?: () => void;
+}
+
+export async function createParticleScene(config: SceneConfig): Promise<ParticleScene> {
+  const {
+    hero,
+    beats = [],
+    buildStages,
+    stageBindings = [],
+    linkEnvelope,
+    buildPhase,
+    buildGeoField,
+    geoStages,
+    regionCues = [],
+    routes: wantsRoutes = false,
+    draggable = false,
+    motion = "globe",
+    formationScale = FORMATION_SCALE,
+    fieldOpacity = 1,
+    palette,
+    cameraOrbit,
+    ports: wantsPorts = false,
+    mobileOpacityCap = 1,
+    onDegrade,
+  } = config;
+  const twoTone = !!palette;
+  const lightGround = palette?.ground === "light";
+  const planar = motion === "planar";
+  const geoMode = !!buildGeoField;
   const width = window.innerWidth;
   const height = window.innerHeight;
 
   const isMobile = width <= 575;
-  const count = isMobile ? COUNT_MOBILE : COUNT_DESKTOP;
+  const isTablet = !isMobile && width <= 1024;
+  const count = isMobile ? COUNT_MOBILE : isTablet ? COUNT_TABLET : COUNT_DESKTOP;
+  const maxDpr = isMobile ? MAX_DPR_MOBILE : isTablet ? MAX_DPR_TABLET : MAX_DPR_DESKTOP;
+  // Below 576px computeSide() returns 0, so the field sits centred *behind* the
+  // headline copy rather than beside it. Pages that put a beat under a heading
+  // pass a cap so the text stays legible.
+  const capOpacity = (o: number) => (isMobile ? Math.min(o, mobileOpacityCap) : o);
+  const heroOpacity = capOpacity(fieldOpacity);
   const reducedMotion =
     typeof window.matchMedia === "function" &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -160,8 +307,10 @@ export async function createParticleScene(onDegrade?: () => void): Promise<Parti
     antialias: false, // round point sprites don't benefit; MSAA costs fill rate
     powerPreference: "high-performance",
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? MAX_DPR_MOBILE : MAX_DPR_DESKTOP));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxDpr));
   renderer.setSize(width, height);
+  // Alpha 0 — a fully transparent canvas so the page background token shows
+  // through. The RGB is unused and is not a palette value.
   renderer.setClearColor(0x000000, 0);
   const canvas = renderer.domElement;
   canvas.style.cssText = "position:fixed;inset:0;z-index:-1;pointer-events:none;";
@@ -171,21 +320,37 @@ export async function createParticleScene(onDegrade?: () => void): Promise<Parti
   const composer = isMobile ? null : new EffectComposer(renderer);
   if (composer) {
     composer.addPass(new RenderPass(scene, camera));
-    // height caps the bloom mip chain's working resolution — visually
-    // indistinguishable for a soft glow, roughly halves the effect's GPU cost.
-    const bloom = new BloomEffect({ intensity: 0.4, luminanceThreshold: 0.7, radius: 0.6, height: 360 });
-    const vignette = new VignetteEffect({ darkness: 0.6, offset: 0.3 });
-    const chromaticAberration = new ChromaticAberrationEffect({
-      offset: new THREE.Vector2(0.0005, 0.0005),
-      radialModulation: false,
-      modulationOffset: 0.15,
-    });
-    const effects: Effect[] = [bloom, vignette, chromaticAberration];
-    // Grain flickers every frame — a non-essential animation, so it's the one
-    // effect skipped under prefers-reduced-motion (the rest are static-look).
+    const effects: Effect[] = [];
+    if (lightGround) {
+      // Bloom and chromatic aberration both push toward white, which is exactly
+      // what a dark-particle-on-light-paper palette must not do, so neither is
+      // built. A gentle vignette survives — on paper it reads as the softened
+      // edge of an aged print rather than as darkness.
+      effects.push(new VignetteEffect({ darkness: 0.22, offset: 0.42 }));
+    } else {
+      // height caps the bloom mip chain's working resolution — visually
+      // indistinguishable for a soft glow, roughly halves the effect's GPU cost.
+      effects.push(
+        new BloomEffect({ intensity: 0.4, luminanceThreshold: 0.7, radius: 0.6, height: 360 }),
+        new VignetteEffect({ darkness: 0.6, offset: 0.3 }),
+        new ChromaticAberrationEffect({
+          offset: new THREE.Vector2(0.0005, 0.0005),
+          radialModulation: false,
+          modulationOffset: 0.15,
+        })
+      );
+    }
+    // The canvas-layer grain. The page-wide brand grain is a DOM layer (see
+    // GrainOverlay) because a composer pass can only reach the canvas, not the
+    // page above it — this one just keeps the field itself from looking
+    // digitally clean. Skipped under prefers-reduced-motion, the one effect here
+    // that animates per frame.
     if (!reducedMotion) {
-      const grain = new NoiseEffect({ blendFunction: BlendFunction.OVERLAY, premultiply: true });
-      grain.blendMode.opacity.value = 0.08;
+      const grain = new NoiseEffect({
+        blendFunction: lightGround ? BlendFunction.SOFT_LIGHT : BlendFunction.OVERLAY,
+        premultiply: true,
+      });
+      grain.blendMode.opacity.value = lightGround ? 0.05 : 0.08;
       effects.push(grain);
     }
     composer.addPass(new EffectPass(camera, ...effects));
@@ -199,45 +364,248 @@ export async function createParticleScene(onDegrade?: () => void): Promise<Parti
   const vpScale = width > 1024 ? 1 : width > 576 ? 0.82 : 0.66;
   const globeRadius = 7 * vpScale;
 
-  // Fibonacci two-layer globe (Phase 3): Layer A landmass first, Layer B shell.
-  const globeGeo = buildGlobeGeometry(count, globeRadius);
-  const globe: Shape = { name: "globe", data: globeGeo.positions, color: GOLD };
+  // Every shape this page's choreography actually names — the registry builds
+  // only these, so a page showing three shapes doesn't pay to sample thirteen.
+  const shapeCtx = { count, R: globeRadius, S: vpScale };
+  const shapeKeys = new Set<ShapeKey>();
+  if (hero) shapeKeys.add(hero);
+  for (const b of beats) if (b.shape) shapeKeys.add(b.shape);
+
+  // The globe is built here rather than through the registry because it also
+  // produces the per-particle layer attribute the shader's Layer-B dimming and
+  // depth cueing read. Pages that never show it skip the work entirely — it is
+  // the most expensive shape by far (tens of thousands of Fibonacci points
+  // tested against the continent rings).
+  const globeBuilt = shapeKeys.has("globe") ? buildGlobeShape(shapeCtx) : null;
 
   const geometry = new THREE.BufferGeometry();
-  const positions = new Float32Array(count * 3);
+
+  // GPU morph (see morphTo): the field interpolates between two stage buffers
+  // inside the vertex shader, driven by a single uProgress uniform. `position`
+  // is the FROM stage and aTo is the TO stage; the CPU writes one float per
+  // frame instead of count*3, and only rewrites the attributes when a new morph
+  // begins (rare) rather than every frame.
+  const positions = new Float32Array(count * 3); // FROM stage
+  const targets = new Float32Array(count * 3); // TO stage
   geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute("aTo", new THREE.BufferAttribute(targets, 3));
+
+  // Per-particle arrival delay, used only by the hero assemble (uStagger=1) so
+  // the form coalesces like settling dust instead of snapping in on one
+  // synchronized keyframe. Zero-cost for ordinary morphs, which run uStagger=0.
+  const delays = new Float32Array(count);
+  geometry.setAttribute("aDelay", new THREE.BufferAttribute(delays, 1));
+
+  // The field is always on screen and its bounds are driven by a shader-side
+  // mix that Three can't see, so the auto-computed bounding sphere (derived
+  // from `position` alone) would be wrong and could cull the whole cloud
+  // mid-morph. One draw call, always visible — just skip culling.
+  geometry.boundingSphere = new THREE.Sphere(new THREE.Vector3(), Infinity);
 
   // Per-particle random phase drives the idle shimmer entirely on the GPU —
   // each grain's opacity oscillates on its own phase (no synchronized "flat"
   // twinkle), and it costs zero per-frame CPU: only the uTime uniform ticks.
-  const phases = new Float32Array(count);
-  for (let i = 0; i < count; i++) phases[i] = Math.random() * Math.PI * 2;
+  // Random per particle by default. A page that wants its CLUSTERS to pulse as
+  // units supplies buildPhase instead, giving every particle in a node the same
+  // phase — otherwise the mixed phases inside a dense node average out and the
+  // node's brightness barely moves, however much each individual grain twinkles.
+  const phases = buildPhase ? buildPhase(shapeCtx) : new Float32Array(count);
+  if (!buildPhase) for (let i = 0; i < count; i++) phases[i] = Math.random() * Math.PI * 2;
   geometry.setAttribute("aPhase", new THREE.BufferAttribute(phases, 1));
 
   // Layer flag per particle (0 = landmass, 1 = shell). Fixed for the pool; the
   // shader only acts on it while the field is the globe (uGlobe), so flat shapes
-  // are unaffected.
-  geometry.setAttribute("aLayer", new THREE.BufferAttribute(globeGeo.layer, 1));
+  // are unaffected — which is also why pages without a globe bind zeros rather
+  // than building the geometry just to source this.
+  const layerData = globeBuilt?.layer ?? new Float32Array(count);
+  geometry.setAttribute("aLayer", new THREE.BufferAttribute(layerData, 1));
 
   const shimmerUniform = { value: 0 };
   // 1 while the field is the globe, 0 for flat formations — gates the globe-only
   // depth cueing and Layer-B dimming. Lerped in the render loop for smoothness.
   const uGlobeUniform = { value: 1 };
+  // GPU morph drivers. uProgress is the ONLY thing the CPU touches per frame —
+  // GSAP tweens it for a discrete morph, ScrollTrigger scrubs it for a staged
+  // sequence. uStagger blends between a uniform lerp (0) and the per-particle
+  // delayed arrival used by the hero assemble (1).
+  const uProgress = { value: 1 };
+  const uStagger = { value: 0 };
+
+  // Two-tone accent: the FROM and TO stage's per-particle accent weight. Mixed by
+  // the same t as position, so a focal node warms into the accent over the course of
+  // the morph that creates it rather than switching colour on arrival. Bound
+  // even in single-tone mode (two floats per particle) so the attribute layout
+  // doesn't fork between pages.
+  const accentA = new Float32Array(count);
+  const accentB = new Float32Array(count);
+  geometry.setAttribute("aAccentA", new THREE.BufferAttribute(accentA, 1));
+  geometry.setAttribute("aAccentB", new THREE.BufferAttribute(accentB, 1));
+
+  // Geo mode: lat/lon per particle plus a region id. Allocated only for geo pages
+  // (the flag is known from the config up front, even though the field itself
+  // resolves asynchronously) and filled once the builder returns — the attributes
+  // must exist before the material compiles.
+  const geoData = geoMode ? new Float32Array(count * 2) : null;
+  const regionData = geoMode ? new Float32Array(count) : null;
+  // Shared eagle finale for geo pages: a second target buffer the analytic
+  // position blends toward, since geo mode has no stage buffers of its own.
+  const eagleData = geoMode ? new Float32Array(count * 3) : null;
+  if (geoData && regionData && eagleData) {
+    geometry.setAttribute("aGeo", new THREE.BufferAttribute(geoData, 2));
+    geometry.setAttribute("aRegion", new THREE.BufferAttribute(regionData, 1));
+    geometry.setAttribute("aEagle", new THREE.BufferAttribute(eagleData, 3));
+  }
+  /** 1 = sphere, 0 = flat map. THE unwrap driver — the only thing the CPU writes. */
+  const uBend = { value: 1 };
+  /** 0 = the page's own form, 1 = fully converged into the shared eagle mark. */
+  const uEagleBlend = { value: 0 };
+  /** Sphere radius / plane scale in world units per radian (isometric unwrap). */
+  const uGeoR = { value: globeRadius };
+  const uActiveRegion = { value: 0 };
+  /** 0 = no highlight (everything at full), 1 = highlight in force. Eased. */
+  const uRegionActive = { value: 0 };
+
+  // Resolved from the live tokens, never from a literal in this file.
+  const uColorPrimary = { value: palette ? tokenColor(palette.primary) : new THREE.Color(1, 1, 1) };
+  const uColorAccent = { value: palette ? tokenColor(palette.accent) : new THREE.Color(1, 1, 1) };
+  // Ambient idle drift amplitude in world units, eased toward the active stage's
+  // own value so a deliberately loose stage disperses without a jump.
+  const uDrift = { value: 0 };
+
   const material = new THREE.PointsMaterial({
+    // Identity white. Every scene supplies a `palette`, so the fragment shader
+    // takes its colour from the resolved tokens (vTint) and ignores `diffuse`.
     color: 0xffffff,
-    size: 0.2,
+    size: lightGround ? 0.17 : 0.2,
     map: texture,
-    blending: THREE.AdditiveBlending,
+    // Additive brightens toward white and so cannot draw a dark particle on light
+    // paper — a light-ground field composites normally instead. On the dark ground
+    // additive is what makes the grains read as points of light.
+    blending: lightGround ? THREE.NormalBlending : THREE.AdditiveBlending,
     transparent: true,
     depthWrite: false,
   });
   material.onBeforeCompile = (shader) => {
     shader.uniforms.uTime = shimmerUniform;
     shader.uniforms.uGlobe = uGlobeUniform;
+    shader.uniforms.uProgress = uProgress;
+    shader.uniforms.uStagger = uStagger;
+    shader.uniforms.uDrift = uDrift;
+    shader.uniforms.uColorPrimary = uColorPrimary;
+    shader.uniforms.uColorAccent = uColorAccent;
+    if (geoMode) {
+      shader.uniforms.uBend = uBend;
+      shader.uniforms.uGeoR = uGeoR;
+      shader.uniforms.uActiveRegion = uActiveRegion;
+      shader.uniforms.uRegionActive = uRegionActive;
+      shader.uniforms.uEagleBlend = uEagleBlend;
+    }
     shader.vertexShader = shader.vertexShader
       .replace(
         "#include <common>",
-        "#include <common>\nattribute float aPhase;\nattribute float aLayer;\nuniform float uTime;\nuniform float uGlobe;\nvarying float vAlpha;"
+        `#include <common>
+        attribute float aPhase;
+        attribute float aLayer;
+        attribute vec3 aTo;
+        attribute float aDelay;
+        attribute float aAccentA;
+        attribute float aAccentB;
+        uniform float uTime;
+        uniform float uGlobe;
+        uniform float uProgress;
+        uniform float uStagger;
+        uniform float uDrift;
+        uniform vec3 uColorPrimary;
+        uniform vec3 uColorAccent;
+        varying float vAlpha;
+        varying vec3 vTint;
+${
+  geoMode
+    ? `        attribute vec2 aGeo;
+        attribute float aRegion;
+        uniform float uBend;
+        uniform float uGeoR;
+        uniform float uActiveRegion;
+        uniform float uRegionActive;
+        attribute vec3 aEagle;
+        uniform float uEagleBlend;
+
+        // Sphere → plane unwrap.
+        //
+        // For bend b, the surface is a sphere of radius R/b tangent to the plane
+        // z = 0 at (lat 0, lon 0). At b = 1 that is exactly a sphere of radius R
+        // centred on the origin; as b → 0 the radius of curvature diverges and
+        // the surface becomes the equirectangular plane x = R·lon, y = R·lat.
+        // Every intermediate b is a coherent surface, which is what makes this
+        // read as unrolling rather than as the globe being crushed — a straight
+        // lerp between a sphere buffer and a plane buffer sends every particle
+        // through the sphere's interior.
+        //
+        // The z term is written via 1 - cos(x) = 2sin²(x/2). Algebraically
+        // identical to R/b·(cos(bu)cos(bv) - 1), but that form loses all its
+        // significant digits to cancellation as b → 0, where the difference of
+        // two near-equal numbers is scaled by a diverging 1/b.
+        vec3 unwrap(vec2 latLon, float bend) {
+          // b is clamped off zero because the radius of curvature is R/b. The
+          // clamp leaves the flat map with a residual bow of R·b·(u²+v²)/2 at the
+          // corners — 3.5e-3 world units against a 44-unit-wide map, four orders
+          // of magnitude below a pixel. 1e-4 is safe in float32 precisely because
+          // the z term below is the cancellation-free form; the naive
+          // R/b·(cos·cos - 1) would have lost all its digits by here.
+          float b = max(bend, 1e-4);
+          float v = latLon.x;             // latitude, radians
+          float u = latLon.y;             // longitude, radians
+          float Rb = uGeoR / b;
+          float su = sin(b * u);
+          float cu = cos(b * u);
+          float sv = sin(b * v);
+          float cv = cos(b * v);
+          float shu = sin(b * u * 0.5);
+          float shv = sin(b * v * 0.5);
+          return vec3(
+            Rb * su * cv,
+            Rb * sv,
+            -Rb * (2.0 * shu * shu + cu * 2.0 * shv * shv) + uGeoR * b
+          );
+        }`
+    : ""
+}`
+      )
+      // THE morph. `position` is the FROM stage, aTo the TO stage. Ordinary
+      // morphs run uStagger=0 so t == uProgress and the easing curve stays
+      // wholly owned by whatever drives the uniform (GSAP tween or scroll
+      // scrub). The hero assemble runs uStagger=1, giving each grain its own
+      // 0–400ms-delayed arrival window.
+      .replace(
+        "#include <begin_vertex>",
+        `float staggered = smoothstep(aDelay, aDelay + 0.55, uProgress);
+        float t = mix(uProgress, staggered, uStagger);
+${
+  geoMode
+    ? `        // The map converges into the shared eagle finale. Blending the
+        // analytic position toward a sampled target keeps geo mode's one-float
+        // cost intact through the closing morph too.
+        vec3 transformed = mix(unwrap(aGeo, uBend), aEagle, uEagleBlend);
+        // Regional illumination. The active cluster lifts and everything else —
+        // including the ocean shell, which carries region 0 — drops well back, so
+        // even a small region (the Middle East box is ~2% of the land points)
+        // reads clearly: the contrast does the work, not the brightness.
+        float isActive = 1.0 - step(0.5, abs(aRegion - uActiveRegion));
+        float regionDim = mix(1.0, mix(0.30, 1.45, isActive), uRegionActive);`
+    : `        vec3 transformed = mix(position, aTo, t);
+        float regionDim = 1.0;`
+}
+        // Ambient idle drift. Each grain wanders on its own phase across three
+        // incommensurate periods, which reads as a slow curl rather than a
+        // shared wobble. Costs one uniform; no extra attribute, no CPU work.
+        transformed += uDrift * vec3(
+          sin(uTime * 0.31 + aPhase),
+          cos(uTime * 0.27 + aPhase * 1.7),
+          sin(uTime * 0.19 + aPhase * 0.6)
+        );
+        // Accent mixes on the same t as position, so a node warms into the accent as
+        // the form that makes it focal assembles.
+        vTint = mix(uColorPrimary, uColorAccent, clamp(mix(aAccentA, aAccentB, t), 0.0, 1.0));`
       )
       .replace(
         "#include <project_vertex>",
@@ -255,17 +623,20 @@ export async function createParticleScene(onDegrade?: () => void): Promise<Parti
         depthOpac = mix(1.0, depthOpac, uGlobe);
         float layerDim = mix(1.0, 0.4, aLayer * uGlobe);  // Layer B shell dimmer, globe only
         float shimmer = 0.68 + 0.32 * sin(uTime + aPhase);
-        vAlpha = shimmer * depthOpac * layerDim;`
+        vAlpha = shimmer * depthOpac * layerDim * regionDim;`
       )
       // Fold the far-hemisphere size cue into PointsMaterial's own size
       // assignment (which runs after <project_vertex>, so an earlier
       // gl_PointSize *= would be overwritten). depthSize is in scope here.
       .replace("gl_PointSize = size;", "gl_PointSize = size * depthSize;");
     shader.fragmentShader = shader.fragmentShader
-      .replace("#include <common>", "#include <common>\nvarying float vAlpha;")
+      .replace("#include <common>", "#include <common>\nvarying float vAlpha;\nvarying vec3 vTint;")
       .replace(
         "vec4 diffuseColor = vec4( diffuse, opacity );",
-        "vec4 diffuseColor = vec4( diffuse, opacity * vAlpha );"
+        twoTone
+          ? // Per-particle hue replaces the material's single diffuse colour.
+            "vec4 diffuseColor = vec4( vTint, opacity * vAlpha );"
+          : "vec4 diffuseColor = vec4( diffuse, opacity * vAlpha );"
       );
   };
 
@@ -274,7 +645,16 @@ export async function createParticleScene(onDegrade?: () => void): Promise<Parti
   // the flat formations (which live on `points` and stay upright). The idle spin
   // is on `points.rotation.y`; the tilt on `holder.rotation.z`.
   const holder = new THREE.Group();
-  holder.add(points);
+  // `spin` sits between them for geo mode, which needs two independent Y
+  // rotations: the reader-facing one (idle spin + drag) and a fixed 90°·bend on
+  // `points` that aligns the unwrap's own axis convention with the repo's
+  // latLonToVec3 (verified: they differ by exactly +90° about Y at bend 1).
+  // Keeping them separate is what lets the trade-route overlay — which is built
+  // in latLonToVec3 space — hang off `spin` and stay welded to the particles
+  // through the entire morph. For globe/planar pages `spin` is identity.
+  const spin = new THREE.Group();
+  spin.add(points);
+  holder.add(spin);
   scene.add(holder);
 
   // Responsive fit — the globe (and every formation) scales with the viewport
@@ -288,7 +668,7 @@ export async function createParticleScene(onDegrade?: () => void): Promise<Parti
   holder.scale.setScalar(fitScale());
   // Start at the formation size so the hero globe doesn't visibly grow in from
   // 1× on load (the render loop only eases toward this target).
-  points.scale.setScalar(FORMATION_SCALE);
+  points.scale.setScalar(formationScale);
 
   // Horizontal offset for the globe / formations. Placed at a consistent
   // fraction of the visible half-width (so the composition reads the same on
@@ -303,28 +683,116 @@ export async function createParticleScene(onDegrade?: () => void): Promise<Parti
     // Visible half-width in world units at the globe's depth.
     const halfW = Math.tan((35 * Math.PI) / 180 / 2) * camera.position.z * (w / h);
     // Globe's on-screen radius (incl. the outer shell) at the LARGEST formation
-    // size, so we can guarantee it stays inside the frustum with margin. Uses
-    // FORMATION_SCALE because that's the biggest the field ever gets — the ports
-    // globe (PORTS_SCALE) is smaller, so it clears comfortably too.
-    const onscreenR = globeRadius * fitScale() * FORMATION_SCALE * 1.08;
+    // size, so we can guarantee it stays inside the frustum with margin. Uses the
+    // configured formation scale because that's the biggest the field ever gets —
+    // the ports globe (PORTS_SCALE) is smaller, so it clears comfortably too.
+    const onscreenR = globeRadius * fitScale() * formationScale * 1.08;
     const frac = w <= 1024 ? 0.34 : 0.42; // how far right of centre it sits
     const maxRight = Math.max(0, halfW - onscreenR * 1.12); // fully-visible cap
     return Math.min(halfW * frac, maxRight);
   };
   let side = computeSide();
-  scene.position.x = side; // hero: globe sits opposite the left-aligned headline
+  // Beat pages park the field beside their headline copy and sweep it around.
+  // Stage and geo pages are composed on the centre: the camera orbits a stage
+  // form (off-centre, it would swing rather than turn), and a world map has to be
+  // centred to be a world map.
+  const centred = !!buildStages || geoMode;
+  scene.position.x = centred ? 0 : side;
 
-  const proxy: ProxyVertex[] = Array.from({ length: count }, () => ({ x: 0, y: 0, z: 0 }));
-  const sourceX = new Float32Array(count);
-  const sourceY = new Float32Array(count);
-  const sourceZ = new Float32Array(count);
-  const morphProgress = { value: 0 };
+  const posAttr = geometry.attributes.position as THREE.BufferAttribute;
+  const toAttr = geometry.attributes.aTo as THREE.BufferAttribute;
+  const delayAttr = geometry.attributes.aDelay as THREE.BufferAttribute;
+  const accentAAttr = geometry.attributes.aAccentA as THREE.BufferAttribute;
+  const accentBAttr = geometry.attributes.aAccentB as THREE.BufferAttribute;
+
+  /**
+   * Freeze the field's CURRENT on-screen positions into the FROM buffer and
+   * point the TO buffer at `target`, so a morph that interrupts one already in
+   * flight starts from where the grains actually are rather than snapping back
+   * to the last stage.
+   *
+   * This is the only place the position buffers are rewritten — once per morph,
+   * not once per frame. Everything between morphs is a single uniform write.
+   */
+  function setStage(target: Float32Array, stagger = false) {
+    const t = uProgress.value;
+    const wasStaggered = uStagger.value > 0.5;
+    for (let i = 0; i < count; i++) {
+      // Mirror the vertex shader's blend exactly, or an interrupted morph
+      // would visibly jump.
+      const local = wasStaggered ? smoothstep(delays[i], delays[i] + 0.55, t) : t;
+      const idx = i * 3;
+      positions[idx] += (targets[idx] - positions[idx]) * local;
+      positions[idx + 1] += (targets[idx + 1] - positions[idx + 1]) * local;
+      positions[idx + 2] += (targets[idx + 2] - positions[idx + 2]) * local;
+    }
+    targets.set(target);
+    posAttr.needsUpdate = true;
+    toAttr.needsUpdate = true;
+    uStagger.value = stagger ? 1 : 0;
+    uProgress.value = 0;
+  }
+
+  /** Drop the field onto `stage` with no travel — used under reduced motion. */
+  function snapTo(stage: Float32Array, stageAccent?: Float32Array) {
+    positions.set(stage);
+    targets.set(stage);
+    posAttr.needsUpdate = true;
+    toAttr.needsUpdate = true;
+    if (stageAccent) {
+      accentA.set(stageAccent);
+      accentB.set(stageAccent);
+      accentAAttr.needsUpdate = true;
+      accentBAttr.needsUpdate = true;
+    }
+    uStagger.value = 0;
+    uProgress.value = 1;
+  }
+
+  const morphProgress = uProgress; // GSAP tweens the uniform directly
 
   let animId = 0;
   let paused = false;
-  let needsUpdate = false;
   let currentFlat = false; // hero starts on the spinning globe
   let currentIsGlobe = true; // drives axial tilt, parallax and depth cueing
+  // Ambient drift target, eased toward in the render loop (see uDrift).
+  let driftTarget = 0;
+  // Per-stage Y rotation (Shape.spinY), accumulated so easing the rate to zero
+  // parks the form where it got to instead of unwinding it back to square.
+  let spinYTarget = 0;
+  let spinYAccum = 0;
+  // Connection-line draw-in. `uDraw` advances 0→1 to sweep the strokes out from
+  // their origin nodes; `uLinkAlpha` fades the whole set with the stage that owns
+  // them. Both are set from the stage timeline, not per frame.
+  const uDraw = { value: 0 };
+  const uLinkAlpha = { value: 0 };
+  let linkTargetAlpha = 0;
+  // Orbital camera dolly progress, 0..1 across the page (scrubbed).
+  const orbit = { value: 0 };
+  const CAMERA_Z = camera.position.z;
+  const orbitSweep = (cameraOrbit?.sweepDeg ?? 26) * (Math.PI / 180);
+  const orbitDolly = cameraOrbit?.dolly ?? 5;
+  // A planar lattice takes its parallax on the camera (±2°), not on the holder —
+  // rotating a flat form toward the cursor would shear it.
+  const CAMERA_PARALLAX = 2 * (Math.PI / 180);
+
+  // ── Geo mode motion ───────────────────────────────────────────────────────
+  // The flat map is ~2π·R wide, over six times the sphere's diameter, so the form
+  // scales down as it flattens. A uniform scale keeps the projection exact — the
+  // map is still a true equirectangular unwrap, just framed to fit.
+  const GEO_FLAT_SCALE = 0.72;
+  // Reader drag on the globe. `dragVel` carries inertia so releasing a spin lets
+  // it coast down rather than stopping dead.
+  let dragging = false;
+  let dragVel = 0;
+  let dragLastX = 0;
+  let dragOffset = 0;
+  let idleSpin = 0;
+  /** Trade-route overlay (line geometry + packets + hub markers). Geo mode only. */
+  let tradeArcs: TradeArcs | null = null;
+  /** Region the reader has scrolled to; handed to uActiveRegion through a dip. */
+  let pendingRegion = 0;
+  const DRAG_SENSITIVITY = 0.0055; // radians per pixel
   // Named-port overlay for the Global Presence globe. Declared before the render
   // loop (which references them) but populated later once R/globeRadius exist.
   let portGroup: THREE.Group | null = null;
@@ -339,11 +807,40 @@ export async function createParticleScene(onDegrade?: () => void): Promise<Parti
   function handlePointer(e: PointerEvent) {
     pointerTarget.x = (e.clientX / window.innerWidth) * 2 - 1;
     pointerTarget.y = (e.clientY / window.innerHeight) * 2 - 1;
+    if (dragging) {
+      const dx = e.clientX - dragLastX;
+      dragLastX = e.clientX;
+      dragOffset += dx * DRAG_SENSITIVITY;
+      dragVel = dx * DRAG_SENSITIVITY;
+    }
   }
   window.addEventListener("pointermove", handlePointer);
 
-  function writeIntoBufferAttribute() {
-    needsUpdate = true;
+  // Drag-to-spin. The canvas is pointer-events:none (it must never intercept a
+  // click), so the listener is on the window and gated instead: only while the
+  // form is substantially spherical, and never when the press began on something
+  // interactive — otherwise dragging to select text or swipe a control would
+  // also throw the globe.
+  function handleDragStart(e: PointerEvent) {
+    if (!draggable || reducedMotion || uBend.value < 0.6) return;
+    // Mouse and pen only. A touch drag competes directly with scrolling — a
+    // diagonal swipe would throw the globe on the way down the page — and the
+    // globe is small enough on a phone that dragging it isn't the point.
+    if (e.pointerType === "touch") return;
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    const el = e.target as HTMLElement | null;
+    if (el?.closest("a, button, input, textarea, select, [role='button'], [contenteditable]")) return;
+    dragging = true;
+    dragLastX = e.clientX;
+    dragVel = 0;
+  }
+  function handleDragEnd() {
+    dragging = false;
+  }
+  if (draggable) {
+    window.addEventListener("pointerdown", handleDragStart);
+    window.addEventListener("pointerup", handleDragEnd);
+    window.addEventListener("pointercancel", handleDragEnd);
   }
 
   const clock = new THREE.Clock();
@@ -358,6 +855,16 @@ export async function createParticleScene(onDegrade?: () => void): Promise<Parti
   let warmupElapsed = 0;
   let degraded = false;
 
+  // Opt-in only (?perf=1) — the 60fps budget can only be confirmed on real
+  // hardware, so this is the readout for doing that. Null in normal sessions.
+  const perfHud = isPerfHudEnabled()
+    ? createPerfHud({
+        particles: count,
+        dpr: renderer.getPixelRatio(),
+        tier: isMobile ? "mobile" : isTablet ? "tablet" : "desktop",
+      })
+    : null;
+
   function renderLoop() {
     // Delta-time normalization: every idle motion below is scaled by real
     // elapsed seconds, so speed is identical at 30, 60, or 144fps. Clamp the
@@ -365,6 +872,7 @@ export async function createParticleScene(onDegrade?: () => void): Promise<Parti
     // keep the raw value too, for the frame-budget monitor below, which needs
     // to see genuinely slow frames rather than a clamped-away view of them.
     const rawDelta = clock.getDelta();
+    perfHud?.sample(rawDelta);
     const delta = Math.min(rawDelta, 0.05);
     const dt60 = delta * 60; // frames-equivalent, for the old per-frame rates
 
@@ -397,7 +905,78 @@ export async function createParticleScene(onDegrade?: () => void): Promise<Parti
     // prefers-reduced-motion: no idle spin/breathing — the object still
     // relocates and reshapes as the user scrolls (see morphTo/sweep below),
     // it just doesn't move on its own between scroll events.
-    if (!reducedMotion) {
+    // Ambient drift + link fades ease toward their targets rather than snapping,
+    // so a stage crossing never pops. Held outside the motion branch so the link
+    // opacity still resolves under prefers-reduced-motion (where it lands on the
+    // settled mesh with its connections already drawn).
+    uDrift.value += (driftTarget - uDrift.value) * kSettle;
+    uLinkAlpha.value += (linkTargetAlpha - uLinkAlpha.value) * kSettle;
+    if (reducedMotion) {
+      uDrift.value = 0;
+      uLinkAlpha.value = linkTargetAlpha;
+    }
+
+    if (geoMode) {
+      // Region highlight hand-off. If the reader has moved to a different cluster,
+      // fade the current highlight out first, swap the id at the bottom of the
+      // dip, then fade back in — so clusters pass the light between them instead
+      // of one snapping off as the next snaps on.
+      const wantActive = pendingRegion !== 0 && uActiveRegion.value === pendingRegion ? 1 : 0;
+      uRegionActive.value += (wantActive - uRegionActive.value) * kSettle * 1.6;
+      if (uActiveRegion.value !== pendingRegion && uRegionActive.value < 0.06) {
+        uActiveRegion.value = pendingRegion;
+      }
+
+      // Depth cueing and the ocean-shell dimmer are sphere-only reads, so they
+      // ride the bend directly: full while spherical, gone once flat. No extra
+      // state — the existing uGlobe machinery already gates both.
+      uGlobeUniform.value = uBend.value;
+      // 90°·bend aligns the unwrap's axes with latLonToVec3 at bend 1 and leaves
+      // the flat map unrotated at bend 0.
+      points.rotation.y = (Math.PI / 2) * uBend.value;
+
+      if (!reducedMotion) {
+        // Idle spin fades out with the bend — a spinning flat map is nonsense.
+        // Drag coasts down on release instead of stopping dead. The two are kept
+        // in separate accumulators so a drag never fights the idle rotation.
+        idleSpin += IDLE_OMEGA * uBend.value * delta;
+        if (!dragging) {
+          dragOffset += dragVel * dt60;
+          dragVel *= Math.pow(0.94, dt60);
+        }
+        spin.rotation.y = idleSpin + dragOffset;
+        // Axial tilt and cursor parallax are also sphere reads; both ease away
+        // as it flattens so the map ends up square to the camera.
+        holder.rotation.z += (AXIAL_TILT * uBend.value - holder.rotation.z) * kSettle;
+        holder.rotation.x +=
+          (pointer.y * PARALLAX_MAX * uBend.value - holder.rotation.x) * kParallax;
+      } else {
+        holder.rotation.set(0, 0, 0);
+      }
+
+      // Uniform scale down as it flattens, so the ~2π·R-wide map frames cleanly.
+      const geoScale = formationScale * (GEO_FLAT_SCALE + (1 - GEO_FLAT_SCALE) * uBend.value);
+      if (reducedMotion) spin.scale.setScalar(geoScale);
+      else spin.scale.setScalar(spin.scale.x + (geoScale - spin.scale.x) * kSettle);
+      points.scale.setScalar(1);
+
+      // The overlay's own sphere↔flat blend is driven from the same bend that
+      // unwraps the particles, which is why the arcs stay welded to the cloud.
+      tradeArcs?.setFlatBlend(1 - uBend.value);
+      // The camera lets the overlay declutter its labels in screen space.
+      tradeArcs?.update(camera);
+    } else if (!reducedMotion && planar) {
+      // Planar lattice: slow in-plane spin on Z (a Y spin would collapse it
+      // edge-on) plus a shallow breath. Depth comes from the camera orbit below,
+      // not from rotating the form out of its plane.
+      points.rotation.z += (2 * Math.PI) / 150 * delta; // 150s/rev
+      points.rotation.x += (0 - points.rotation.x) * kSettle;
+      // A stage that asks for it also turns on Y (see Shape.spinY) — the rate is
+      // interpolated per stage, so a cube revolves and a process chain settles.
+      spinYAccum += spinYTarget * delta;
+      points.rotation.y = spinYAccum;
+      holder.rotation.set(0, 0, 0);
+    } else if (!reducedMotion) {
       if (currentIsGlobe) {
         // Idle rotation: single Y-axis, constant velocity, 26s/rev (Phase 3.2.1).
         // Tilt lives on the holder (23.4°); no secondary-axis wobble on points.
@@ -430,21 +1009,32 @@ export async function createParticleScene(onDegrade?: () => void): Promise<Parti
     // prefers-reduced-motion, just without the easing). The hero globe and the
     // flat shapes render at FORMATION_SCALE; the ports globe holds at the
     // smaller PORTS_SCALE so it stays clear of the global-presence copy.
-    const targetScale = currentIsGlobe && portsMode ? PORTS_SCALE : FORMATION_SCALE;
+    let targetScale = currentIsGlobe && portsMode ? PORTS_SCALE : formationScale;
+    // Subtle breathing on the planar lattice — ±1.8%, slow enough to read as
+    // respiration rather than a pulse.
+    if (planar && !reducedMotion) targetScale *= 1 + 0.018 * Math.sin(shimmerUniform.value * 0.32);
     if (reducedMotion) points.scale.setScalar(targetScale);
     else points.scale.setScalar(points.scale.x + (targetScale - points.scale.x) * kSettle);
 
-    if (needsUpdate) {
-      const posArr = geometry.attributes.position.array as Float32Array;
-      for (let i = 0; i < count; i++) {
-        const idx = i * 3;
-        posArr[idx] = proxy[i].x;
-        posArr[idx + 1] = proxy[i].y;
-        posArr[idx + 2] = proxy[i].z;
-      }
-      geometry.attributes.position.needsUpdate = true;
-      needsUpdate = false;
+    // Orbital camera dolly. The camera swings along an arc around the form and
+    // creeps closer across the page, so a planar lattice gains real parallax
+    // depth without the form itself having to leave its plane. Mouse parallax
+    // (±2°) rides on the same angle.
+    if (cameraOrbit && !reducedMotion) {
+      const angle = (orbit.value - 0.5) * orbitSweep + pointer.x * CAMERA_PARALLAX;
+      const radius = CAMERA_Z - orbitDolly * orbit.value;
+      camera.position.x = Math.sin(angle) * radius;
+      camera.position.z = Math.cos(angle) * radius;
+      // radius × the angle is the small-angle arc length, so this is a true ±2°
+      // vertical offset rather than an arbitrary world-unit nudge.
+      camera.position.y = -pointer.y * CAMERA_PARALLAX * radius;
+      camera.lookAt(0, 0, 0);
     }
+
+    // No per-frame position write: the morph is a vertex-shader mix of the two
+    // stage buffers, so the only per-frame CPU cost is the uProgress uniform
+    // that GSAP or the scroll scrub already set.
+
     // Port labels: fade each toward its target only when it faces the camera
     // (front hemisphere), so labels on the far side of the globe don't show
     // through. Cheap — at most ~7 sprites. Hides the group once fully faded.
@@ -517,90 +1107,93 @@ export async function createParticleScene(onDegrade?: () => void): Promise<Parti
     // yank the field sideways under the reader; deeper sections re-place on
     // their next scroll trigger.
     side = computeSide();
-    if (window.scrollY < window.innerHeight * 0.6) scene.position.x = side;
+    if (!centred && window.scrollY < window.innerHeight * 0.6) scene.position.x = side;
   }
   window.addEventListener("resize", handleResize);
 
-  // scale multiplier per viewport (matches vpScale used for the globe radius)
-  const S = width > 1024 ? 1 : width > 576 ? 0.82 : 0.66;
-  const R = 7 * S; // nominal shape radius in world units (== globeRadius)
+  // Same value as globeRadius above, aliased under the name the port overlay
+  // and hero assembly below already use.
+  const R = globeRadius; // nominal shape radius in world units
 
-  // globe is built procedurally above (buildGlobeGeometry). Only the eagle mark
-  // still needs async decode of its PNG alpha.
-  const eagle = await loadEagle("/images/trivoxa-eagle.png", "eagle", 20 * S, GOLD, count);
+  // Build this page's shapes. Async only because the eagle decodes its PNG
+  // alpha channel; every other builder resolves immediately.
+  const shapes = await buildShapes(shapeKeys, shapeCtx);
+  if (globeBuilt) shapes.set("globe", globeBuilt.shape);
 
-  // Container ship (Global Presence) — maritime trade "across borders": long
-  // hull, a grid of stacked deck containers, and a bridge tower at the stern.
-  // flat:true → a stable, readable side profile facing the camera.
-  const cargoShip = ((): Shape => {
-    const parts: THREE.BufferGeometry[] = [];
-    const hull = new THREE.BoxGeometry(R * 3.4, R * 0.55, R * 0.7, 60, 8, 8);
-    hull.translate(0, -R * 0.35, 0);
-    parts.push(hull);
-    const cols = 7;
-    const rows = 3;
-    const cw = R * 0.42;
-    const ch = R * 0.3;
-    const gap = R * 0.05;
-    const startX = -R * 1.3;
-    for (let c = 0; c < cols; c++) {
-      const stack = c === cols - 1 ? rows - 1 : rows; // taper the bow stack
-      for (let r = 0; r < stack; r++) {
-        const box = new THREE.BoxGeometry(cw, ch, R * 0.55, 6, 5, 6);
-        box.translate(startX + c * (cw + gap), -R * 0.02 + r * (ch + gap * 0.6), 0);
-        parts.push(box);
-      }
-    }
-    const bridge = new THREE.BoxGeometry(R * 0.5, R * 0.75, R * 0.52, 6, 12, 6);
-    bridge.translate(R * 1.2, R * 0.42, 0);
-    parts.push(bridge);
-    const merged = mergeGeometries(parts, false)!;
-    parts.forEach((g) => g.dispose());
-    const shape = sampleGeometry(merged, "cargo-ship", GOLD, count);
-    shape.flat = true;
-    return shape;
-  })();
+  // Built at the scene's own pool size, so every stage is morph-compatible with
+  // the shared buffers regardless of which device tier we landed on.
+  const stages = buildStages ? await buildStages(shapeCtx) : undefined;
 
-  // Small shipping container (About — "A Vision Beyond Business"): a single
-  // corrugated box, sampled and held as a flat profile. Deliberately smaller
-  // than the ship so the two maritime beats read as distinct moments.
-  const container = ((): Shape => {
-    const parts: THREE.BufferGeometry[] = [];
-    const body = new THREE.BoxGeometry(R * 1.7, R * 0.74, R * 0.74, 46, 16, 16);
-    parts.push(body);
-    const ribs = 10;
-    for (let i = 0; i < ribs; i++) {
-      const rib = new THREE.BoxGeometry(R * 0.028, R * 0.74, R * 0.78, 2, 12, 8);
-      rib.translate(-R * 0.82 + (i / (ribs - 1)) * R * 1.64, 0, 0);
-      parts.push(rib);
-    }
-    const merged = mergeGeometries(parts, false)!;
-    parts.forEach((g) => g.dispose());
-    const shape = sampleGeometry(merged, "container", GOLD, count);
-    shape.flat = true;
-    return shape;
-  })();
+  // Geo field. Fills the attributes allocated above, plus the ocean-shell layer
+  // flag and the static HQ accent mask — in geo mode the accented node never moves,
+  // so both accent buffers hold the same mask and the shader's mix is constant.
+  if (buildGeoField && geoData && regionData) {
+    const field = await buildGeoField(shapeCtx);
+    geoData.set(field.geo);
+    regionData.set(field.region);
+    layerData.set(field.layer);
+    accentA.set(field.accent);
+    accentB.set(field.accent);
+    (geometry.attributes.aGeo as THREE.BufferAttribute).needsUpdate = true;
+    (geometry.attributes.aRegion as THREE.BufferAttribute).needsUpdate = true;
+    (geometry.attributes.aLayer as THREE.BufferAttribute).needsUpdate = true;
+    accentAAttr.needsUpdate = true;
+    accentBAttr.needsUpdate = true;
+  }
 
-  // Major world trade hubs for the "Connecting Opportunities Across Borders"
-  // globe. Surat is the single origin; shipment packets flow from it out to
-  // every hub along a connecting arc. Each pins to its real lat/lon on the same
-  // sphere the land particles use, so labels track the continents as it turns.
-  const CITIES: { name: string; lat: number; lon: number; origin?: boolean }[] = [
-    { name: "Surat", lat: 21.1702, lon: 72.8311, origin: true },
-    { name: "Dubai", lat: 25.2048, lon: 55.2708 },
-    { name: "Jeddah", lat: 21.4858, lon: 39.1925 },
-    { name: "Singapore", lat: 1.3521, lon: 103.8198 },
-    { name: "Shanghai", lat: 31.2304, lon: 121.4737 },
-    { name: "Hong Kong", lat: 22.3193, lon: 114.1694 },
-    { name: "Tokyo", lat: 35.6762, lon: 139.6503 },
-    { name: "Rotterdam", lat: 51.9244, lon: 4.4777 },
-    { name: "New York", lat: 40.7128, lon: -74.006 },
-    { name: "Los Angeles", lat: 34.0522, lon: -118.2437 },
-    { name: "Santos", lat: -23.9608, lon: -46.3336 },
-    { name: "Durban", lat: -29.8587, lon: 31.0218 },
-    { name: "Mombasa", lat: -4.0435, lon: 39.6682 },
-    { name: "Sydney", lat: -33.8688, lon: 151.2093 },
-  ];
+  // Shared eagle finale for a geo page. Sampled once per session and cached, so a
+  // route change or a remount reuses the buffer.
+  if (geoMode && eagleData && geoStages?.some((g) => g.eagle)) {
+    const eagle = await buildEagleStage(shapeCtx);
+    eagleData.set(eagle.data);
+    (geometry.attributes.aEagle as THREE.BufferAttribute).needsUpdate = true;
+  }
+
+  // Trade-route overlay. Built at unit radius (its marker geometry is sized for
+  // that) inside a group scaled to world units, and given flat dimensions of
+  // exactly 2π × π — which is the unwrap's own plane, since that flattens to
+  // R world units per radian. That exact agreement is what keeps the arcs landing
+  // on the continents the particles draw, at every bend between sphere and map.
+  if (geoMode && wantsRoutes) {
+    // On the dark ground TradeArcs keeps its own tokens (route blue, gold origins,
+    // slate destinations) — that is the palette it was designed against. Only a
+    // light-ground page overrides them, where those hues would sit outside a
+    // two-tone paper palette.
+    tradeArcs = new TradeArcs(
+      1,
+      reducedMotion,
+      2 * Math.PI,
+      Math.PI,
+      lightGround && palette
+        ? {
+            route: tokenColor(palette.primary).getHex(),
+            origin: tokenColor(palette.accent).getHex(),
+            destination: tokenColor(palette.primary).getHex(),
+          }
+        : {},
+      isMobile
+    );
+    const arcRoot = new THREE.Group();
+    arcRoot.scale.setScalar(globeRadius);
+    arcRoot.add(tradeArcs.group);
+    // On `spin`, NOT on `points` — points carries the 90°·bend alignment rotation
+    // and the arcs are already in latLonToVec3 space.
+    spin.add(arcRoot);
+  }
+
+  // `stages` / `geoStages` pages carry their own forms and have no registry hero.
+  const heroShape = hero ? shapes.get(hero) : undefined;
+  if (hero && !heroShape) throw new Error(`particle-scene: hero shape "${hero}" failed to build`);
+  if (!hero && !stages?.length && !geoStages?.length) {
+    throw new Error(
+      "particle-scene: config needs a `hero` shape, a `stages` sequence, or `geoStages`"
+    );
+  }
+
+  // Cities come from the shared dataset (src/data/trade-cities.ts) — the same list
+  // the Global Presence flat map draws, so the two surfaces cannot drift apart.
+  // Surat is the single origin; packets flow from it out to every hub.
+  const CITIES = TRADE_CITIES;
 
   const makePortSprite = (name: string, origin: boolean): THREE.Sprite => {
     const dpr = 2;
@@ -625,14 +1218,14 @@ export async function createParticleScene(onDegrade?: () => void): Promise<Parti
     ctx.font = fontStack;
     ctx.textBaseline = "middle";
     // marker dot
-    ctx.fillStyle = origin ? "#F2C24A" : "#8894AC";
+    ctx.fillStyle = readToken(origin ? "--port-origin-dot" : "--port-dest-dot");
     ctx.beginPath();
     ctx.arc(padX + dotR, h / 2, dotR, 0, Math.PI * 2);
     ctx.fill();
     // city name — faint shadow so it reads over the grains without glowing
     ctx.shadowColor = "rgba(6,12,26,0.9)";
     ctx.shadowBlur = 4;
-    ctx.fillStyle = origin ? "#F3D488" : "#9BA6BC";
+    ctx.fillStyle = readToken(origin ? "--port-origin-text" : "--port-dest-text");
     ctx.fillText(name, padX + dotR * 2 + gap, h / 2 + 1);
     const tex = new THREE.CanvasTexture(canvas);
     tex.anisotropy = 4;
@@ -653,58 +1246,63 @@ export async function createParticleScene(onDegrade?: () => void): Promise<Parti
     return sprite;
   };
 
-  portGroup = new THREE.Group();
-  portGroup.visible = false;
-  const cityVecs: Record<string, THREE.Vector3> = {};
-  for (const c of CITIES) {
-    const sprite = makePortSprite(c.name, !!c.origin);
-    const [x, y, z] = latLonToVec3(c.lat, c.lon, globeRadius * 1.045);
-    sprite.position.set(x, y, z);
-    sprite.renderOrder = c.origin ? 4 : 3; // labels over arcs; Surat over labels
-    portGroup.add(sprite);
-    portSprites.push(sprite);
-    cityVecs[c.name] = new THREE.Vector3(...latLonToVec3(c.lat, c.lon, globeRadius * 1.01));
-  }
+  // The overlay is home / global-presence only: fourteen canvas-texture label
+  // sprites plus thirteen arc geometries and their packet sprites. Pages whose
+  // choreography never shows the ports globe skip building any of it.
+  if (wantsPorts) {
+    portGroup = new THREE.Group();
+    portGroup.visible = false;
+    const cityVecs: Record<string, THREE.Vector3> = {};
+    for (const c of CITIES) {
+      const sprite = makePortSprite(c.name, !!c.origin);
+      const [x, y, z] = latLonToVec3(c.lat, c.lon, globeRadius * 1.045);
+      sprite.position.set(x, y, z);
+      sprite.renderOrder = c.origin ? 4 : 3; // labels over arcs; Surat over labels
+      portGroup.add(sprite);
+      portSprites.push(sprite);
+      cityVecs[c.name] = new THREE.Vector3(...latLonToVec3(c.lat, c.lon, globeRadius * 1.01));
+    }
 
-  // Connecting arcs + travelling packets: one lane from Surat to every hub. Each
-  // arc bulges off the sphere (higher for longer lanes) and a gold "packet"
-  // sprite runs Surat → hub along it, looping — the trade flowing outward.
-  const surat = cityVecs["Surat"];
-  for (const c of CITIES) {
-    if (c.origin) continue;
-    const dest = cityVecs[c.name];
-    const mid = surat.clone().add(dest).multiplyScalar(0.5);
-    const lift = globeRadius * (1.1 + surat.distanceTo(dest) / (globeRadius * 4.2));
-    mid.setLength(lift);
-    const curve = new THREE.QuadraticBezierCurve3(surat.clone(), mid, dest.clone());
-    const lineGeo = new THREE.BufferGeometry().setFromPoints(curve.getPoints(64));
-    const lineMat = new THREE.LineBasicMaterial({
-      color: 0xd4af5e,
-      transparent: true,
-      opacity: 0,
-      blending: THREE.AdditiveBlending,
-      depthTest: false,
-      depthWrite: false,
-    });
-    const line = new THREE.Line(lineGeo, lineMat);
-    line.renderOrder = 1;
-    portGroup.add(line);
-    const packetMat = new THREE.SpriteMaterial({
-      map: texture,
-      color: 0xffe3a6,
-      transparent: true,
-      opacity: 0,
-      blending: THREE.AdditiveBlending,
-      depthTest: false,
-      depthWrite: false,
-    });
-    const packet = new THREE.Sprite(packetMat);
-    packet.scale.setScalar(globeRadius * 0.05); // small flowing dots
-    packet.renderOrder = 2;
-    portGroup.add(packet);
-    arcs.push({ line, packet, curve, speed: 0.16 + Math.random() * 0.12, off: Math.random() });
+    // Connecting arcs + travelling packets: one lane from Surat to every hub. Each
+    // arc bulges off the sphere (higher for longer lanes) and a gold "packet"
+    // sprite runs Surat → hub along it, looping — the trade flowing outward.
+    const surat = cityVecs["Surat"];
+    for (const c of CITIES) {
+      if (c.origin) continue;
+      const dest = cityVecs[c.name];
+      const mid = surat.clone().add(dest).multiplyScalar(0.5);
+      const lift = globeRadius * (1.1 + surat.distanceTo(dest) / (globeRadius * 4.2));
+      mid.setLength(lift);
+      const curve = new THREE.QuadraticBezierCurve3(surat.clone(), mid, dest.clone());
+      const lineGeo = new THREE.BufferGeometry().setFromPoints(curve.getPoints(64));
+      const lineMat = new THREE.LineBasicMaterial({
+        color: tokenColor("--gold-particle"),
+        transparent: true,
+        opacity: 0,
+        blending: THREE.AdditiveBlending,
+        depthTest: false,
+        depthWrite: false,
+      });
+      const line = new THREE.Line(lineGeo, lineMat);
+      line.renderOrder = 1;
+      portGroup.add(line);
+      const packetMat = new THREE.SpriteMaterial({
+        map: texture,
+        color: tokenColor("--gold-packet"),
+        transparent: true,
+        opacity: 0,
+        blending: THREE.AdditiveBlending,
+        depthTest: false,
+        depthWrite: false,
+      });
+      const packet = new THREE.Sprite(packetMat);
+      packet.scale.setScalar(globeRadius * 0.05); // small flowing dots
+      packet.renderOrder = 2;
+      portGroup.add(packet);
+      arcs.push({ line, packet, curve, speed: 0.16 + Math.random() * 0.12, off: Math.random() });
+    }
+    points.add(portGroup);
   }
-  points.add(portGroup);
 
   const showPorts = () => {
     if (portGroup) portGroup.visible = true;
@@ -717,45 +1315,22 @@ export async function createParticleScene(onDegrade?: () => void): Promise<Parti
   function morphTo(shape: Shape, onProgress?: (eased: number) => void) {
     currentFlat = !!shape.flat;
     currentIsGlobe = shape.name === "globe";
-    material.color.setHex(shape.color);
 
     if (reducedMotion) {
       // Jump-cut: land on the target shape immediately, no elastic travel
       // and no speed pulse — the object stays static between scroll steps.
-      for (let i = 0; i < count; i++) {
-        const idx = i * 3;
-        proxy[i].x = shape.data[idx];
-        proxy[i].y = shape.data[idx + 1];
-        proxy[i].z = shape.data[idx + 2];
-      }
-      writeIntoBufferAttribute();
+      snapTo(shape.data);
       onProgress?.(1); // jump-cut still resolves any blend the caller drives off this call
       return;
     }
 
-    for (let i = 0; i < count; i++) {
-      sourceX[i] = proxy[i].x;
-      sourceY[i] = proxy[i].y;
-      sourceZ[i] = proxy[i].z;
-    }
-
-    morphProgress.value = 0;
     gsap.killTweensOf(morphProgress);
+    setStage(shape.data);
     gsap.to(morphProgress, {
       value: 1,
       duration: 4,
       ease: "elastic.out(1, 0.75)",
-      onUpdate: () => {
-        const easeVal = morphProgress.value;
-        for (let i = 0; i < count; i++) {
-          const idx = i * 3;
-          proxy[i].x = sourceX[i] + (shape.data[idx] - sourceX[i]) * easeVal;
-          proxy[i].y = sourceY[i] + (shape.data[idx + 1] - sourceY[i]) * easeVal;
-          proxy[i].z = sourceZ[i] + (shape.data[idx + 2] - sourceZ[i]) * easeVal;
-        }
-        writeIntoBufferAttribute();
-        onProgress?.(easeVal);
-      },
+      onUpdate: onProgress ? () => onProgress(morphProgress.value) : undefined,
     });
   }
 
@@ -764,71 +1339,307 @@ export async function createParticleScene(onDegrade?: () => void): Promise<Parti
     return s * s * (3 - 2 * s);
   }
 
-  // Hero: scatter every grain into a chaotic shell, then let each fall into the
-  // globe on its own 0–400ms-delayed track, so the sphere coalesces like
-  // settling dust rather than snapping in on one synchronized keyframe (§2).
-  function assembleGlobe() {
-    material.color.setHex(globe.color);
-    currentFlat = false;
-    currentIsGlobe = true;
-    if (reducedMotion) {
-      for (let i = 0; i < count; i++) {
-        proxy[i].x = globe.data[i * 3];
-        proxy[i].y = globe.data[i * 3 + 1];
-        proxy[i].z = globe.data[i * 3 + 2];
+  // ── Connection lines ───────────────────────────────────────────────────────
+  // The mesh stage's node-to-node connections, as line geometry rather than
+  // particles. The stroke draw-in is done entirely in the vertex shader: each
+  // segment's far endpoint is pulled back toward its origin by a per-segment
+  // fraction of uDraw, so the lines grow outward from their nodes. Staggering by
+  // segment index means they draw in sequence rather than all at once. No CPU
+  // work per frame — one uniform.
+  const linkStageIndex = stages?.findIndex((s) => s.links && s.links.length) ?? -1;
+  let linkMesh: THREE.LineSegments | null = null;
+  let linkMaterial: THREE.ShaderMaterial | null = null;
+  if (stages && linkStageIndex >= 0) {
+    const src = stages[linkStageIndex].links!;
+    const segments = src.length / 6;
+    const from = new Float32Array(segments * 2 * 3);
+    const to = new Float32Array(segments * 2 * 3);
+    const side = new Float32Array(segments * 2);
+    const seq = new Float32Array(segments * 2);
+    const pos = new Float32Array(segments * 2 * 3);
+    for (let s = 0; s < segments; s++) {
+      const a = src.subarray(s * 6, s * 6 + 3);
+      const b = src.subarray(s * 6 + 3, s * 6 + 6);
+      for (let v = 0; v < 2; v++) {
+        const o = (s * 2 + v) * 3;
+        from.set(a, o);
+        to.set(b, o);
+        pos.set(v === 0 ? a : b, o);
+        side[s * 2 + v] = v;
+        seq[s * 2 + v] = segments > 1 ? s / (segments - 1) : 0;
       }
-      material.opacity = 1;
-      writeIntoBufferAttribute();
+    }
+    const linkGeo = new THREE.BufferGeometry();
+    // `position` is what the renderer derives the draw count from; the shader
+    // reconstructs the real endpoints from aFrom/aTo.
+    linkGeo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+    linkGeo.setAttribute("aFrom", new THREE.BufferAttribute(from, 3));
+    linkGeo.setAttribute("aTo", new THREE.BufferAttribute(to, 3));
+    linkGeo.setAttribute("aSide", new THREE.BufferAttribute(side, 1));
+    linkGeo.setAttribute("aSeq", new THREE.BufferAttribute(seq, 1));
+    linkMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        uDraw,
+        uLinkAlpha,
+        uColor: { value: palette ? tokenColor(palette.accent) : tokenColor("--gold-particle") },
+      },
+      transparent: true,
+      depthWrite: false,
+      depthTest: false,
+      blending: lightGround ? THREE.NormalBlending : THREE.AdditiveBlending,
+      vertexShader: `
+        attribute vec3 aFrom;
+        attribute vec3 aTo;
+        attribute float aSide;
+        attribute float aSeq;
+        uniform float uDraw;
+        varying float vFade;
+        // STAGGER reserves the first 55% of uDraw for spreading the segments'
+        // start times; each then has the remaining 45% to complete.
+        const float STAGGER = 0.55;
+        void main() {
+          float local = clamp((uDraw - aSeq * STAGGER) / (1.0 - STAGGER), 0.0, 1.0);
+          vec3 p = aFrom + (aTo - aFrom) * (aSide * local);
+          vFade = local;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+        }`,
+      fragmentShader: `
+        uniform vec3 uColor;
+        uniform float uLinkAlpha;
+        varying float vFade;
+        void main() {
+          // 0.42 keeps the strokes a structural hint rather than a diagram.
+          gl_FragColor = vec4(uColor, uLinkAlpha * vFade * 0.42);
+        }`,
+    });
+    linkMesh = new THREE.LineSegments(linkGeo, linkMaterial);
+    linkMesh.frustumCulled = false;
+    linkMesh.renderOrder = 1;
+    points.add(linkMesh); // rides the lattice's spin, scale and breathing
+  }
+
+  // ── Scrubbed stage timeline ────────────────────────────────────────────────
+  // The whole sequence is one scalar: `t` runs 0 → stages.length-1, its integer
+  // part selecting which pair of stages is loaded into the FROM/TO buffers and
+  // its fraction driving uProgress. Buffers are rewritten only when the integer
+  // part changes — a handful of times across a full page scroll — so scrolling
+  // inside a segment costs exactly one float write per frame, and scrolling back
+  // up is symmetric for free.
+  let activeSegment = -1;
+
+  function loadSegment(i: number) {
+    if (!stages || i === activeSegment) return;
+    activeSegment = i;
+    // If the hero assemble is still easing uProgress, the timeline is taking
+    // over — stop the tween writing the same uniform.
+    gsap.killTweensOf(morphProgress);
+    const a = stages[i];
+    const b = stages[i + 1];
+    positions.set(a.data);
+    targets.set(b.data);
+    posAttr.needsUpdate = true;
+    toAttr.needsUpdate = true;
+    if (a.accent) accentA.set(a.accent);
+    if (b.accent) accentB.set(b.accent);
+    accentAAttr.needsUpdate = true;
+    accentBAttr.needsUpdate = true;
+    uStagger.value = 0;
+    currentFlat = !!b.flat;
+    currentIsGlobe = false;
+  }
+
+  /** Show or hide the route overlay. Both calls are idempotent inside TradeArcs. */
+  function setRoutes(on: boolean) {
+    if (!tradeArcs) return;
+    if (on) tradeArcs.playIn();
+    else tradeArcs.playOut();
+  }
+
+  /**
+   * Illuminate a regional cluster (0 clears). Rather than swapping the active id
+   * under a live highlight — which reads as a hard cut — the request is queued and
+   * the highlight dips through neutral first (see the render loop), so the
+   * clusters hand off to each other.
+   */
+  function setRegion(region: number) {
+    pendingRegion = region;
+  }
+
+  /**
+   * Geo timeline: interpolate `bend` between the two stages being blended. This is
+   * the whole unwrap — one float per frame, no buffer writes, which is why the
+   * signature moment costs the same as sitting still.
+   */
+  function setGeoTimeline(t: number) {
+    if (!geoStages) return;
+    const last = geoStages.length - 1;
+    const clamped = Math.min(Math.max(t, 0), last);
+    const i = Math.min(Math.floor(clamped), last - 1);
+    const f = clamped - i;
+    const a = geoStages[i];
+    const b = geoStages[i + 1];
+    uBend.value = a.bend + (b.bend - a.bend) * f;
+    const dA = a.drift ?? 0;
+    const dB = b.drift ?? 0;
+    driftTarget = dA + (dB - dA) * f;
+    // The shared eagle finale. Interpolated on the same fraction as bend and
+    // drift, so the map dissolves into the mark rather than switching to it.
+    uEagleBlend.value = (a.eagle ? 1 : 0) + ((b.eagle ? 1 : 0) - (a.eagle ? 1 : 0)) * f;
+    // Whichever stage the reader is closer to owns the overlay. The routes fade
+    // out as the eagle takes over — the closing mark stands alone.
+    setRoutes(f > 0.5 ? !!b.routes : !!a.routes);
+    // Sequence the route draw against the scroll, so arcs grow outward from Surat
+    // as the reader moves through the section rather than on a timer of their own.
+    if (tradeArcs) {
+      const routeStage = geoStages.findIndex((g) => g.routes);
+      if (routeStage >= 0) tradeArcs.setDrawProgress(clamped - (routeStage - 1));
+    }
+  }
+
+  function setTimelinePos(t: number) {
+    if (geoStages) {
+      setGeoTimeline(t);
       return;
     }
-    const delays = new Float32Array(count);
+    if (!stages) return;
+    const last = stages.length - 1;
+    const clamped = Math.min(Math.max(t, 0), last);
+    const i = Math.min(Math.floor(clamped), last - 1);
+    loadSegment(i);
+    uProgress.value = clamped - i;
+
+    // Drift is interpolated between the two stages being blended, so the closing
+    // stage's loose wander arrives gradually rather than switching on.
+    const dA = stages[i].drift ?? 0;
+    const dB = stages[i + 1].drift ?? 0;
+    driftTarget = dA + (dB - dA) * uProgress.value;
+    const sA = stages[i].spinY ?? 0;
+    const sB = stages[i + 1].spinY ?? 0;
+    spinYTarget = sA + (sB - sA) * uProgress.value;
+
+    // Connections draw in across the final third of the morph that completes the
+    // mesh, hold at full through that stage, then fade as the next morph pulls
+    // the lattice apart.
+    if (linkStageIndex >= 0) {
+      const env = linkEnvelope ?? {
+        drawFrom: linkStageIndex - 0.38,
+        drawTo: linkStageIndex,
+        fadeFrom: linkStageIndex,
+        fadeTo: linkStageIndex + 0.55,
+      };
+      uDraw.value = Math.min(
+        Math.max((clamped - env.drawFrom) / (env.drawTo - env.drawFrom || 1), 0),
+        1
+      );
+      linkTargetAlpha = 1 - smoothstep(env.fadeFrom, env.fadeTo, clamped);
+    }
+  }
+
+  // Hero: scatter every grain into a chaotic shell, then let each fall into the
+  // hero shape on its own 0–400ms-delayed track, so the form coalesces like
+  // settling dust rather than snapping in on one synchronized keyframe (§2).
+  // On Careers this convergence *is* the beat — the motion carries the idea, so
+  // it survives the mobile particle budget better than any silhouette.
+  function assembleInto(shape: Shape) {
+    currentFlat = !!shape.flat;
+    currentIsGlobe = shape.name === "globe";
+    if (reducedMotion) {
+      snapTo(shape.data);
+      material.opacity = heroOpacity;
+      return;
+    }
+
+    // Scatter shell — written straight into the FROM buffer, with each grain
+    // given its own arrival delay in aDelay. uStagger=1 makes the shader honour
+    // those delays, so the form settles like dust instead of snapping in.
     for (let i = 0; i < count; i++) {
       const r = R * 2.6 + Math.random() * R * 3.2;
       const th = Math.random() * Math.PI * 2;
       const ph = Math.acos(2 * Math.random() - 1);
-      sourceX[i] = r * Math.sin(ph) * Math.cos(th);
-      sourceY[i] = r * Math.sin(ph) * Math.sin(th);
-      sourceZ[i] = r * Math.cos(ph);
-      proxy[i].x = sourceX[i];
-      proxy[i].y = sourceY[i];
-      proxy[i].z = sourceZ[i];
+      const idx = i * 3;
+      positions[idx] = r * Math.sin(ph) * Math.cos(th);
+      positions[idx + 1] = r * Math.sin(ph) * Math.sin(th);
+      positions[idx + 2] = r * Math.cos(ph);
       delays[i] = Math.random() * 0.4; // 0–400ms per-particle stagger
     }
+    targets.set(shape.data);
+    posAttr.needsUpdate = true;
+    toAttr.needsUpdate = true;
+    delayAttr.needsUpdate = true;
+    uStagger.value = 1;
+    uProgress.value = 0;
+
     material.opacity = 0;
-    writeIntoBufferAttribute();
-    gsap.to(material, { opacity: 1, duration: 1.4, ease: "power1.out" });
-    morphProgress.value = 0;
+    gsap.to(material, { opacity: heroOpacity, duration: 1.4, ease: "power1.out" });
     gsap.killTweensOf(morphProgress);
-    gsap.to(morphProgress, {
-      value: 1,
-      duration: 2.1,
-      ease: "none",
-      onUpdate: () => {
-        const g = morphProgress.value;
-        for (let i = 0; i < count; i++) {
-          const lt = smoothstep(delays[i], delays[i] + 0.55, g);
-          const idx = i * 3;
-          proxy[i].x = sourceX[i] + (globe.data[idx] - sourceX[i]) * lt;
-          proxy[i].y = sourceY[i] + (globe.data[idx + 1] - sourceY[i]) * lt;
-          proxy[i].z = sourceZ[i] + (globe.data[idx + 2] - sourceZ[i]) * lt;
-        }
-        writeIntoBufferAttribute();
-      },
-    });
+    gsap.to(morphProgress, { value: 1, duration: 2.1, ease: "none" });
   }
 
-  // Assemble the hero globe. (Caller signals preloader-done once this
-  // instance's promise resolves — see ParticleCanvas.tsx.)
-  assembleGlobe();
+  // Initial state. (Caller signals preloader-done once this instance's promise
+  // resolves — see ParticleCanvas.tsx.)
+  if (geoStages?.length) {
+    material.opacity = heroOpacity;
+    if (reducedMotion) {
+      // Reduced motion resting state: the FLAT map, already unwrapped, with Surat,
+      // every route drawn and every label visible. No unwrap, no spin, no drift —
+      // TradeArcs' own reduced-motion path draws the network in one go.
+      //
+      // The eagle is then held as the page's final state once the reader reaches the
+      // CTA, switched instantly by a single trigger below rather than morphed. That
+      // keeps both halves of the brief: nothing animates, but the closing signature
+      // is still the state the page ends on.
+      uBend.value = 0;
+      uEagleBlend.value = 0;
+      driftTarget = 0;
+      setRoutes(true);
+    } else {
+      // Settle on stage 0 — the globe.
+      uBend.value = geoStages[0].bend;
+      driftTarget = geoStages[0].drift ?? 0;
+      setRoutes(!!geoStages[0].routes);
+    }
+    currentIsGlobe = false; // geo mode drives uGlobe from bend directly
+    currentFlat = false;
+  } else if (stages?.length) {
+    if (reducedMotion) {
+      // Reduced motion settles on the LAST stage, which is the shared eagle
+      // finale on every page — the closing signature, static. No assemble, no
+      // scroll morph, no drift; the trigger branch below is skipped entirely.
+      const settled = stages[stages.length - 1];
+      snapTo(settled.data, settled.accent);
+      currentFlat = !!settled.flat;
+      currentIsGlobe = false;
+      driftTarget = 0;
+      spinYTarget = 0;
+      // The eagle finale carries no connections, so the link layer stays down —
+      // drawing a network over the closing mark would be nonsense.
+      uDraw.value = 0;
+      linkTargetAlpha = 0;
+      material.opacity = heroOpacity;
+    } else {
+      assembleInto(stages[0]);
+      if (stages[0].accent) {
+        accentA.set(stages[0].accent);
+        accentB.set(stages[0].accent);
+        accentAAttr.needsUpdate = true;
+        accentBAttr.needsUpdate = true;
+      }
+      driftTarget = stages[0].drift ?? 0;
+      spinYTarget = stages[0].spinY ?? 0;
+    }
+  } else if (heroShape) {
+    assembleInto(heroShape);
+  }
 
-  // Scroll choreography — a deliberate, sparse sequence. The field only forms a
-  // shape at four narrative beats and is fully hidden everywhere else, so it
-  // never competes with content-heavy sections:
-  //   globe (hero) → vessel (trust) → container (about) → [hidden: business
-  //   arms + industries] → ports globe (global presence) → [hidden: values /
-  //   insights / careers] → eagle (CTA) → dimmed eagle (footer).
-  // (Globe horizontal placement `side` is computed above via computeSide() and
-  // kept current on resize — see handleResize.)
+  // Scroll choreography — a deliberate, sparse sequence, supplied per page as
+  // a beat list (see SceneConfig). The field only forms a shape at a handful of
+  // narrative beats and is faded out everywhere else, so it never competes with
+  // content-heavy sections. Every page follows the same grammar: a thesis shape
+  // in the hero, one or two development beats, then a resolve into the eagle at
+  // the CTA — which is what makes five separate choreographies read as one site.
+  // See docs/research/ANIMATION_CHOREOGRAPHY.md.
+  // (Horizontal placement `side` is computed above via computeSide() and kept
+  // current on resize — see handleResize.)
 
   // ScrollTriggers created by this scene instance, so dispose() can kill only
   // its own — a blanket ScrollTrigger.getAll() kill would also wipe out
@@ -837,6 +1648,95 @@ export async function createParticleScene(onDegrade?: () => void): Promise<Parti
 
   // Defer ScrollTrigger creation so the DOM exists.
   requestAnimationFrame(() => {
+    // Scrubbed stage sequence. Every morph is bound to real section boundaries
+    // and driven by scroll position, so the reader is scrubbing the animation
+    // rather than triggering it. Under prefers-reduced-motion none of this is
+    // built at all — the field stays on the settled mesh set up above, which is
+    // why a reduced-motion reader never sees a shape pop mid-scroll.
+    // Both scrubbed modes (position-buffer `stages` and analytic `geoStages`) use
+    // the same binding machinery — only what a stage MEANS differs.
+    const stageCount = stages?.length ?? geoStages?.length ?? 0;
+    if (stageCount > 1 && !reducedMotion) {
+      stageBindings.slice(0, stageCount - 1).forEach((binding, i) => {
+        const proxy = { t: 0 };
+        const settle = (t: number) => setTimelinePos(i + t);
+        const tween = gsap.to(proxy, {
+          t: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: binding.trigger,
+            endTrigger: binding.endTrigger ?? binding.trigger,
+            start: binding.start ?? "top center",
+            end: binding.end ?? "center center",
+            scrub: true,
+            // Clamp on the way out in both directions, so a fast flick or an
+            // anchor jump that skips past the range still leaves the timeline on
+            // the correct integer stage instead of a stale fraction.
+            onLeave: () => settle(1),
+            onLeaveBack: () => settle(0),
+          },
+          onUpdate: () => settle(proxy.t),
+        });
+        if (tween.scrollTrigger) instanceScrollTriggers.push(tween.scrollTrigger);
+      });
+
+      // Slow orbital dolly across the page's whole scroll range.
+      if (cameraOrbit) {
+        const orbitTween = gsap.to(orbit, {
+          value: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: cameraOrbit.trigger,
+            start: "top top",
+            end: "bottom bottom",
+            scrub: true,
+          },
+        });
+        if (orbitTween.scrollTrigger) instanceScrollTriggers.push(orbitTween.scrollTrigger);
+      }
+
+      // Regional clusters illuminate in sequence as they scroll into view. Plain
+      // enter/enterBack rather than a scrub: a cluster is either the one being
+      // discussed or it isn't, and the dip-and-hand-off easing lives in the
+      // render loop.
+      for (const cue of regionCues) {
+        const st = ScrollTrigger.create({
+          trigger: cue.trigger,
+          start: cue.start ?? "top 65%",
+          onEnter: () => setRegion(cue.region),
+          onEnterBack: () => setRegion(cue.region),
+        });
+        instanceScrollTriggers.push(st);
+      }
+
+      ScrollTrigger.refresh();
+      return; // stage pages don't use the beat system below
+    }
+    if (geoStages && reducedMotion) {
+      // The one exception to "reduced motion binds nothing": an instant, untweened
+      // swap to the eagle at the CTA, so the page still ends on the shared mark.
+      const finale = stageBindings[stageBindings.length - 1];
+      const eagleStageExists = geoStages.some((g) => g.eagle);
+      if (finale && eagleStageExists) {
+        const st = ScrollTrigger.create({
+          trigger: finale.endTrigger ?? finale.trigger,
+          start: finale.end ?? "top center",
+          onEnter: () => {
+            uEagleBlend.value = 1;
+            setRoutes(false);
+          },
+          onLeaveBack: () => {
+            uEagleBlend.value = 0;
+            setRoutes(true);
+          },
+        });
+        instanceScrollTriggers.push(st);
+        ScrollTrigger.refresh();
+      }
+      return;
+    }
+    if (stages || geoStages) return; // reduced motion on a stage page: nothing to bind
+
     const sweep = (trigger: string, to: number) => {
       const tween = gsap.to(scene.position, {
         x: to,
@@ -871,57 +1771,39 @@ export async function createParticleScene(onDegrade?: () => void): Promise<Parti
       return st;
     };
 
-    // 1 · Trust ("A sourcing partner, not just a supplier directory") — a cargo
-    //     vessel. The hero globe flies straight into the ship. Sits to the side.
-    sweep(".hp-trust", side);
-    on(".hp-trust", {
-      onEnter: () => { fade(1); morphTo(cargoShip); },
-      onEnterBack: () => { fade(1); morphTo(cargoShip); },
-    });
+    // Drive the page's beat list. Each beat is idempotent — the same handler
+    // runs on scroll-down (onEnter) and scroll-up (onEnterBack) so the field
+    // lands in the same state whichever direction the reader arrives from.
+    for (const beat of beats) {
+      const shape = beat.shape ? shapes.get(beat.shape) : undefined;
+      if (beat.shape && !shape) {
+        // A beat naming a shape the registry didn't build would silently show
+        // the previous formation — loud enough to catch in dev, harmless live.
+        console.warn(`particle-scene: beat "${beat.trigger}" wants unbuilt shape "${beat.shape}"`);
+      }
 
-    // 2 · About ("A Vision Beyond Business") — a single small container.
-    sweep(".hp-about", side * 0.7);
-    on(".hp-about", {
-      onEnter: () => { fade(1); morphTo(container); },
-      onEnterBack: () => { fade(1); morphTo(container); },
-    });
+      if (beat.sweep !== undefined) sweep(beat.trigger, side * beat.sweep);
 
-    // 3 · Business Arms + Industries carousel — NO animation. Fade the field
-    //     fully out and hold it hidden across both content-dense sections.
-    on(".hp-sec-4", {
-      onEnter: () => fade(0),
-      onEnterBack: () => fade(0),
-    });
+      const apply = () => {
+        if (beat.ports) showPorts();
+        else hidePorts();
+        fade(capOpacity(beat.opacity ?? 1), beat.fadeDuration);
+        if (shape) morphTo(shape);
+      };
 
-    // 4 · Global Presence ("Connecting Opportunities Across Borders") — the big
-    //     ports globe with named markers, parked on the RIGHT so the section's
-    //     copy (left-aligned in CSS) sits clear of it.
-    sweep(".hp-global", side);
-    on(".hp-global", {
-      onEnter: () => { fade(1); morphTo(globe); showPorts(); },
-      onEnterBack: () => { fade(1); morphTo(globe); showPorts(); },
-      onLeaveBack: () => { hidePorts(); fade(0); }, // scrolling up into carousel
-    });
-
-    // 5 · Values / Insights / Careers — NO animation. Keep the field hidden.
-    on(".hp-values", {
-      onEnter: () => { hidePorts(); fade(0); },
-      onEnterBack: () => { hidePorts(); fade(0); },
-    });
-
-    // 6 · Final CTA — the Trivoxa eagle, in grains, behind the copy.
-    sweep(".hp-cta", 0);
-    on(".hp-cta", {
-      onEnter: () => { hidePorts(); fade(1); morphTo(eagle); },
-      onEnterBack: () => { hidePorts(); fade(1); morphTo(eagle); },
-    });
-
-    // 7 · Footer — hold the eagle but drop it to a dim wash so footer copy stays
-    //     fully legible; scrolling back up restores full opacity.
-    on(".footer", {
-      onEnter: () => fade(0.18, 0.8),
-      onLeaveBack: () => fade(1, 0.5),
-    });
+      const leaveBack = beat.onLeaveBack;
+      on(beat.trigger, {
+        start: beat.start,
+        onEnter: apply,
+        onEnterBack: apply,
+        ...(leaveBack && {
+          onLeaveBack: () => {
+            if (!leaveBack.ports) hidePorts();
+            fade(capOpacity(leaveBack.opacity ?? 0), leaveBack.fadeDuration);
+          },
+        }),
+      });
+    }
 
     ScrollTrigger.refresh();
   });
@@ -961,6 +1843,10 @@ export async function createParticleScene(onDegrade?: () => void): Promise<Parti
       cancelAnimationFrame(animId);
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("pointermove", handlePointer);
+      window.removeEventListener("pointerdown", handleDragStart);
+      window.removeEventListener("pointerup", handleDragEnd);
+      window.removeEventListener("pointercancel", handleDragEnd);
+      tradeArcs?.dispose();
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       // Not composer.dispose(): it also disposes Pass.fullscreenGeometry, a
       // static triangle shared by every EffectComposer on the page — doing
@@ -975,6 +1861,8 @@ export async function createParticleScene(onDegrade?: () => void): Promise<Parti
       renderer.dispose();
       geometry.dispose();
       material.dispose();
+      linkMesh?.geometry.dispose();
+      linkMaterial?.dispose();
       // Port-globe overlay: dispose each label/arc's own geometry + material
       // (and its unique canvas texture — but not the shared particle `texture`,
       // freed once below).
@@ -988,6 +1876,7 @@ export async function createParticleScene(onDegrade?: () => void): Promise<Parti
         }
       });
       texture.dispose();
+      perfHud?.dispose();
       gsap.killTweensOf(morphProgress);
       instanceScrollTriggers.forEach((st) => st.kill());
     },

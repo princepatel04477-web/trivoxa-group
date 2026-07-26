@@ -38,7 +38,7 @@ const strengths = [
 
 export default function ServiceExportsPage() {
   return (
-    <TrivoxaShell>
+    <TrivoxaShell film="service-digital">
       {/* 1. HERO */}
       <PageHero
         crumb={[{ label: "Businesses", href: "/businesses/" }, { label: "Service Exports" }]}

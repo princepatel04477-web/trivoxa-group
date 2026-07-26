@@ -30,7 +30,7 @@ export function PageHero({
   actions,
   crumb,
   accent,
-  grain,
+  grain = true,
 }: {
   eyebrow?: string;
   title: string;
@@ -39,7 +39,9 @@ export function PageHero({
   crumb?: { label: string; href?: string }[];
   /** Per-page hero background decoration — pass `<PageAccent variant="..." />`. */
   accent?: ReactNode;
-  /** Home hero's film-grain + vignette + scroll-scale atmosphere, opt-in. */
+  /** Home hero's film-grain + vignette + scroll-scale atmosphere. On by
+   * default: every hero carries the grain, matching the home hero. Pass
+   * `grain={false}` for a hero that should stay flat. */
   grain?: boolean;
 }) {
   return (

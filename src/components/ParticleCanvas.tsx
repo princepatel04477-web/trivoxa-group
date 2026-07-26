@@ -1,12 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { createParticleScene, type ParticleScene } from "@/lib/particle-scene";
+import { createParticleScene, type ParticleScene, type SceneConfig } from "@/lib/particle-scene";
 import { markPreloaderDone } from "@/lib/site-events";
 import { isLowEndDevice } from "@/lib/gpu-capability";
 import ParticleFallback from "@/components/ParticleFallback";
 
-export default function ParticleCanvas() {
+interface ParticleCanvasProps {
+  /** This page's choreography — see src/lib/choreography.ts. */
+  config: Omit<SceneConfig, "onDegrade">;
+}
+
+export default function ParticleCanvas({ config }: ParticleCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<ParticleScene | null>(null);
   // Pre-flight gate (checked once, before the WebGL scene is ever created) and
@@ -32,7 +37,7 @@ export default function ParticleCanvas() {
       setUseFallback(true);
     };
 
-    createParticleScene(handleDegrade).then((scene) => {
+    createParticleScene({ ...config, onDegrade: handleDegrade }).then((scene) => {
       if (cancelled) {
         scene.dispose();
         return;
@@ -49,7 +54,9 @@ export default function ParticleCanvas() {
       cancelled = true;
       sceneRef.current?.dispose();
     };
-  }, [useFallback]);
+    // `config` is a module-level constant from src/lib/choreography.ts, so its
+    // identity is stable and this never re-runs on a re-render.
+  }, [useFallback, config]);
 
   if (useFallback) return <ParticleFallback />;
 

@@ -3,7 +3,9 @@ import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, Pills, CtaBand } from "@/components/trivoxa/ui";
 import InsightsTeaser from "@/components/insights/InsightsTeaser";
 import { PageAccent } from "@/components/visuals/PageAccent";
+import InsightsNetwork from "@/components/insights/InsightsNetwork";
 import "@/app/styles/insights-page.css";
+import "@/app/styles/signature-canvas.css";
 
 export const metadata: Metadata = {
   title: "Insights | Trivoxa Group",
@@ -31,6 +33,15 @@ const upcomingTopics = [
 export default function InsightsPage() {
   return (
     <TrivoxaShell>
+      {/* Signature animation: one persistent canvas behind every section. A single
+          point of light in the hero emits into knowledge nodes, organises into a
+          connected web behind the article cards, densifies into an editorial
+          lattice, then relaxes. Replaces the GLSL shader background this page used
+          to carry — one WebGL context per page. */}
+      <div className="gp-canvas" aria-hidden="true">
+        <InsightsNetwork />
+      </div>
+
       <PageHero
         eyebrow="Insights"
         title="Perspectives That Drive Global Business."
@@ -43,7 +54,7 @@ export default function InsightsPage() {
         grain
       />
 
-      <Section eyebrow="Categories" title="Knowledge Across Global Trade." lead="Three focused streams of thinking, built to help partners make confident decisions.">
+      <Section id="categories" eyebrow="Categories" title="Knowledge Across Global Trade." lead="Three focused streams of thinking, built to help partners make confident decisions.">
         <Pills items={categories.map((category) => category.title)} />
       </Section>
 

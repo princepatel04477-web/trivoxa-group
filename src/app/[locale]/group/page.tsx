@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { Eyebrow, Section, CtaBand } from "@/components/trivoxa/ui";
-import { PageAccent } from "@/components/visuals/PageAccent";
 import { PageReveal } from "@/components/motion/PageReveal";
 import { AnimatedCard } from "@/components/motion/AnimatedCard";
 import SplitScreenSticky from "@/components/patterns/SplitScreenSticky";
@@ -12,8 +11,10 @@ import SectionGrain from "@/components/patterns/SectionGrain";
 import HorizontalTimeline from "@/components/patterns/HorizontalTimeline";
 import LeadershipPanel from "@/components/leadership/LeadershipPanel";
 import EcosystemDiagram from "@/components/ecosystem/EcosystemDiagram";
+import GroupLattice from "@/components/group/GroupLattice";
 import "@/app/styles/patterns.css";
 import "@/app/styles/group-page.css";
+import "@/app/styles/signature-canvas.css";
 
 export const metadata: Metadata = {
   title: "Group | Trivoxa Group",
@@ -120,10 +121,18 @@ export default function GroupPage() {
     <TrivoxaShell>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
+      {/* Signature animation: one persistent canvas behind every section, its hex
+          lattice subdividing as the reader descends. Replaces the GLSL shader
+          background this page used to carry — one WebGL context per page. */}
+      <div className="gp-canvas" aria-hidden="true">
+        <GroupLattice />
+      </div>
+
       {/* 1. HERO */}
       <section className="group-hero">
-        <PageAccent variant="constellation" seed="group" />
-        <SectionGrain className="tvx-hero__grain" vignette scrollScale />
+        {/* No PageAccent here: GroupLattice above already carries this page's
+            constellation, so an SVG one behind the hero would double the motif. */}
+        <SectionGrain className="hero-grain" />
         <div className="container group-hero__inner">
           <PageReveal as="div">
             <Eyebrow>The Group</Eyebrow>
@@ -232,7 +241,7 @@ export default function GroupPage() {
       </section>
 
       {/* 6. THE TRIVOXA WAY */}
-      <Section eyebrow="Our Philosophy" title="The Trivoxa Way" lead="Every decision we make is guided by principles that define who we are and how we build relationships.">
+      <Section id="trivoxa-way" eyebrow="Our Philosophy" title="The Trivoxa Way" lead="Every decision we make is guided by principles that define who we are and how we build relationships.">
         <NumberedList items={principles} />
       </Section>
 
@@ -252,7 +261,7 @@ export default function GroupPage() {
       </div>
 
       {/* 8. BUSINESS ECOSYSTEM */}
-      <Section eyebrow="Our Ecosystem" title="One Connected Network. Endless Opportunities." lead="Trivoxa Group brings together manufacturing expertise, strategic sourcing, technology, logistics, and professional services within one integrated business ecosystem.">
+      <Section id="ecosystem" eyebrow="Our Ecosystem" title="One Connected Network. Endless Opportunities." lead="Trivoxa Group brings together manufacturing expertise, strategic sourcing, technology, logistics, and professional services within one integrated business ecosystem.">
         <EcosystemDiagram centerLabel="Trivoxa Group" nodes={ecosystem.map((item) => ({ label: item.title }))} />
       </Section>
 
@@ -313,6 +322,7 @@ export default function GroupPage() {
 
       {/* 11. LOOKING AHEAD */}
       <EditorialPanel
+        id="looking-ahead"
         eyebrow="Looking Ahead"
         title="Building for the Next Generation of Global Business."
         paragraphs={[

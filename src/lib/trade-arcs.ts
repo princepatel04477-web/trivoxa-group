@@ -1,101 +1,68 @@
 import * as THREE from "three";
 import { gsap } from "@/lib/gsap";
 import { latLonToVec3, latLonToFlatVec3 } from "./geo-sphere";
+import { canvasFont, tokenColor } from "./design-tokens";
+import { TRADE_CITIES, tradeDestinations, tradeOrigin, type TradeCity } from "@/data/trade-cities";
 
-// Mirrors GlobalPresenceTicker.tsx's ORIGINS/DESTINATIONS/ARCS exactly so the
-// 3D globe overlay and the 2D ticker map tell the same trade story.
-const ORIGINS: Record<string, [number, number]> = {
-  Mumbai: [72.8777, 19.076],
-  Mundra: [69.7212, 22.8394],
-  Kandla: [70.2208, 23.0333],
-  "Nhava Sheva": [72.9425, 18.949],
-};
-
-const DESTINATIONS: Record<string, [number, number]> = {
-  Rotterdam: [4.4777, 51.9244],
-  Hamburg: [9.9937, 53.5511],
-  "Jebel Ali": [55.0272, 25.0143],
-  Singapore: [103.8198, 1.3521],
-  "New York": [-74.006, 40.7128],
-};
-
-type ArcStatus = "in_transit" | "confirmed" | "delivered";
-
-interface RouteDef {
-  from: keyof typeof ORIGINS;
-  to: keyof typeof DESTINATIONS;
-  status: ArcStatus;
-}
-
-// Same 5 lane pairings as ARCS in GlobalPresenceTicker.tsx, tagged with a
-// status drawn from the MANIFEST rows that reference each lane.
-const ROUTES: RouteDef[] = [
-  { from: "Mumbai", to: "Rotterdam", status: "in_transit" },
-  { from: "Mundra", to: "Jebel Ali", status: "delivered" },
-  { from: "Kandla", to: "Hamburg", status: "confirmed" },
-  { from: "Nhava Sheva", to: "Singapore", status: "in_transit" },
-  { from: "Mumbai", to: "New York", status: "delivered" },
-];
-
-// Midnight Navy palette (mirrors globals.css tokens): --route arc blue,
-// --gold, --success, --text-2. No old ivory-era particle hues survive here.
-const ROUTE = 0x8fb4e8; // --route: trade-route arc lines
-const GOLD = 0xc9a24b; // --gold: origin port markers
-const SILVER = 0x9facc4; // --text-2: destination port markers
-const SUCCESS = 0x5fa97c; // --success: DELIVERED
-
-const STATUS_COLOR: Record<ArcStatus, number> = {
-  in_transit: ROUTE,
-  confirmed: GOLD,
-  delivered: SUCCESS,
-};
+/**
+ * The trade-route overlay: one origin, a route to every destination, labels.
+ *
+ * Cities come from `src/data/trade-cities.ts` — the same list the homepage globe
+ * renders — so the two surfaces can never drift apart. Every route departs from the
+ * single origin flagged there (Surat); there is no second origin and no local list.
+ *
+ * Arcs are LINE GEOMETRY with an animated draw offset (never particles), drawn by
+ * advancing each line's `drawRange`. The draw is scrubbed from the scroll timeline
+ * via setDrawProgress, staggered so routes complete outward from the origin in
+ * sequence rather than all at once, and each destination's label fades in only once
+ * its own route has arrived.
+ *
+ * Colours and the label face come from design tokens; nothing here names a value.
+ */
 
 const ARC_SEGMENTS = 64;
 const PACKET_SPEED = 0.18; // loops per second along the arc
 
-function lonLatOf(dict: Record<string, [number, number]>, name: string): [number, number] {
-  const [lon, lat] = dict[name];
-  return [lon, lat];
+/** Fraction of the draw window spent staggering starts; the rest is each arc's own draw. */
+const DRAW_STAGGER = 0.55;
+
+/** Label typography, in canvas px before the sprite is scaled into world units. */
+const LABEL_SIZE_ORIGIN = 21;
+const LABEL_SIZE_DEST = 14;
+
+/**
+ * Screen-space padding used when decluttering labels, in normalised device units.
+ * Two labels closer than this on either axis are treated as colliding.
+ */
+const DECLUTTER_PAD_X = 0.085;
+const DECLUTTER_PAD_Y = 0.038;
+
+export interface ArcColors {
+  /** Route lines. */
+  route?: number;
+  /** Origin hub marker + its label. */
+  origin?: number;
+  /** Destination markers. */
+  destination?: number;
 }
 
-function buildArcCurve(radius: number, from: [number, number], to: [number, number]): THREE.QuadraticBezierCurve3 {
-  const [lonA, latA] = from;
-  const [lonB, latB] = to;
-  const a = new THREE.Vector3(...latLonToVec3(latA, lonA, radius));
-  const b = new THREE.Vector3(...latLonToVec3(latB, lonB, radius));
-  const mid = a.clone().add(b).multiplyScalar(0.5);
-  // Lift the control point above the chord along the shared midpoint normal
-  // so the arc bulges outward off the sphere surface rather than cutting
-  // through it.
-  const lift = radius * (0.22 + a.distanceTo(b) / radius / 8);
-  mid.normalize().multiplyScalar(radius + lift);
-  return new THREE.QuadraticBezierCurve3(a, mid, b);
-}
-
-/** Same lane, projected onto the flat equirectangular map — a shallow bow
- * rising off the plane toward the camera, like a flight-path map, instead of
- * the sphere version's outward bulge. */
-function buildFlatArcCurve(
-  flatWidth: number,
-  flatHeight: number,
-  from: [number, number],
-  to: [number, number]
-): THREE.QuadraticBezierCurve3 {
-  const [lonA, latA] = from;
-  const [lonB, latB] = to;
-  const a = new THREE.Vector3(...latLonToFlatVec3(latA, lonA, flatWidth, flatHeight));
-  const b = new THREE.Vector3(...latLonToFlatVec3(latB, lonB, flatWidth, flatHeight));
-  const mid = a.clone().add(b).multiplyScalar(0.5);
-  mid.z += flatWidth * 0.06 + a.distanceTo(b) * 0.15;
-  return new THREE.QuadraticBezierCurve3(a, mid, b);
-}
-
-interface PortMarker {
+interface CityNode {
+  city: TradeCity;
   group: THREE.Group;
-  ring: THREE.Mesh;
-  ringMaterial: THREE.MeshBasicMaterial;
+  /** Pulse ring — origin only. */
+  ring: THREE.Mesh | null;
+  ringMaterial: THREE.MeshBasicMaterial | null;
+  label: THREE.Sprite;
+  labelMaterial: THREE.SpriteMaterial;
+  /** Hairline from node to label, shown only when declutter offsets the label. */
+  leader: THREE.Line;
+  leaderMaterial: THREE.LineBasicMaterial;
+  /** Local label offset applied by declutter, in world units. */
+  labelOffset: THREE.Vector2;
   spherePos: THREE.Vector3;
   flatPos: THREE.Vector3;
+  /** 0..1 — how far this node's own route has drawn. Drives label opacity. */
+  arrived: number;
 }
 
 interface Arc {
@@ -107,135 +74,292 @@ interface Arc {
   lineMaterial: THREE.LineBasicMaterial;
   packet: THREE.Mesh;
   packetMaterial: THREE.MeshBasicMaterial;
-  drawUniform: { value: number };
-  phase: number;
+  node: CityNode;
+  /** Position in the stagger order, 0..1. */
+  seq: number;
+}
+
+function buildArcCurve(
+  radius: number,
+  from: TradeCity,
+  to: TradeCity
+): THREE.QuadraticBezierCurve3 {
+  const a = new THREE.Vector3(...latLonToVec3(from.lat, from.lon, radius));
+  const b = new THREE.Vector3(...latLonToVec3(to.lat, to.lon, radius));
+  const mid = a.clone().add(b).multiplyScalar(0.5);
+  // Lift the control point along the shared midpoint normal so the arc bulges off
+  // the sphere rather than cutting through it.
+  const lift = radius * (0.22 + a.distanceTo(b) / radius / 8);
+  mid.normalize().multiplyScalar(radius + lift);
+  return new THREE.QuadraticBezierCurve3(a, mid, b);
+}
+
+/** The same lane on the flat map: a shallow bow toward the camera, flight-path style. */
+function buildFlatArcCurve(
+  w: number,
+  h: number,
+  from: TradeCity,
+  to: TradeCity
+): THREE.QuadraticBezierCurve3 {
+  const a = new THREE.Vector3(...latLonToFlatVec3(from.lat, from.lon, w, h));
+  const b = new THREE.Vector3(...latLonToFlatVec3(to.lat, to.lon, w, h));
+  const mid = a.clone().add(b).multiplyScalar(0.5);
+  mid.z += w * 0.06 + a.distanceTo(b) * 0.15;
+  return new THREE.QuadraticBezierCurve3(a, mid, b);
 }
 
 export class TradeArcs {
   group: THREE.Group;
   private arcs: Arc[] = [];
-  private ports: PortMarker[] = [];
+  private nodes: CityNode[] = [];
+  private originNode!: CityNode;
   private clockStart = 0;
   private active = false;
   private tweens: gsap.core.Tween[] = [];
   private reducedMotion: boolean;
-  /** 0 = sphere-mapped (default), 1 = fully flattened onto the trade map —
-   * driven by setFlatBlend() as the particle globe unfurls. */
   private blend = 0;
+  private drawProgress = 0;
+  private mobile = false;
+  private radius: number;
+  private declutterTick = 0;
 
-  constructor(radius: number, reducedMotion = false, flatWidth = radius * 3.2, flatHeight = radius * 1.6) {
+  constructor(
+    radius: number,
+    reducedMotion = false,
+    flatWidth = radius * 3.2,
+    flatHeight = radius * 1.6,
+    colors: ArcColors = {},
+    mobile = false
+  ) {
     this.reducedMotion = reducedMotion;
+    this.radius = radius;
+    this.mobile = mobile;
     this.group = new THREE.Group();
     this.group.visible = false;
 
-    const portNames = new Set<string>();
-    ROUTES.forEach((r) => {
-      portNames.add(`o:${r.from}`);
-      portNames.add(`d:${r.to}`);
-    });
+    const routeColor = colors.route ?? tokenColor("--route").getHex();
+    const originColor = colors.origin ?? tokenColor("--gold-particle").getHex();
+    const destColor = colors.destination ?? tokenColor("--text-2").getHex();
 
-    portNames.forEach((key) => {
-      const [kind, name] = key.split(":") as ["o" | "d", string];
-      const [lon, lat] = kind === "o" ? lonLatOf(ORIGINS, name) : lonLatOf(DESTINATIONS, name);
-      const spherePos = new THREE.Vector3(...latLonToVec3(lat, lon, radius * 1.002));
-      const flatPos = new THREE.Vector3(...latLonToFlatVec3(lat, lon, flatWidth, flatHeight));
-      this.ports.push(this.buildPortMarker(spherePos, flatPos, kind === "o" ? GOLD : SILVER));
-    });
+    const origin = tradeOrigin();
+    const destinations = tradeDestinations();
 
-    ROUTES.forEach((route, i) => {
-      const curve = buildArcCurve(radius, lonLatOf(ORIGINS, route.from), lonLatOf(DESTINATIONS, route.to));
-      const flatCurve = buildFlatArcCurve(
+    // Nodes for every city in the shared dataset.
+    for (const city of TRADE_CITIES) {
+      const node = this.buildNode(
+        city,
+        radius,
         flatWidth,
         flatHeight,
-        lonLatOf(ORIGINS, route.from),
-        lonLatOf(DESTINATIONS, route.to)
+        city.origin ? originColor : destColor
       );
-      this.arcs.push(this.buildArc(curve, flatCurve, STATUS_COLOR[route.status], i));
+      this.nodes.push(node);
+      if (city.origin) this.originNode = node;
+      this.group.add(node.group);
+    }
+
+    // One arc per destination, all departing from the single origin. Ordered
+    // nearest-first so the network grows outward from Surat as the draw advances.
+    const ordered = [...destinations].sort(
+      (a, b) =>
+        new THREE.Vector3(...latLonToVec3(a.lat, a.lon, radius)).distanceTo(
+          new THREE.Vector3(...latLonToVec3(origin.lat, origin.lon, radius))
+        ) -
+        new THREE.Vector3(...latLonToVec3(b.lat, b.lon, radius)).distanceTo(
+          new THREE.Vector3(...latLonToVec3(origin.lat, origin.lon, radius))
+        )
+    );
+
+    ordered.forEach((city, i) => {
+      const node = this.nodes.find((n) => n.city.name === city.name)!;
+      this.arcs.push(
+        this.buildArc(
+          buildArcCurve(radius, origin, city),
+          buildFlatArcCurve(flatWidth, flatHeight, origin, city),
+          routeColor,
+          node,
+          ordered.length > 1 ? i / (ordered.length - 1) : 0
+        )
+      );
     });
 
-    this.ports.forEach((p) => this.group.add(p.group));
     this.arcs.forEach((a) => this.group.add(a.line, a.packet));
+    // The origin label always sits above everything else on the map.
+    this.originNode.label.renderOrder = 12;
+    this.originNode.group.renderOrder = 11;
   }
 
-  private buildPortMarker(spherePos: THREE.Vector3, flatPos: THREE.Vector3, color: number): PortMarker {
+  // ── construction ─────────────────────────────────────────────────────────────
+
+  private buildNode(
+    city: TradeCity,
+    radius: number,
+    flatWidth: number,
+    flatHeight: number,
+    color: number
+  ): CityNode {
+    const isOrigin = !!city.origin;
     const group = new THREE.Group();
+    const spherePos = new THREE.Vector3(...latLonToVec3(city.lat, city.lon, radius * 1.002));
+    const flatPos = new THREE.Vector3(...latLonToFlatVec3(city.lat, city.lon, flatWidth, flatHeight));
     group.position.copy(spherePos);
-    // Face outward (away from the globe's center), matching setFlatBlend's
-    // sphere-pose formula at blend=0 — lookAt(0,0,0) would orient the flat
-    // dot's front face toward the center instead, making it invisible from
-    // an external camera (MeshBasicMaterial defaults to FrontSide culling).
     group.lookAt(group.position.clone().add(spherePos.clone().normalize()));
 
+    // The origin is the larger node; destinations are deliberately small dots.
+    const dotR = radius * (isOrigin ? 0.03 : 0.017);
     const dot = new THREE.Mesh(
-      new THREE.CircleGeometry(0.012, 16),
+      new THREE.CircleGeometry(dotR, 16),
       new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.9 })
     );
-    const ringMaterial = new THREE.MeshBasicMaterial({
+
+    // Soft pulse ring — origin only. Every route leaves from here, so it is the one
+    // node that earns continuous motion.
+    let ring: THREE.Mesh | null = null;
+    let ringMaterial: THREE.MeshBasicMaterial | null = null;
+    if (isOrigin) {
+      ringMaterial = new THREE.MeshBasicMaterial({
+        color,
+        transparent: true,
+        opacity: 0.5,
+        side: THREE.DoubleSide,
+      });
+      ring = new THREE.Mesh(new THREE.RingGeometry(dotR, dotR * 1.22, 24), ringMaterial);
+      group.add(ring);
+    }
+
+    const label = this.buildLabel(city.name, isOrigin, color, radius);
+    const labelMaterial = label.material as THREE.SpriteMaterial;
+
+    // Leader hairline, node → label. Zero-length until declutter offsets the label.
+    const leaderGeo = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(),
+      new THREE.Vector3(),
+    ]);
+    const leaderMaterial = new THREE.LineBasicMaterial({
       color,
       transparent: true,
-      opacity: 0.5,
-      side: THREE.DoubleSide,
+      opacity: 0,
+      depthTest: false,
+      depthWrite: false,
     });
-    const ring = new THREE.Mesh(new THREE.RingGeometry(0.012, 0.015, 24), ringMaterial);
+    const leader = new THREE.Line(leaderGeo, leaderMaterial);
+    leader.renderOrder = 3;
 
-    group.add(dot, ring);
-    return { group, ring, ringMaterial, spherePos, flatPos };
+    group.add(dot, label, leader);
+    return {
+      city,
+      group,
+      ring,
+      ringMaterial,
+      label,
+      labelMaterial,
+      leader,
+      leaderMaterial,
+      labelOffset: new THREE.Vector2(),
+      spherePos,
+      flatPos,
+      arrived: 0,
+    };
+  }
+
+  /**
+   * Label sprite, drawn into a canvas texture.
+   *
+   * The face is the site's mono token so map labels match the rest of the site's
+   * mono type; the origin is uppercased and tracked out, understated rather than
+   * badged. No plate, no banner — just type.
+   */
+  private buildLabel(name: string, isOrigin: boolean, color: number, radius: number): THREE.Sprite {
+    const dpr = 2;
+    const px = isOrigin ? LABEL_SIZE_ORIGIN : LABEL_SIZE_DEST;
+    const text = isOrigin ? name.toUpperCase() : name;
+    const tracking = isOrigin ? 2.2 : 0.4;
+
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d")!;
+    const font = canvasFont("--font-mono", px, isOrigin ? 600 : 500);
+    ctx.font = font;
+    const glyphWidth = ctx.measureText(text).width + tracking * (text.length - 1);
+    const padX = 6;
+    const w = Math.ceil(glyphWidth + padX * 2);
+    const h = Math.ceil(px + 10);
+
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    ctx.scale(dpr, dpr);
+    ctx.font = font;
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = `#${new THREE.Color(color).getHexString()}`;
+    // A faint shadow keeps the type legible over the particle field without
+    // introducing a plate behind it.
+    ctx.shadowColor = `#${tokenColor("--bg").getHexString()}`;
+    ctx.shadowBlur = 4;
+
+    let x = padX;
+    for (const ch of text) {
+      ctx.fillText(ch, x, h / 2 + 1);
+      x += ctx.measureText(ch).width + tracking;
+    }
+
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.anisotropy = 4;
+    const sprite = new THREE.Sprite(
+      new THREE.SpriteMaterial({
+        map: tex,
+        transparent: true,
+        depthTest: false,
+        depthWrite: false,
+        opacity: 0,
+      })
+    );
+    const worldH = radius * (isOrigin ? 0.115 : 0.075);
+    sprite.scale.set(worldH * (w / h), worldH, 1);
+    sprite.center.set(0, 0.5); // anchor at the node, type reads to the right
+    sprite.renderOrder = isOrigin ? 12 : 4;
+    return sprite;
   }
 
   private buildArc(
     curve: THREE.QuadraticBezierCurve3,
     flatCurve: THREE.QuadraticBezierCurve3,
     color: number,
-    index: number
+    node: CityNode,
+    seq: number
   ): Arc {
     const spherePoints = curve.getPoints(ARC_SEGMENTS);
     const flatPoints = flatCurve.getPoints(ARC_SEGMENTS);
     const geometry = new THREE.BufferGeometry().setFromPoints(spherePoints);
-    const drawUniform = { value: 0 };
     geometry.setDrawRange(0, 0);
 
     const lineMaterial = new THREE.LineBasicMaterial({
       color,
       transparent: true,
-      opacity: 0.75,
+      // Thin arcs on mobile, where they cross a much smaller map.
+      opacity: this.mobile ? 0.45 : 0.7,
     });
     const line = new THREE.Line(geometry, lineMaterial);
-    (line as unknown as { userData: Record<string, unknown> }).userData = {
-      drawUniform,
-      totalPoints: spherePoints.length + 1,
-    };
 
-    const packetMaterial = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0 });
-    const packet = new THREE.Mesh(new THREE.SphereGeometry(0.01, 8, 8), packetMaterial);
+    const packetMaterial = new THREE.MeshBasicMaterial({
+      color: tokenColor("--gold-packet"),
+      transparent: true,
+      opacity: 0,
+    });
+    const packet = new THREE.Mesh(new THREE.SphereGeometry(this.radius * 0.018, 8, 8), packetMaterial);
 
-    return {
-      curve,
-      flatCurve,
-      spherePoints,
-      flatPoints,
-      line,
-      lineMaterial,
-      packet,
-      packetMaterial,
-      drawUniform,
-      phase: index * 0.25,
-    };
+    return { curve, flatCurve, spherePoints, flatPoints, line, lineMaterial, packet, packetMaterial, node, seq };
   }
 
-  /** Current sphere<->flat blend (0..1) — read before starting a new blend
-   * tween so it can interpolate from wherever the overlay currently sits,
-   * rather than snapping if a prior transition was interrupted mid-flight. */
+  // ── driving ──────────────────────────────────────────────────────────────────
+
   getFlatBlend(): number {
     return this.blend;
   }
 
-  /** Blend every arc/port between its sphere-mapped and flat-mapped position,
-   * 0..1. Called on scroll as the particle globe unfurls into the flat map —
-   * keeps the overlay visually attached to the point cloud it decorates. */
+  /** Blend every arc, node and label between its sphere and flat position. */
   setFlatBlend(blend: number): void {
     this.blend = Math.min(1, Math.max(0, blend));
 
-    this.arcs.forEach((arc) => {
+    for (const arc of this.arcs) {
       const posAttr = arc.line.geometry.getAttribute("position") as THREE.BufferAttribute;
       for (let i = 0; i <= ARC_SEGMENTS; i++) {
         const s = arc.spherePoints[i];
@@ -248,20 +372,38 @@ export class TradeArcs {
         );
       }
       posAttr.needsUpdate = true;
-    });
+    }
 
-    this.ports.forEach((port) => {
-      port.group.position.lerpVectors(port.spherePos, port.flatPos, this.blend);
-      // Sphere pose faces outward from the globe's center; flat pose faces
-      // the camera along +z — blend the facing direction along with position.
-      const sphereDir = port.spherePos.clone().normalize();
-      const flatDir = new THREE.Vector3(0, 0, 1);
-      const dir = sphereDir.lerp(flatDir, this.blend).normalize();
-      port.group.lookAt(port.group.position.clone().add(dir));
-    });
+    for (const node of this.nodes) {
+      node.group.position.lerpVectors(node.spherePos, node.flatPos, this.blend);
+      const dir = node.spherePos.clone().normalize().lerp(new THREE.Vector3(0, 0, 1), this.blend).normalize();
+      node.group.lookAt(node.group.position.clone().add(dir));
+    }
   }
 
-  /** Reveal arcs/ports staggered, start the packet loop. Call on section enter. */
+  /**
+   * Scrub the route draw-in, 0..1.
+   *
+   * Each arc gets a staggered slice of the window so the network grows outward from
+   * the origin rather than every lane appearing together, and a destination's label
+   * only begins to fade in once its own route has arrived.
+   */
+  setDrawProgress(p: number): void {
+    this.drawProgress = Math.min(1, Math.max(0, p));
+    for (const arc of this.arcs) {
+      const local = Math.min(
+        1,
+        Math.max(0, (this.drawProgress - arc.seq * DRAW_STAGGER) / (1 - DRAW_STAGGER))
+      );
+      const total = (arc.line.geometry.getAttribute("position") as THREE.BufferAttribute).count;
+      arc.line.geometry.setDrawRange(0, Math.max(0, Math.floor(total * local)));
+      arc.lineMaterial.opacity = (this.mobile ? 0.45 : 0.7) * (local > 0 ? 1 : 0);
+      arc.packetMaterial.opacity = local >= 1 && !this.reducedMotion ? 0.9 : 0;
+      arc.node.arrived = local;
+    }
+  }
+
+  /** Reveal the overlay. The origin appears immediately — it is the source. */
   playIn(): void {
     if (this.active) return;
     this.active = true;
@@ -271,49 +413,24 @@ export class TradeArcs {
     this.tweens = [];
 
     if (this.reducedMotion) {
-      // Jump-cut: land on the fully-revealed state instantly, no stagger and
-      // no traveling packets — matches the morph engine's reduced-motion rule.
-      this.arcs.forEach((arc) => {
-        const total = (arc.line.geometry as THREE.BufferGeometry).getAttribute("position").count;
-        arc.line.geometry.setDrawRange(0, total);
-        arc.lineMaterial.opacity = 0.75;
-        arc.packetMaterial.opacity = 0;
+      // Everything drawn and every label visible, at once. No stagger, no packets.
+      this.setDrawProgress(1);
+      this.nodes.forEach((n) => {
+        n.group.scale.setScalar(1);
+        n.labelMaterial.opacity = this.labelVisible(n) ? 1 : 0;
       });
-      this.ports.forEach((port) => port.group.scale.setScalar(1));
       return;
     }
 
-    this.arcs.forEach((arc, i) => {
-      const total = (arc.line.geometry as THREE.BufferGeometry).getAttribute("position").count;
-      const state = { n: 0 };
-      const tween = gsap.to(state, {
-        n: total,
-        duration: 1.1,
-        delay: i * 0.12,
-        ease: "power2.out",
-        onUpdate: () => arc.line.geometry.setDrawRange(0, Math.floor(state.n)),
-      });
-      this.tweens.push(tween);
-      this.tweens.push(gsap.to(arc.lineMaterial, { opacity: 0.75, duration: 0.6, delay: i * 0.12 }));
-      this.tweens.push(gsap.to(arc.packetMaterial, { opacity: 0.9, duration: 0.4, delay: i * 0.12 + 0.6 }));
-    });
-
-    this.ports.forEach((port, i) => {
-      port.group.scale.setScalar(0.01);
+    this.nodes.forEach((node, i) => {
+      node.group.scale.setScalar(node.city.origin ? 1 : 0.01);
+      if (node.city.origin) return;
       this.tweens.push(
-        gsap.to(port.group.scale, {
-          x: 1,
-          y: 1,
-          z: 1,
-          duration: 0.5,
-          delay: i * 0.05,
-          ease: "back.out(2)",
-        })
+        gsap.to(node.group.scale, { x: 1, y: 1, z: 1, duration: 0.5, delay: i * 0.04, ease: "back.out(2)" })
       );
     });
   }
 
-  /** Fade everything out. Call on section leave. */
   playOut(): void {
     if (!this.active) return;
     this.active = false;
@@ -324,43 +441,122 @@ export class TradeArcs {
       this.group.visible = false;
       return;
     }
-
     const group = this.group;
-    const arcs = this.arcs;
     this.tweens.push(
       gsap.to(
-        arcs.map((a) => a.lineMaterial),
+        this.arcs.map((a) => a.lineMaterial),
         { opacity: 0, duration: 0.4, onComplete: () => (group.visible = false) }
       )
     );
-    arcs.forEach((a) => this.tweens.push(gsap.to(a.packetMaterial, { opacity: 0, duration: 0.3 })));
-    this.ports.forEach((p) =>
-      this.tweens.push(gsap.to(p.ringMaterial, { opacity: 0, duration: 0.3 }))
-    );
+    this.arcs.forEach((a) => this.tweens.push(gsap.to(a.packetMaterial, { opacity: 0, duration: 0.3 })));
+    this.nodes.forEach((n) => this.tweens.push(gsap.to(n.labelMaterial, { opacity: 0, duration: 0.3 })));
   }
 
-  /** Advance packet travel + port pulse rings. Call once per rendered frame. */
-  update(): void {
-    if (!this.active || this.reducedMotion) return;
+  /** Is this node's label shown at the current tier? */
+  private labelVisible(node: CityNode): boolean {
+    if (node.city.origin) return true;
+    // Mobile keeps the origin and the major hubs only — fourteen labels is
+    // unreadable at phone width.
+    return this.mobile ? !!node.city.major : true;
+  }
+
+  /**
+   * Per-frame: packet travel, origin pulse, label fades, and label decluttering.
+   *
+   * Declutter runs in screen space, which needs the camera, and only while the map
+   * is substantially flat — on the sphere the labels are already separated by the
+   * globe's own curvature and half of them are facing away. It is throttled to
+   * every 6th frame because fourteen projections plus a sort is not free and the
+   * layout only changes when the camera or the draw does.
+   */
+  update(camera?: THREE.Camera): void {
+    if (!this.active) return;
     const t = (performance.now() - this.clockStart) / 1000;
 
-    this.arcs.forEach((arc) => {
-      const u = ((t * PACKET_SPEED + arc.phase) % 1 + 1) % 1;
-      if (this.blend === 0) {
-        arc.packet.position.copy(arc.curve.getPointAt(u));
-      } else {
+    if (!this.reducedMotion) {
+      for (const arc of this.arcs) {
+        if (arc.node.arrived < 1) continue;
+        // Pulses travel outward from the origin: u runs 0 → 1 along the arc, which
+        // is built origin-first.
+        const u = (((t * PACKET_SPEED + arc.seq) % 1) + 1) % 1;
         const sphereP = arc.curve.getPointAt(u);
-        const flatP = arc.flatCurve.getPointAt(u);
-        arc.packet.position.lerpVectors(sphereP, flatP, this.blend);
+        if (this.blend === 0) arc.packet.position.copy(sphereP);
+        else arc.packet.position.lerpVectors(sphereP, arc.flatCurve.getPointAt(u), this.blend);
       }
+
+      // Origin pulse ring.
+      const ring = this.originNode.ring;
+      if (ring && this.originNode.ringMaterial) {
+        const cycle = (t * 0.5) % 1;
+        ring.scale.setScalar(1 + cycle * 2.4);
+        this.originNode.ringMaterial.opacity = Math.max(0, 0.5 * (1 - cycle));
+      }
+    }
+
+    // Labels fade in with their own route's arrival.
+    for (const node of this.nodes) {
+      const want = this.labelVisible(node) ? (node.city.origin ? 1 : node.arrived) : 0;
+      const k = this.reducedMotion ? 1 : 0.12;
+      node.labelMaterial.opacity += (want - node.labelMaterial.opacity) * k;
+    }
+
+    if (camera && this.blend > 0.6 && this.declutterTick++ % 6 === 0) this.declutter(camera);
+  }
+
+  /**
+   * Push overlapping labels apart in screen space.
+   *
+   * Sorted so the origin is placed first and always wins; each subsequent label is
+   * tested against those already placed and nudged vertically if it collides,
+   * alternating up and down so a dense cluster fans out rather than drifting one
+   * way. A label that has been moved gets a hairline leader back to its node, so
+   * the association stays unambiguous.
+   */
+  private declutter(camera: THREE.Camera): void {
+    const placed: { x: number; y: number }[] = [];
+    const ndc = new THREE.Vector3();
+
+    const order = [...this.nodes].sort((a, b) => {
+      if (a.city.origin) return -1;
+      if (b.city.origin) return 1;
+      // Then by arrival, so settled labels hold their position as later ones appear.
+      return b.arrived - a.arrived;
     });
 
-    this.ports.forEach((port, i) => {
-      const cycle = (t * 0.5 + i * 0.3) % 1;
-      const scale = 1 + cycle * 2.2;
-      port.ring.scale.setScalar(scale);
-      port.ringMaterial.opacity = this.active ? Math.max(0, 0.5 * (1 - cycle)) : port.ringMaterial.opacity;
-    });
+    for (const node of order) {
+      node.labelOffset.set(0, 0);
+      if (!this.labelVisible(node) || node.labelMaterial.opacity < 0.02) continue;
+
+      node.group.getWorldPosition(ndc);
+      ndc.project(camera);
+      let y = ndc.y;
+      let step = 0;
+      // Alternate up/down in increasing increments until the slot is free.
+      while (
+        placed.some((p) => Math.abs(p.x - ndc.x) < DECLUTTER_PAD_X && Math.abs(p.y - y) < DECLUTTER_PAD_Y) &&
+        step < 8
+      ) {
+        step++;
+        const dir = step % 2 === 0 ? 1 : -1;
+        y = ndc.y + dir * Math.ceil(step / 2) * DECLUTTER_PAD_Y;
+      }
+      placed.push({ x: ndc.x, y });
+
+      // NDC delta → world offset on the node's own local axes. The sprite is
+      // parented to the node group, so a local y shift is enough.
+      const shift = (y - ndc.y) * this.radius * 1.4;
+      node.labelOffset.set(0, shift);
+      node.label.position.set(0, shift, 0);
+
+      const moved = Math.abs(shift) > 1e-4;
+      node.leaderMaterial.opacity = moved ? 0.35 * node.labelMaterial.opacity : 0;
+      if (moved) {
+        const pos = node.leader.geometry.getAttribute("position") as THREE.BufferAttribute;
+        pos.setXYZ(0, 0, 0, 0);
+        pos.setXYZ(1, 0, shift, 0);
+        pos.needsUpdate = true;
+      }
+    }
   }
 
   dispose(): void {
@@ -371,13 +567,17 @@ export class TradeArcs {
       a.packet.geometry.dispose();
       a.packetMaterial.dispose();
     });
-    this.ports.forEach((p) => {
-      p.group.children.forEach((child) => {
+    this.nodes.forEach((n) => {
+      n.labelMaterial.map?.dispose();
+      n.labelMaterial.dispose();
+      n.leader.geometry.dispose();
+      n.leaderMaterial.dispose();
+      n.group.children.forEach((child) => {
         const mesh = child as THREE.Mesh;
-        mesh.geometry?.dispose();
-        const mat = mesh.material as THREE.Material | THREE.Material[];
-        if (Array.isArray(mat)) mat.forEach((m) => m.dispose());
-        else mat?.dispose();
+        mesh.geometry?.dispose?.();
+        const m = mesh.material as THREE.Material | THREE.Material[] | undefined;
+        if (Array.isArray(m)) m.forEach((x) => x.dispose());
+        else if (m && m !== n.labelMaterial && m !== n.leaderMaterial) m.dispose();
       });
     });
   }
