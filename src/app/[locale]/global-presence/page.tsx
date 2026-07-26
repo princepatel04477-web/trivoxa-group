@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import "@/app/styles/global-presence-page.css";
+import "@/app/styles/signature-canvas.css";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, Checklist, CtaBand } from "@/components/trivoxa/ui";
-import GlobalPresenceMap from "@/components/presence/GlobalPresenceMap";
+import PresenceGlobe from "@/components/presence/PresenceGlobe";
 import PresenceStats from "@/components/presence/PresenceStats";
 import LazyCrane from "@/components/LazyCrane";
 import { PageAccent } from "@/components/visuals/PageAccent";
@@ -14,13 +15,16 @@ export const metadata: Metadata = {
     "Trivoxa Group connects opportunities across borders through an expanding network of suppliers, partners, and clients.",
 };
 
+/** `slug` drives the `#region-*` anchor each lane carries — those ids are what the
+ *  particle field's regionCues hang off, so each cluster illuminates as its row
+ *  scrolls up. See GLOBAL_PRESENCE in src/lib/choreography.ts. */
 const regions = [
-  { icon: "🇪🇺", title: "Europe", description: "Textiles, building materials, and professional services for established and emerging European markets.", categories: ["Textiles", "Building Materials", "Professional Services"] },
-  { icon: "🕌", title: "Middle East", description: "Building materials, agriculture, and consumer goods for fast-growing Gulf and regional markets.", categories: ["Building Materials", "Agriculture", "Consumer Goods"] },
-  { icon: "🌍", title: "Africa", description: "Agriculture, pharmaceuticals, and industrial products supporting infrastructure and development.", categories: ["Agriculture", "Pharmaceuticals", "Industrial Products"] },
-  { icon: "🗽", title: "North America", description: "Textiles, home goods, and technology services for demanding, quality-focused buyers.", categories: ["Textiles", "Home Goods", "Technology Services"] },
-  { icon: "🌎", title: "South America", description: "Sourcing partnerships and consumer goods for expanding regional supply chains.", categories: ["Sourcing Partnerships", "Consumer Goods"] },
-  { icon: "🌏", title: "Asia-Pacific", description: "Manufacturing collaboration, technology services, and cross-border trade across APAC.", categories: ["Manufacturing Collaboration", "Technology Services", "Cross-Border Trade"] },
+  { slug: "europe", icon: "🇪🇺", title: "Europe", description: "Textiles, building materials, and professional services for established and emerging European markets.", categories: ["Textiles", "Building Materials", "Professional Services"] },
+  { slug: "middle-east", icon: "🕌", title: "Middle East", description: "Building materials, agriculture, and consumer goods for fast-growing Gulf and regional markets.", categories: ["Building Materials", "Agriculture", "Consumer Goods"] },
+  { slug: "africa", icon: "🌍", title: "Africa", description: "Agriculture, pharmaceuticals, and industrial products supporting infrastructure and development.", categories: ["Agriculture", "Pharmaceuticals", "Industrial Products"] },
+  { slug: "north-america", icon: "🗽", title: "North America", description: "Textiles, home goods, and technology services for demanding, quality-focused buyers.", categories: ["Textiles", "Home Goods", "Technology Services"] },
+  { slug: "south-america", icon: "🌎", title: "South America", description: "Sourcing partnerships and consumer goods for expanding regional supply chains.", categories: ["Sourcing Partnerships", "Consumer Goods"] },
+  { slug: "asia-pacific", icon: "🌏", title: "Asia-Pacific", description: "Manufacturing collaboration, technology services, and cross-border trade across APAC.", categories: ["Manufacturing Collaboration", "Technology Services", "Cross-Border Trade"] },
 ];
 
 // Export ports — Layer 2 (commerce/logistics data, honestly placed on the
@@ -94,6 +98,14 @@ const why = [
 export default function GlobalPresencePage() {
   return (
     <TrivoxaShell>
+      {/* Signature animation: one persistent canvas behind every section. The
+          particle globe in the hero unwraps into the flat world map across
+          Overview → Network, then holds flat while the regions illuminate and the
+          trade routes draw. */}
+      <div className="gp-canvas" aria-hidden="true">
+        <PresenceGlobe />
+      </div>
+
       <PageHero
         eyebrow="Global Presence"
         title="Connecting Opportunities Across Borders."
@@ -104,6 +116,7 @@ export default function GlobalPresencePage() {
       />
 
       <Section
+        id="global-overview"
         eyebrow="Our Global Approach"
         title="One Vision. Connected Across Markets."
         lead={
@@ -112,11 +125,33 @@ export default function GlobalPresencePage() {
         }
       />
 
-      <Section eyebrow="Regions We Serve" title="Building Presence Across Six Global Regions." lead="Rather than counting borders, we focus on building durable relationships across the regions where our partners operate and grow.">
-        <GlobalPresenceMap regions={regions.map((r) => ({ title: r.title, categories: r.categories }))} />
+      {/* Interactive Global Network — the section the unwrap resolves into. It is
+          deliberately sparse and tall (see .presence-network in signature-canvas.css): the
+          particle field flattening from globe to world map behind it IS the
+          content, and the unwrap needs the scroll distance to breathe.
+
+          This replaces the inline <WorldMap> SVG that used to sit in the Regions
+          section below. Two world maps on one page — a small static one inside a
+          full-viewport live one — read as a mistake, and the live field is the map
+          the rest of the page's choreography depends on. */}
+      <section className="tvx-section presence-network" id="global-network">
+        <div className="container">
+          <span className="tvx-eyebrow">Interactive Global Network</span>
+          <h2>The Network, Unfolded.</h2>
+          <div className="tvx-lead">
+            <p>
+              The same network, seen two ways — a connected world, and the flat map
+              of the lanes that hold it together. Drag the globe above to turn it;
+              keep scrolling to lay it flat.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <Section id="regions" eyebrow="Regions We Serve" title="Building Presence Across Six Global Regions." lead="Rather than counting borders, we focus on building durable relationships across the regions where our partners operate and grow.">
         <div className="tvx-lanes">
           {regions.map((r, i) => (
-            <AnimatedCard as="div" className="tvx-lane" key={r.title} index={i}>
+            <AnimatedCard as="div" className="tvx-lane" key={r.title} index={i} id={`region-${r.slug}`}>
               <span className="tvx-lane__name">{r.title}</span>
               <span className="tvx-lane__desc">{r.description}</span>
             </AnimatedCard>
@@ -173,11 +208,11 @@ export default function GlobalPresencePage() {
         </div>
       </Section>
 
-      <Section eyebrow="Trade & Operations" title="Managing International Business, End to End." lead="We coordinate the practical realities of global trade so our partners can focus on growth.">
+      <Section id="trade-operations" eyebrow="Trade & Operations" title="Managing International Business, End to End." lead="We coordinate the practical realities of global trade so our partners can focus on growth.">
         <Checklist items={operations} />
       </Section>
 
-      <Section eyebrow="Growing Across Borders" title="Clear Ambition, Built Responsibly." lead="Instead of overstating reach, we focus on the growth that creates real, lasting value.">
+      <Section id="growing" eyebrow="Growing Across Borders" title="Clear Ambition, Built Responsibly." lead="Instead of overstating reach, we focus on the growth that creates real, lasting value.">
         <Checklist items={growth} />
       </Section>
 

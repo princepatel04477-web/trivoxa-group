@@ -2,6 +2,7 @@
 .group-hero {
   position: relative;
   isolation: isolate;
+  overflow: hidden;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -14,6 +15,8 @@
 }
 
 .group-hero__inner {
+  position: relative;
+  z-index: 1;
   max-width: 46rem;
 }
 

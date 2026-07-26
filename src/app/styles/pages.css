@@ -39,6 +39,68 @@
   opacity: 0.03;
 }
 
+/* Remotion editorial film loop — sits just above the gold-glow ambient bg
+   (z-index -2) and below all page content. A navy scrim keeps copy readable. */
+.film-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.film-bg__media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.92;
+}
+.film-bg__scrim {
+  position: absolute;
+  inset: 0;
+  /* Lighter than before so the motion clearly reads; still darkened at the top
+     (under the header) and bottom for text contrast. */
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--bg) 62%, transparent) 0%,
+    color-mix(in srgb, var(--bg) 16%, transparent) 22%,
+    color-mix(in srgb, var(--bg) 16%, transparent) 72%,
+    color-mix(in srgb, var(--bg) 72%, transparent) 100%
+  );
+}
+@media (prefers-reduced-motion: reduce) {
+  /* Poster still already renders; keep it quiet. */
+  .film-bg__media {
+    opacity: 0.55;
+  }
+}
+
+/* Live GLSL shader background — same slot as .film-bg (fixed, above the gold-
+   glow ambient bg at z-index -2, below content). A navy scrim keeps copy
+   readable. Falls back to nothing (the ambient .tvx__bg shows) on low-end GPUs. */
+.shader-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.shader-bg canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.shader-bg__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--bg) 62%, transparent) 0%,
+    color-mix(in srgb, var(--bg) 16%, transparent) 22%,
+    color-mix(in srgb, var(--bg) 16%, transparent) 72%,
+    color-mix(in srgb, var(--bg) 72%, transparent) 100%
+  );
+}
+
 .tvx .container {
   width: 100%;
   max-width: 1240px;
@@ -50,8 +112,11 @@
 .tvx-hero {
   padding: 220px 0 110px;
   position: relative;
+  overflow: hidden;
 }
 .tvx-hero__inner {
+  position: relative;
+  z-index: 1;
   max-width: 900px;
 }
 /* Film-grain + vignette atmosphere (PageHero's `grain` prop) — same recipe
@@ -59,7 +124,11 @@
    .page-accent in DOM order (see ui.tsx) so it blends on top via
    mix-blend-mode, same layering the home hero already has over its
    particle canvas. */
-.tvx-hero__grain {
+/* `.hero-grain` is the same treatment on bespoke heroes that build their own
+   markup instead of going through PageHero (e.g. .group-hero). Both classes
+   are kept: they differ in opacity and in whether a vignette is painted. */
+.tvx-hero__grain,
+.hero-grain {
   position: absolute;
   inset: 0;
   z-index: 0;
@@ -81,6 +150,16 @@
     transparent 40%,
     color-mix(in srgb, var(--bg) 40%, transparent) 100%
   );
+}
+/* Bespoke heroes carry the grain heavier and without a vignette — they paint
+   over their own full-page canvas rather than PageHero's flat background. */
+.hero-grain .grain-globe__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.16;
+  mix-blend-mode: screen;
 }
 .tvx-hero h1 {
   font-family: var(--font-heading, sans-serif);

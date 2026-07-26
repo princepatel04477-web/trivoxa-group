@@ -24,7 +24,7 @@ const inquiryTypes = [
 
 export default function ContactPage() {
   return (
-    <TrivoxaShell>
+    <TrivoxaShell film="contact">
       <PageHero
         eyebrow="Contact"
         title="Let's Build the Future Together."

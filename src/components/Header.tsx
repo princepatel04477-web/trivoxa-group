@@ -155,14 +155,10 @@ export default function Header() {
 
   return (
     <div className="header" ref={rootRef}>
-      <div className="header-wrapper d-flex">
-        <div className="h-left d-flex">
-          <div className="logo">
-            <Link href="/" aria-label="Trivoxa Group — home">
-              <img src="/images/trivoxa-logo.png" alt="Trivoxa Group" />
-            </Link>
-          </div>
-          <ul className="header-links d-flex">
+      <div className="header-wrapper">
+        {/* Left cluster — first half of the primary nav. */}
+        <div className="h-left">
+          <ul className="header-links header-links--left d-flex">
             <li className={isActive("/") && pathname === "/" ? "current-menu-item" : undefined}>
               <Link href="/" aria-current={pathname === "/" ? "page" : undefined}>
                 {t("home")}
@@ -221,6 +217,19 @@ export default function Header() {
                 {t("globalPresence")}
               </Link>
             </li>
+          </ul>
+        </div>
+
+        {/* Centered logo. */}
+        <div className="logo">
+          <Link href="/" aria-label="Trivoxa Group — home">
+            <img src="/images/trivoxa-logo.png" alt="Trivoxa Group" />
+          </Link>
+        </div>
+
+        {/* Right cluster — second half of the nav, then utilities. */}
+        <div className="h-right">
+          <ul className="header-links header-links--right d-flex">
             <li className={isActive("/insights/") ? "current-menu-item" : undefined}>
               <Link href="/insights/" aria-current={isActive("/insights/") ? "page" : undefined}>
                 {t("insights")}
@@ -232,8 +241,6 @@ export default function Header() {
               </Link>
             </li>
           </ul>
-        </div>
-        <div className="h-right d-flex">
           <LanguageSwitcher />
           <Link href="/rfq/" className="primary-button nav-cta" data-analytics="nav-rfq-cta">
             <span className="d-flex">

@@ -33,6 +33,11 @@ export interface AnimatedCardProps {
    * that was tried on text reveals before and the client rejected it, so
    * card entrances stay to the same restrained fade+translate/scale family. */
   variant?: AnimatedCardVariant;
+  /** Forwarded to the rendered element. Some cards double as ScrollTrigger
+   * anchors (e.g. the `#region-*` lanes global-presence drives the world map
+   * from), so this must reach the DOM on the reduced-motion path too — the
+   * trigger has to resolve whether or not the entrance animates. */
+  id?: string;
 }
 
 /** Card-grid item: fades/rises (or slides/scales, per `variant`) in on
@@ -43,20 +48,21 @@ export interface AnimatedCardProps {
  * — mixing a horizontal entrance with a horizontal hover would read as drag,
  * not lift. Reduced-motion users get the plain element — content and layout
  * unaffected either way. */
-export function AnimatedCard({ children, index = 0, as = "div", className = "", variant = "up" }: AnimatedCardProps) {
+export function AnimatedCard({ children, index = 0, as = "div", className = "", variant = "up", id }: AnimatedCardProps) {
   const reduceMotion = useReducedMotion();
   const cls = `motion-card ${className}`.trim();
   const delay = Math.min(index * 0.07, 0.42);
 
   if (reduceMotion) {
     const Static = as;
-    return <Static className={cls}>{children}</Static>;
+    return <Static className={cls} id={id}>{children}</Static>;
   }
 
   const Comp = TAGS[as];
   const { initial, animate } = VARIANTS[variant];
   return (
     <Comp
+      id={id}
       className={cls}
       initial={initial}
       whileInView={animate}

@@ -22,6 +22,7 @@ import { AboutPreview, CareersPreview, FinalCta } from "@/components/home/previe
 import SiteFooter from "@/components/SiteFooter";
 import ContactModal from "@/components/ContactModal";
 import ParticleCanvasWrapper from "@/components/ParticleCanvasWrapper";
+import { HOME } from "@/lib/choreography";
 import WhyBuyersTrust from "@/components/sections/WhyBuyersTrust";
 import MobileStickyCta from "@/components/MobileStickyCta";
 
@@ -36,7 +37,7 @@ export default function Home() {
     <>
       <Preloader />
       <Suspense fallback={null}>
-        <ParticleCanvasWrapper />
+        <ParticleCanvasWrapper config={HOME} />
       </Suspense>
       <Header />
       <MobileNav />

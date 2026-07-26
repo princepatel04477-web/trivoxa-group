@@ -55,7 +55,7 @@ export default async function ExportCategoryPage(props: PageProps<"/[locale]/bus
     })) ?? [];
 
   return (
-    <TrivoxaShell>
+    <TrivoxaShell film={category}>
       <PageHero
         crumb={[
           { label: "Businesses", href: "/businesses/" },
