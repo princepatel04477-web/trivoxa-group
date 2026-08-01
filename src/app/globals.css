@@ -415,6 +415,17 @@ html {
   display: inline-block;
   will-change: transform, opacity;
 }
+.split-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+/* Button Micro-Interactions: Primary CTA press scale feedback */
+.tvx-btn--primary:active,
+.btn-gold:active,
+.form-submit:active {
+  transform: scale(0.98);
+}
 
 /* Smooth universal scroll behavior for non-smooth-scroll contexts */
 html {

@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import dynamic from "next/dynamic";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, Steps } from "@/components/trivoxa/ui";
-import RfqForm from "@/components/rfq/RfqForm";
 import { PageAccent } from "@/components/visuals/PageAccent";
-import "@/app/styles/rfq-page.css";
+import "@/styles/rfq-page.css";
+
+const RfqForm = dynamic(() => import("@/components/rfq/RfqForm"));
 
 export const metadata: Metadata = {
   title: "Request a Quote | Trivoxa Group",

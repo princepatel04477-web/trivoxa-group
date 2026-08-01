@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef } from "react";
 
 export interface StatItem {
   value: number;
@@ -11,19 +11,31 @@ export interface StatItem {
 /** Animated stat counters (spec §3 trust layer). Counts up once when the
  * strip scrolls into view; renders the final value immediately under
  * prefers-reduced-motion. */
-export default function PresenceStats({ stats }: { stats: StatItem[] }) {
+function PresenceStats({ stats }: { stats: StatItem[] }) {
   const rootRef = useRef<HTMLDivElement>(null);
-  const [progress, setProgress] = useState(0); // 0..1 easing driver
+  const valueRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const statsRef = useRef(stats);
+  statsRef.current = stats;
 
   useEffect(() => {
     const el = rootRef.current;
     if (!el) return;
     let raf = 0;
+
+    const updateDOM = (progress: number) => {
+      valueRefs.current.forEach((span, i) => {
+        const item = statsRef.current[i];
+        if (span && item) {
+          span.textContent = `${Math.round(item.value * progress)}${item.suffix ?? ""}`;
+        }
+      });
+    };
+
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      // Async so the state write isn't a synchronous effect-body setState.
-      raf = requestAnimationFrame(() => setProgress(1));
-      return () => cancelAnimationFrame(raf);
+      updateDOM(1);
+      return;
     }
+
     const io = new IntersectionObserver(
       (entries) => {
         if (!entries[0].isIntersecting) return;
@@ -33,7 +45,8 @@ export default function PresenceStats({ stats }: { stats: StatItem[] }) {
         const tick = (now: number) => {
           const t = Math.min(1, (now - start) / DURATION);
           // easeOutCubic — the last digits settle instead of snapping.
-          setProgress(1 - Math.pow(1 - t, 3));
+          const progress = 1 - Math.pow(1 - t, 3);
+          updateDOM(progress);
           if (t < 1) raf = requestAnimationFrame(tick);
         };
         raf = requestAnimationFrame(tick);
@@ -43,17 +56,21 @@ export default function PresenceStats({ stats }: { stats: StatItem[] }) {
     io.observe(el);
     return () => {
       io.disconnect();
-      cancelAnimationFrame(raf);
+      if (raf) cancelAnimationFrame(raf);
     };
   }, []);
 
   return (
     <div className="presence-stats" ref={rootRef}>
-      {stats.map((s) => (
+      {stats.map((s, i) => (
         <div className="presence-stats__item" key={s.label}>
-          <span className="presence-stats__value">
-            {Math.round(s.value * progress)}
-            {s.suffix ?? ""}
+          <span
+            className="presence-stats__value"
+            ref={(el) => {
+              valueRefs.current[i] = el;
+            }}
+          >
+            0{s.suffix ?? ""}
           </span>
           <span className="presence-stats__label">{s.label}</span>
         </div>
@@ -61,3 +78,6 @@ export default function PresenceStats({ stats }: { stats: StatItem[] }) {
     </div>
   );
 }
+
+export default memo(PresenceStats);
+

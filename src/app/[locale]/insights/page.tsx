@@ -4,8 +4,8 @@ import { PageHero, Section, Pills, CtaBand } from "@/components/trivoxa/ui";
 import InsightsTeaser from "@/components/insights/InsightsTeaser";
 import { PageAccent } from "@/components/visuals/PageAccent";
 import InsightsNetwork from "@/components/insights/InsightsNetwork";
-import "@/app/styles/insights-page.css";
-import "@/app/styles/signature-canvas.css";
+import "@/styles/insights-page.css";
+import "@/styles/signature-canvas.css";
 
 export const metadata: Metadata = {
   title: "Insights | Trivoxa Group",

@@ -97,8 +97,26 @@ export function isLand(lon: number, lat: number): boolean {
   return false;
 }
 
+/** Analytical sphere Signed Distance Function (SDF). Returns distance from point p to sphere surface of radius r. */
+export function sphereSDF(x: number, y: number, z: number, radius: number): number {
+  const len = Math.sqrt(x * x + y * y + z * z);
+  return len - radius;
+}
+
+/** Project a 3D vector onto sphere surface using analytical sphere SDF projection. */
+export function projectToSphereSDF(
+  x: number,
+  y: number,
+  z: number,
+  radius: number
+): [number, number, number] {
+  const len = Math.sqrt(x * x + y * y + z * z) || 1e-9;
+  const scale = radius / len;
+  return [x * scale, y * scale, z * scale];
+}
+
 /** Golden-angle (Fibonacci) direction on the unit sphere for index i of n. */
-function fibDirection(i: number, n: number): [number, number, number] {
+export function fibDirection(i: number, n: number): [number, number, number] {
   const y = 1 - (i / Math.max(1, n - 1)) * 2; // 1 (north pole) -> -1 (south)
   const r = Math.sqrt(Math.max(0, 1 - y * y));
   const goldenAngle = Math.PI * (3 - Math.sqrt(5));
@@ -115,7 +133,7 @@ export interface GlobeGeometry {
 }
 
 /**
- * Build the two-layer particle globe.
+ * Build the two-layer particle globe using analytical sphere SDF formulas.
  * @param count  total particle budget (shared pool size)
  * @param radius world-unit sphere radius
  */
@@ -125,19 +143,20 @@ export function buildGlobeGeometry(count: number, radius: number): GlobeGeometry
   const positions = new Float32Array(count * 3);
   const layer = new Float32Array(count);
 
-  // Layer A — oversample the sphere with Fibonacci points, keep the land hits,
-  // then subsample evenly across the collected set (Fibonacci index order runs
-  // pole-to-pole, so an even stride avoids a hemisphere bias).
+  // Layer A — sample Fibonacci points, keep land hits, project via sphere SDF
   let landDirs: number[] = [];
-  let K = Math.max(landCount * 4, 20000);
-  for (let attempt = 0; attempt < 5 && landDirs.length / 3 < landCount; attempt++) {
+  let K = Math.max(landCount * 4, 16000);
+  for (let attempt = 0; attempt < 4 && landDirs.length / 3 < landCount; attempt++) {
     landDirs = [];
     for (let i = 0; i < K; i++) {
       const [x, y, z] = fibDirection(i, K);
       const { lat, lon } = vec3ToLatLon(x, y, z);
-      if (isLand(lon, lat)) landDirs.push(x, y, z);
+      if (isLand(lon, lat)) {
+        const [px, py, pz] = projectToSphereSDF(x, y, z, 1.0);
+        landDirs.push(px, py, pz);
+      }
     }
-    if (landDirs.length / 3 < landCount) K = Math.floor(K * 1.8);
+    if (landDirs.length / 3 < landCount) K = Math.floor(K * 1.5);
   }
 
   const available = Math.max(1, landDirs.length / 3);
@@ -150,13 +169,14 @@ export function buildGlobeGeometry(count: number, radius: number): GlobeGeometry
     layer[k] = 0;
   }
 
-  // Layer B — sparse full-sphere shell (oceans included), its own Fibonacci set.
+  // Layer B — sparse full-sphere shell (oceans included), projected via sphere SDF.
   for (let j = 0; j < shellCount; j++) {
     const [x, y, z] = fibDirection(j, shellCount);
+    const [px, py, pz] = projectToSphereSDF(x, y, z, radius);
     const idx = (landCount + j) * 3;
-    positions[idx] = x * radius;
-    positions[idx + 1] = y * radius;
-    positions[idx + 2] = z * radius;
+    positions[idx] = px;
+    positions[idx + 1] = py;
+    positions[idx + 2] = pz;
     layer[landCount + j] = 1;
   }
 

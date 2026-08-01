@@ -10,9 +10,9 @@ import { industries, getIndustryBySlug } from "@/lib/data/industries";
 import { getExportCategory } from "@/lib/data/product-categories";
 import { PageAccent } from "@/components/visuals/PageAccent";
 import { AnimatedCard } from "@/components/motion/AnimatedCard";
-import "@/app/styles/patterns.css";
-import "@/app/styles/industries-page.css";
-import "@/app/styles/industry-page.css";
+import "@/styles/patterns.css";
+import "@/styles/industries-page.css";
+import "@/styles/industry-page.css";
 
 export function generateStaticParams() {
   return industries.map((i) => ({ slug: i.slug }));

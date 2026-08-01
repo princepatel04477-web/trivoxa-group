@@ -1,19 +1,19 @@
 import type { ReactNode } from "react";
-import "@/app/styles/shared.css";
-import "@/app/styles/scroll-infra.css";
-import "@/app/styles/header.css";
-import "@/app/styles/mobile-nav.css";
-import "@/app/styles/contact-modal.css";
-import "@/app/styles/footer.css";
-import "@/app/styles/pages.css";
-import "@/app/styles/motion.css";
+import "@/styles/shared.css";
+import "@/styles/scroll-infra.css";
+import "@/styles/header.css";
+import "@/styles/mobile-nav.css";
+import "@/styles/contact-modal.css";
+import "@/styles/footer.css";
+import "@/styles/pages.css";
+import "@/styles/motion.css";
 
 import Header from "@/components/Header";
 import MobileNav from "@/components/MobileNav";
-import ContactModal from "@/components/ContactModal";
 import SiteFooter from "@/components/SiteFooter";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import MobileStickyCta from "@/components/MobileStickyCta";
+import ContactModal from "@/components/ContactModal";
 import ShaderBackground from "@/components/ShaderBackground";
 
 /**

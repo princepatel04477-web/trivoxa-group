@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import "@/app/styles/patterns.css";
-import "@/app/styles/product-exports-page.css";
-import "@/app/styles/product-grid.css";
+import "@/styles/patterns.css";
+import "@/styles/product-exports-page.css";
+import "@/styles/product-grid.css";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, CtaBand } from "@/components/trivoxa/ui";
 import HorizontalTimeline from "@/components/patterns/HorizontalTimeline";

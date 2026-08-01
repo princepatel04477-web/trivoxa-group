@@ -3,7 +3,7 @@ import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero } from "@/components/trivoxa/ui";
 import CertificationsStrip from "@/components/sections/CertificationsStrip";
 import { PageAccent } from "@/components/visuals/PageAccent";
-import "@/app/styles/flagship-sections.css";
+import "@/styles/flagship-sections.css";
 
 export const metadata: Metadata = {
   title: "Compliance | Trivoxa Group",

@@ -8,8 +8,8 @@ import HorizontalTimeline from "@/components/patterns/HorizontalTimeline";
 import IndustryManifest from "@/components/industries/IndustryManifest";
 import { industries } from "@/lib/data/industries";
 import { PageAccent } from "@/components/visuals/PageAccent";
-import "@/app/styles/patterns.css";
-import "@/app/styles/industries-page.css";
+import "@/styles/patterns.css";
+import "@/styles/industries-page.css";
 
 export const metadata: Metadata = {
   title: "Industries | Trivoxa Group",

@@ -3,7 +3,7 @@ import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section } from "@/components/trivoxa/ui";
 import { Link } from "@/i18n/navigation";
 import { PageAccent } from "@/components/visuals/PageAccent";
-import "@/app/styles/patterns.css";
+import "@/styles/patterns.css";
 
 export const metadata: Metadata = {
   title: "Thank You | Trivoxa Group",

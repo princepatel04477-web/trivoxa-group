@@ -12,9 +12,9 @@ import HorizontalTimeline from "@/components/patterns/HorizontalTimeline";
 import LeadershipPanel from "@/components/leadership/LeadershipPanel";
 import EcosystemDiagram from "@/components/ecosystem/EcosystemDiagram";
 import GroupLattice from "@/components/group/GroupLattice";
-import "@/app/styles/patterns.css";
-import "@/app/styles/group-page.css";
-import "@/app/styles/signature-canvas.css";
+import "@/styles/patterns.css";
+import "@/styles/group-page.css";
+import "@/styles/signature-canvas.css";
 
 export const metadata: Metadata = {
   title: "Group | Trivoxa Group",

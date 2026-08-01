@@ -6,9 +6,9 @@ import JobBoard from "@/components/careers/JobBoard";
 import { PageAccent } from "@/components/visuals/PageAccent";
 import { AnimatedCard } from "@/components/motion/AnimatedCard";
 import CareersTeam from "@/components/careers/CareersTeam";
-import "@/app/styles/patterns.css";
-import "@/app/styles/careers-page.css";
-import "@/app/styles/signature-canvas.css";
+import "@/styles/patterns.css";
+import "@/styles/careers-page.css";
+import "@/styles/signature-canvas.css";
 
 export const metadata: Metadata = {
   title: "Careers | Trivoxa Group",

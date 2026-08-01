@@ -1,7 +1,7 @@
 "use client";
 
 import { gsap } from "@/lib/gsap";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -38,7 +38,7 @@ const serviceLinks = [
 
 type Accordion = "group" | "biz" | null;
 
-export default function MobileNav() {
+function MobileNav() {
   const navRef = useRef<HTMLDivElement>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
   const [openSection, setOpenSection] = useState<Accordion>(null);
@@ -69,16 +69,9 @@ export default function MobileNav() {
     };
   }, []);
 
-  // Any navigation collapses accordions — derived reset during render (the
-  // React-sanctioned pattern; avoids a cascading setState-in-effect)…
-  const [lastPath, setLastPath] = useState(pathname);
-  if (lastPath !== pathname) {
-    setLastPath(pathname);
-    setOpenSection(null);
-  }
-
-  // …while closing the overlay is a DOM side effect, so it stays an effect.
+  // Any navigation collapses accordions and closes overlay without double render passes.
   useEffect(() => {
+    setOpenSection(null);
     document.body.classList.remove("nav-active");
   }, [pathname]);
 
@@ -207,3 +200,5 @@ export default function MobileNav() {
     </div>
   );
 }
+
+export default memo(MobileNav);

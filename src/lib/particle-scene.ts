@@ -494,7 +494,6 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
     // takes its colour from the resolved tokens (vTint) and ignores `diffuse`.
     color: 0xffffff,
     size: lightGround ? 0.17 : 0.2,
-    map: texture,
     // Additive brightens toward white and so cannot draw a dark particle on light
     // paper — a light-ground field composites normally instead. On the dark ground
     // additive is what makes the grains read as points of light.
@@ -536,6 +535,13 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
         uniform vec3 uColorAccent;
         varying float vAlpha;
         varying vec3 vTint;
+
+        // Analytical sphere SDF helpers for particle transformations
+        float sphereSDF(vec3 p, float r) { return length(p) - r; }
+        vec3 projectToSphereSDF(vec3 p, float r) {
+          float len = length(p);
+          return len > 0.0001 ? (p / len) * r : p;
+        }
 ${
   geoMode
     ? `        attribute vec2 aGeo;
@@ -547,28 +553,8 @@ ${
         attribute vec3 aEagle;
         uniform float uEagleBlend;
 
-        // Sphere → plane unwrap.
-        //
-        // For bend b, the surface is a sphere of radius R/b tangent to the plane
-        // z = 0 at (lat 0, lon 0). At b = 1 that is exactly a sphere of radius R
-        // centred on the origin; as b → 0 the radius of curvature diverges and
-        // the surface becomes the equirectangular plane x = R·lon, y = R·lat.
-        // Every intermediate b is a coherent surface, which is what makes this
-        // read as unrolling rather than as the globe being crushed — a straight
-        // lerp between a sphere buffer and a plane buffer sends every particle
-        // through the sphere's interior.
-        //
-        // The z term is written via 1 - cos(x) = 2sin²(x/2). Algebraically
-        // identical to R/b·(cos(bu)cos(bv) - 1), but that form loses all its
-        // significant digits to cancellation as b → 0, where the difference of
-        // two near-equal numbers is scaled by a diverging 1/b.
+        // Sphere → plane unwrap using analytical sphere SDF geometry
         vec3 unwrap(vec2 latLon, float bend) {
-          // b is clamped off zero because the radius of curvature is R/b. The
-          // clamp leaves the flat map with a residual bow of R·b·(u²+v²)/2 at the
-          // corners — 3.5e-3 world units against a 44-unit-wide map, four orders
-          // of magnitude below a pixel. 1e-4 is safe in float32 precisely because
-          // the z term below is the cancellation-free form; the naive
-          // R/b·(cos·cos - 1) would have lost all its digits by here.
           float b = max(bend, 1e-4);
           float v = latLon.x;             // latitude, radians
           float u = latLon.y;             // longitude, radians
@@ -588,48 +574,31 @@ ${
     : ""
 }`
       )
-      // THE morph. `position` is the FROM stage, aTo the TO stage. Ordinary
-      // morphs run uStagger=0 so t == uProgress and the easing curve stays
-      // wholly owned by whatever drives the uniform (GSAP tween or scroll
-      // scrub). The hero assemble runs uStagger=1, giving each grain its own
-      // 0–400ms-delayed arrival window.
       .replace(
         "#include <begin_vertex>",
         `float staggered = smoothstep(aDelay, aDelay + 0.55, uProgress);
         float t = mix(uProgress, staggered, uStagger);
 ${
   geoMode
-    ? `        // The map converges into the shared eagle finale. Blending the
-        // analytic position toward a sampled target keeps geo mode's one-float
-        // cost intact through the closing morph too.
-        vec3 transformed = mix(unwrap(aGeo, uBend), aEagle, uEagleBlend);
-        // Regional illumination. The active cluster lifts and everything else —
-        // including the ocean shell, which carries region 0 — drops well back, so
-        // even a small region (the Middle East box is ~2% of the land points)
-        // reads clearly: the contrast does the work, not the brightness.
+    ? `        vec3 transformed = mix(unwrap(aGeo, uBend), aEagle, uEagleBlend);
         float isActive = 1.0 - step(0.5, abs(aRegion - uActiveRegion));
         float regionDim = mix(1.0, mix(0.30, 1.45, isActive), uRegionActive);`
-    : `        vec3 transformed = mix(position, aTo, t);
+    : `        vec3 posTarget = mix(position, aTo, t);
+        // Apply analytical sphere SDF projection when transitioning into globe form
+        vec3 spherePos = projectToSphereSDF(posTarget, ${globeRadius.toFixed(4)});
+        vec3 transformed = mix(posTarget, spherePos, uGlobe * 0.15);
         float regionDim = 1.0;`
 }
-        // Ambient idle drift. Each grain wanders on its own phase across three
-        // incommensurate periods, which reads as a slow curl rather than a
-        // shared wobble. Costs one uniform; no extra attribute, no CPU work.
         transformed += uDrift * vec3(
           sin(uTime * 0.31 + aPhase),
           cos(uTime * 0.27 + aPhase * 1.7),
           sin(uTime * 0.19 + aPhase * 0.6)
         );
-        // Accent mixes on the same t as position, so a node warms into the accent as
-        // the form that makes it focal assembles.
         vTint = mix(uColorPrimary, uColorAccent, clamp(mix(aAccentA, aAccentB, t), 0.0, 1.0));`
       )
       .replace(
         "#include <project_vertex>",
         `#include <project_vertex>
-        // Depth cueing (Phase 3.2.5): fade + shrink the far hemisphere so the
-        // globe reads as a sphere, not a flat disc of dots. Frontness is the
-        // view-space z of this particle's offset from the object centre.
         vec3 vCenter = (modelViewMatrix * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
         vec3 vOff = mvPosition.xyz - vCenter;
         float frontness = length(vOff) > 0.0001 ? normalize(vOff).z : 0.0;
@@ -642,18 +611,16 @@ ${
         float shimmer = 0.68 + 0.32 * sin(uTime + aPhase);
         vAlpha = shimmer * depthOpac * layerDim * regionDim;`
       )
-      // Fold the far-hemisphere size cue into PointsMaterial's own size
-      // assignment (which runs after <project_vertex>, so an earlier
-      // gl_PointSize *= would be overwritten). depthSize is in scope here.
-      .replace("gl_PointSize = size;", "gl_PointSize = size * depthSize;");
+      .replace("gl_PointSize = size;", "gl_PointSize = size * depthSize;")
     shader.fragmentShader = shader.fragmentShader
       .replace("#include <common>", "#include <common>\nvarying float vAlpha;\nvarying vec3 vTint;")
       .replace(
         "vec4 diffuseColor = vec4( diffuse, opacity );",
-        twoTone
-          ? // Per-particle hue replaces the material's single diffuse colour.
-            "vec4 diffuseColor = vec4( vTint, opacity * vAlpha );"
-          : "vec4 diffuseColor = vec4( diffuse, opacity * vAlpha );"
+        `vec2 ptUv = gl_PointCoord - vec2(0.5);
+        float ptDist = length(ptUv);
+        if (ptDist > 0.5) discard;
+        float ptSdf = smoothstep(0.5, 0.05, ptDist) * (1.0 + 0.4 * smoothstep(0.18, 0.0, ptDist));
+        vec4 diffuseColor = vec4( vTint, opacity * vAlpha * ptSdf );`
       );
   };
 
@@ -813,6 +780,7 @@ ${
   // Named-port overlay for the Global Presence globe. Declared before the render
   // loop (which references them) but populated later once R/globeRadius exist.
   let portGroup: THREE.Group | null = null;
+  let portAtlasTexture: THREE.CanvasTexture | null = null;
   let portsMode = false; // true only while the ports globe is the active field
   const portSprites: THREE.Sprite[] = [];
   const arcs: ArcAnim[] = []; // Surat → hub trade lanes on the ports globe
@@ -1081,20 +1049,17 @@ ${
     } else {
       renderer.render(scene, camera);
     }
-    // Once degraded, stop self-scheduling — the caller's onDegrade handler
-    // owns teardown (dispose() also cancels animId, this just avoids one more
-    // wasted frame in between).
-    if (!degraded) animId = requestAnimationFrame(renderLoop);
   }
-  renderLoop();
+  gsap.ticker.add(renderLoop);
 
   function handleVisibilityChange() {
     if (document.hidden) {
       paused = true;
-      cancelAnimationFrame(animId);
+      gsap.ticker.remove(renderLoop);
     } else if (paused) {
       paused = false;
-      renderLoop();
+      clock.getDelta();
+      gsap.ticker.add(renderLoop);
     }
   }
   document.addEventListener("visibilitychange", handleVisibilityChange);
@@ -1204,72 +1169,149 @@ ${
   // Surat is the single origin; packets flow from it out to every hub.
   const CITIES = TRADE_CITIES;
 
-  const makePortSprite = (name: string, origin: boolean): THREE.Sprite => {
+  const createPortSpritesFromAtlas = (
+    cities: typeof CITIES,
+    globeR: number
+  ): { sprites: THREE.Sprite[]; cityVecs: Record<string, THREE.Vector3> } => {
     const dpr = 2;
-    // Surat (origin) is the standout — larger + warm gold. Destinations are
-    // small and muted (a soft slate, NOT bright white) so they don't read as
-    // neon and don't fight each other for attention.
-    const fontPx = origin ? 21 : 15;
-    const weight = origin ? 700 : 500;
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d")!;
-    const fontStack = `${weight} ${fontPx}px 'Lufga','Inter',system-ui,sans-serif`;
-    ctx.font = fontStack;
-    const textW = ctx.measureText(name).width;
     const padX = 5;
-    const dotR = origin ? 6 : 4;
     const gap = 8;
-    const w = Math.ceil(dotR * 2 + gap + textW + padX * 2);
-    const h = Math.ceil(fontPx + 12);
-    canvas.width = w * dpr;
-    canvas.height = h * dpr;
-    ctx.scale(dpr, dpr);
-    ctx.font = fontStack;
-    ctx.textBaseline = "middle";
-    // marker dot
-    ctx.fillStyle = readToken(origin ? "--port-origin-dot" : "--port-dest-dot");
-    ctx.beginPath();
-    ctx.arc(padX + dotR, h / 2, dotR, 0, Math.PI * 2);
-    ctx.fill();
-    // city name — faint shadow so it reads over the grains without glowing
-    ctx.shadowColor = "rgba(6,12,26,0.9)";
-    ctx.shadowBlur = 4;
-    ctx.fillStyle = readToken(origin ? "--port-origin-text" : "--port-dest-text");
-    ctx.fillText(name, padX + dotR * 2 + gap, h / 2 + 1);
-    const tex = new THREE.CanvasTexture(canvas);
-    tex.anisotropy = 4;
-    tex.needsUpdate = true;
-    const mat = new THREE.SpriteMaterial({
-      map: tex,
-      transparent: true,
-      depthTest: false,
-      depthWrite: false,
-      opacity: 0,
-    });
-    const sprite = new THREE.Sprite(mat);
-    // Local size (the whole globe scales up in ports mode — see render loop —
-    // so these stay small on screen even though the globe grows).
-    const worldH = origin ? R * 0.3 : R * 0.19;
-    sprite.scale.set(worldH * (w / h), worldH, 1);
-    sprite.center.set(0, 0.5); // anchor at the dot, so text reads to the right
-    return sprite;
+    const rowGap = 4;
+
+    const tempCanvas = document.createElement("canvas");
+    const tempCtx = tempCanvas.getContext("2d")!;
+
+    interface LabelInfo {
+      c: typeof CITIES[number];
+      origin: boolean;
+      w: number;
+      h: number;
+      wPx: number;
+      hPx: number;
+      yPx: number;
+      dotR: number;
+      fontPx: number;
+      weight: number;
+    }
+
+    const labels: LabelInfo[] = [];
+    let maxWPx = 0;
+    let totalHPx = 0;
+
+    for (const c of cities) {
+      const origin = !!c.origin;
+      const fontPx = origin ? 21 : 15;
+      const weight = origin ? 700 : 500;
+      const dotR = origin ? 6 : 4;
+      const fontStack = `${weight} ${fontPx}px 'Lufga','Inter',system-ui,sans-serif`;
+      tempCtx.font = fontStack;
+      const textW = tempCtx.measureText(c.name).width;
+      const w = Math.ceil(dotR * 2 + gap + textW + padX * 2);
+      const h = Math.ceil(fontPx + 12);
+      const wPx = w * dpr;
+      const hPx = h * dpr;
+
+      labels.push({
+        c,
+        origin,
+        w,
+        h,
+        wPx,
+        hPx,
+        yPx: totalHPx,
+        dotR,
+        fontPx,
+        weight,
+      });
+
+      if (wPx > maxWPx) maxWPx = wPx;
+      totalHPx += hPx + rowGap * dpr;
+    }
+
+    // Single HTML 2D Canvas creation for all port label textures
+    const atlasCanvas = document.createElement("canvas");
+    atlasCanvas.width = Math.max(maxWPx, 1);
+    atlasCanvas.height = Math.max(totalHPx, 1);
+    const ctx = atlasCanvas.getContext("2d")!;
+
+    for (const label of labels) {
+      ctx.save();
+      ctx.translate(0, label.yPx);
+      ctx.scale(dpr, dpr);
+
+      const fontStack = `${label.weight} ${label.fontPx}px 'Lufga','Inter',system-ui,sans-serif`;
+      ctx.font = fontStack;
+      ctx.textBaseline = "middle";
+
+      // marker dot
+      ctx.fillStyle = readToken(label.origin ? "--port-origin-dot" : "--port-dest-dot");
+      ctx.beginPath();
+      ctx.arc(padX + label.dotR, label.h / 2, label.dotR, 0, Math.PI * 2);
+      ctx.fill();
+
+      // city name — faint shadow so it reads over the grains without glowing
+      ctx.shadowColor = "rgba(6,12,26,0.9)";
+      ctx.shadowBlur = 4;
+      ctx.fillStyle = readToken(label.origin ? "--port-origin-text" : "--port-dest-text");
+      ctx.fillText(label.c.name, padX + label.dotR * 2 + gap, label.h / 2 + 1);
+
+      ctx.restore();
+    }
+
+    const atlasTexture = new THREE.CanvasTexture(atlasCanvas);
+    atlasTexture.anisotropy = 4;
+    atlasTexture.needsUpdate = true;
+    portAtlasTexture = atlasTexture;
+
+    const sprites: THREE.Sprite[] = [];
+    const cityVecs: Record<string, THREE.Vector3> = {};
+
+    for (const label of labels) {
+      const tex = atlasTexture.clone();
+      tex.needsUpdate = true;
+
+      const uRepeat = label.wPx / atlasCanvas.width;
+      const vRepeat = label.hPx / atlasCanvas.height;
+      const uOffset = 0;
+      const vOffset = 1 - (label.yPx + label.hPx) / atlasCanvas.height;
+
+      tex.repeat.set(uRepeat, vRepeat);
+      tex.offset.set(uOffset, vOffset);
+
+      const mat = new THREE.SpriteMaterial({
+        map: tex,
+        transparent: true,
+        depthTest: false,
+        depthWrite: false,
+        opacity: 0,
+      });
+
+      const sprite = new THREE.Sprite(mat);
+      const worldH = label.origin ? globeR * 0.3 : globeR * 0.19;
+      sprite.scale.set(worldH * (label.w / label.h), worldH, 1);
+      sprite.center.set(0, 0.5);
+
+      const [x, y, z] = latLonToVec3(label.c.lat, label.c.lon, globeR * 1.045);
+      sprite.position.set(x, y, z);
+      sprite.renderOrder = label.origin ? 4 : 3;
+
+      sprites.push(sprite);
+      cityVecs[label.c.name] = new THREE.Vector3(...latLonToVec3(label.c.lat, label.c.lon, globeR * 1.01));
+    }
+
+    return { sprites, cityVecs };
   };
 
-  // The overlay is home / global-presence only: fourteen canvas-texture label
-  // sprites plus thirteen arc geometries and their packet sprites. Pages whose
+  // The overlay is home / global-presence only: a single shared canvas-texture label
+  // atlas for port sprites plus thirteen arc geometries and their packet sprites. Pages whose
   // choreography never shows the ports globe skip building any of it.
   if (wantsPorts) {
     portGroup = new THREE.Group();
     portGroup.visible = false;
-    const cityVecs: Record<string, THREE.Vector3> = {};
-    for (const c of CITIES) {
-      const sprite = makePortSprite(c.name, !!c.origin);
-      const [x, y, z] = latLonToVec3(c.lat, c.lon, globeRadius * 1.045);
-      sprite.position.set(x, y, z);
-      sprite.renderOrder = c.origin ? 4 : 3; // labels over arcs; Surat over labels
+    const { sprites, cityVecs } = createPortSpritesFromAtlas(CITIES, globeRadius);
+    for (const sprite of sprites) {
       portGroup.add(sprite);
       portSprites.push(sprite);
-      cityVecs[c.name] = new THREE.Vector3(...latLonToVec3(c.lat, c.lon, globeRadius * 1.01));
     }
 
     // Connecting arcs + travelling packets: one lane from Surat to every hub. Each
@@ -1849,7 +1891,7 @@ ${
       disposed = true;
       settleTimers.forEach((t) => clearTimeout(t));
       window.removeEventListener("load", resync);
-      cancelAnimationFrame(animId);
+      gsap.ticker.remove(renderLoop);
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("pointermove", handlePointer);
       window.removeEventListener("pointerdown", handleDragStart);
@@ -1867,27 +1909,29 @@ ${
         composer.inputBuffer?.dispose();
         composer.outputBuffer?.dispose();
       }
-      renderer.dispose();
       geometry.dispose();
       material.dispose();
       linkMesh?.geometry.dispose();
       linkMaterial?.dispose();
       // Port-globe overlay: dispose each label/arc's own geometry + material
-      // (and its unique canvas texture — but not the shared particle `texture`,
+      // (and its cloned canvas texture — but not the shared particle `texture` or `portAtlasTexture`,
       // freed once below).
       portGroup?.traverse((o) => {
         const obj = o as THREE.Mesh & THREE.Line & THREE.Sprite;
         obj.geometry?.dispose?.();
         const m = obj.material as THREE.Material & { map?: THREE.Texture | null };
         if (m) {
-          if (m.map && m.map !== texture) m.map.dispose();
+          if (m.map && m.map !== texture && m.map !== portAtlasTexture) m.map.dispose();
           m.dispose();
         }
       });
+      portAtlasTexture?.dispose();
       texture.dispose();
       perfHud?.dispose();
       gsap.killTweensOf(morphProgress);
       instanceScrollTriggers.forEach((st) => st.kill());
+      renderer.dispose();
+      renderer.forceContextLoss();
     },
   };
 }

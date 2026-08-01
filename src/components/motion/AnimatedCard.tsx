@@ -1,24 +1,27 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { type ReactNode, useEffect, useRef } from "react";
+import { gsap } from "@/lib/gsap";
 
 const TAGS = {
-  div: motion.div,
-  li: motion.li,
-  article: motion.article,
-  figure: motion.figure,
+  div: "div",
+  li: "li",
+  article: "article",
+  figure: "figure",
 } as const;
 
 type Tag = keyof typeof TAGS;
 
 export type AnimatedCardVariant = "up" | "left" | "right" | "scale";
 
-const VARIANTS: Record<AnimatedCardVariant, { initial: Record<string, number>; animate: Record<string, number> }> = {
-  up: { initial: { opacity: 0, y: 28 }, animate: { opacity: 1, y: 0 } },
-  left: { initial: { opacity: 0, x: -28 }, animate: { opacity: 1, x: 0 } },
-  right: { initial: { opacity: 0, x: 28 }, animate: { opacity: 1, x: 0 } },
-  scale: { initial: { opacity: 0, scale: 0.94 }, animate: { opacity: 1, scale: 1 } },
+const VARIANTS: Record<
+  AnimatedCardVariant,
+  { from: gsap.TweenVars; to: gsap.TweenVars }
+> = {
+  up: { from: { opacity: 0, y: 28 }, to: { opacity: 1, y: 0 } },
+  left: { from: { opacity: 0, x: -28 }, to: { opacity: 1, x: 0 } },
+  right: { from: { opacity: 0, x: 28 }, to: { opacity: 1, x: 0 } },
+  scale: { from: { opacity: 0, scale: 0.94 }, to: { opacity: 1, scale: 1 } },
 };
 
 export interface AnimatedCardProps {
@@ -27,50 +30,55 @@ export interface AnimatedCardProps {
   index?: number;
   as?: Tag;
   className?: string;
-  /** Entrance direction. Default "up" matches the original single-style
-   * behavior exactly — pass "left"/"right" to alternate across a grid's
-   * columns, or "scale" for a lone feature card. No rotation/skew/tilt:
-   * that was tried on text reveals before and the client rejected it, so
-   * card entrances stay to the same restrained fade+translate/scale family. */
+  /** Entrance direction. */
   variant?: AnimatedCardVariant;
-  /** Forwarded to the rendered element. Some cards double as ScrollTrigger
-   * anchors (e.g. the `#region-*` lanes global-presence drives the world map
-   * from), so this must reach the DOM on the reduced-motion path too — the
-   * trigger has to resolve whether or not the entrance animates. */
+  /** Forwarded to the rendered element. */
   id?: string;
 }
 
-/** Card-grid item: fades/rises (or slides/scales, per `variant`) in on
- * scroll (staggered by `index`) and lifts gently on hover. Hover border/
- * shadow live in the `.motion-card` CSS class (globals via motion.css) so
- * they stay cheap CSS transitions; only the entrance and the hover/tap lift
- * are driven by Motion. Hover/tap stay vertical-only regardless of `variant`
- * — mixing a horizontal entrance with a horizontal hover would read as drag,
- * not lift. Reduced-motion users get the plain element — content and layout
- * unaffected either way. */
-export function AnimatedCard({ children, index = 0, as = "div", className = "", variant = "up", id }: AnimatedCardProps) {
-  const reduceMotion = useReducedMotion();
+/** Card-grid item: entrance animated with GSAP ScrollTrigger, hover/tap handled via CSS. */
+export function AnimatedCard({
+  children,
+  index = 0,
+  as = "div",
+  className = "",
+  variant = "up",
+  id,
+}: AnimatedCardProps) {
+  const elRef = useRef<HTMLElement>(null);
+  const Comp = TAGS[as] as React.ElementType;
   const cls = `motion-card ${className}`.trim();
   const delay = Math.min(index * 0.07, 0.42);
 
-  if (reduceMotion) {
-    const Static = as;
-    return <Static className={cls} id={id}>{children}</Static>;
-  }
+  useEffect(() => {
+    const el = elRef.current;
+    if (!el) return;
 
-  const Comp = TAGS[as];
-  const { initial, animate } = VARIANTS[variant];
+    const reduceMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion) return;
+
+    const { from, to } = VARIANTS[variant];
+    const ctx = gsap.context(() => {
+      gsap.fromTo(el, from, {
+        ...to,
+        duration: 0.6,
+        delay,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: el,
+          start: "top 80%",
+          once: true,
+        },
+      });
+    }, el);
+
+    return () => ctx.revert();
+  }, [delay, variant]);
+
   return (
-    <Comp
-      id={id}
-      className={cls}
-      initial={initial}
-      whileInView={animate}
-      viewport={{ once: true, amount: 0.2 }}
-      whileHover={{ y: -7 }}
-      whileTap={{ y: -3 }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay }}
-    >
+    <Comp ref={elRef} id={id} className={cls}>
       {children}
     </Comp>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import GrainOverlay from "@/components/hero/GrainOverlay";
+import CanvasGrainOverlay from "@/components/hero/CanvasGrainOverlay";
 import { gsap } from "@/lib/gsap";
 
 const MOBILE_QUERY = "(max-width: 767px)";
@@ -26,13 +26,15 @@ export interface SectionGrainProps {
 /** Scoped film-grain atmosphere layer, following the hero's GrainGlobe
  * matchMedia convention but reusable across sections via `className`. */
 export default function SectionGrain({ className, vignette = false, scrollScale = false }: SectionGrainProps) {
-  const [isMobile, setIsMobile] = useState(() => matches(MOBILE_QUERY));
-  const [reducedMotion, setReducedMotion] = useState(() => matches(REDUCED_MOTION_QUERY));
+  const [isMobile, setIsMobile] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const mobileQuery = window.matchMedia(MOBILE_QUERY);
     const motionQuery = window.matchMedia(REDUCED_MOTION_QUERY);
+    setIsMobile(mobileQuery.matches);
+    setReducedMotion(motionQuery.matches);
     const onMobileChange = (e: MediaQueryListEvent) => setIsMobile(e.matches);
     const onMotionChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
     mobileQuery.addEventListener("change", onMobileChange);
@@ -62,7 +64,7 @@ export default function SectionGrain({ className, vignette = false, scrollScale 
 
   return (
     <div className={className} ref={wrapperRef} aria-hidden="true">
-      <GrainOverlay frameSkip={isMobile ? 4 : 2} reducedMotion={reducedMotion} />
+      <CanvasGrainOverlay frameSkip={isMobile ? 4 : 2} reducedMotion={reducedMotion} />
       {vignette && <div className="grain-globe__vignette" />}
     </div>
   );

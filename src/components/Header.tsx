@@ -2,7 +2,7 @@
 import { useTranslations } from "next-intl";
 
 import { gsap } from "@/lib/gsap";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { on } from "@/lib/site-events";
 import { getLenis } from "@/components/providers/LenisProvider";
 import { Link, usePathname } from "@/i18n/navigation";
@@ -41,7 +41,7 @@ const serviceColumn = [
 
 type OpenMenu = "group" | "biz" | null;
 
-export default function Header() {
+function Header() {
   const t = useTranslations("nav");
   const tm = useTranslations("megaMenu");
   const pathname = usePathname();
@@ -68,13 +68,10 @@ export default function Header() {
     return () => document.removeEventListener("keydown", onKey);
   }, []);
 
-  // Route change always dismisses panels — derived reset during render (the
-  // React-sanctioned pattern; avoids a cascading setState-in-effect).
-  const [lastPath, setLastPath] = useState(pathname);
-  if (lastPath !== pathname) {
-    setLastPath(pathname);
+  // Route change dismisses open panels without double render passes.
+  useEffect(() => {
     setOpenMenu(null);
-  }
+  }, [pathname]);
 
   /** Active-trail detection for the underline + aria-current. */
   const isActive = useCallback(
@@ -121,6 +118,7 @@ export default function Header() {
     // Primary: Lenis scroll event (the real driver).
     let lenisOff = () => {};
     const hookLenis = () => {
+      lenisOff();
       const lenis = getLenis();
       if (!lenis) return;
       const cb = () => apply(lenis.animatedScroll ?? window.scrollY);
@@ -139,6 +137,7 @@ export default function Header() {
 
     apply(window.scrollY);
     return () => {
+      document.body.classList.remove("nav-active");
       lenisOff();
       offInit();
       window.removeEventListener("scroll", onScroll);
@@ -154,7 +153,7 @@ export default function Header() {
   };
 
   return (
-    <div className="header" ref={rootRef}>
+    <header role="banner" className="header" ref={rootRef}>
       <div className="header-wrapper">
         {/* Left cluster — first half of the primary nav. */}
         <div className="h-left">
@@ -223,7 +222,7 @@ export default function Header() {
         {/* Centered logo. */}
         <div className="logo">
           <Link href="/" aria-label="Trivoxa Group — home">
-            <img src="/images/trivoxa-logo.png" alt="Trivoxa Group" />
+            <img src="/images/trivoxa-logo.png" alt="Trivoxa Group" width={150} height={73} />
           </Link>
         </div>
 
@@ -246,7 +245,7 @@ export default function Header() {
             <span className="d-flex">
               <span>{t("requestQuote")}</span>
               <div className="img d-flex">
-                <img src="/images/icons/envelope-send.svg" alt="" />
+                <img src="/images/icons/envelope-send.svg" alt="" width={20} height={18} />
               </div>
             </span>
           </Link>
@@ -265,7 +264,7 @@ export default function Header() {
           </button>
           <Link className="mobile-contact" href="/rfq/" aria-label={t("requestQuote")}>
             <div>
-              <img src="/images/icons/envelope-send.svg" alt="" />
+              <img src="/images/icons/envelope-send.svg" alt="" width={20} height={18} />
             </div>
           </Link>
         </div>
@@ -316,6 +315,8 @@ export default function Header() {
           </div>
         </div>
       </div>
-    </div>
+    </header>
   );
 }
+
+export default memo(Header);

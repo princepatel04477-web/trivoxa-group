@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { memo, useState, type FormEvent } from "react";
 import { Link } from "@/i18n/navigation";
 
 const DIGITAL_URL = "https://digital.trivoxagroup.com";
@@ -68,7 +68,7 @@ function FooterColumn({ title, links }: { title: string; links: { label: string;
   );
 }
 
-export default function SiteFooter() {
+function SiteFooter() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -97,7 +97,7 @@ export default function SiteFooter() {
           {/* Brand column */}
           <div className="col footer-brand">
             <div className="logo">
-              <img src="/images/trivoxa-logo.png" alt="Trivoxa Group" />
+              <img src="/images/trivoxa-logo.png" alt="Trivoxa Group" width={150} height={73} />
             </div>
             <p className="tagline">Building the Future of Global Commerce — One Partnership at a Time.</p>
 
@@ -173,3 +173,5 @@ export default function SiteFooter() {
     </section>
   );
 }
+
+export default memo(SiteFooter);

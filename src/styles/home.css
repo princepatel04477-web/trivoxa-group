@@ -1,0 +1,489 @@
+/* ============================================================
+   Home preview sections — About · Global Presence · Insights ·
+   Careers · Final CTA. Premium dark-gold, transparent so the
+   particle field reads through every section.
+   ============================================================ */
+
+.home-sec {
+  position: relative;
+  padding: 150px 0;
+  z-index: 1;
+}
+
+.home-sec .container {
+  width: 100%;
+}
+
+/* Shared eyebrow — gold uppercase label with a leading rule */
+.home-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-transform: uppercase;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 4px;
+  color: var(--trivoxa-gold, var(--gold-hover));
+  margin-bottom: 28px;
+}
+
+.home-eyebrow::before {
+  content: "";
+  width: 42px;
+  height: 1px;
+  background: var(--trivoxa-gold, var(--gold-hover));
+  opacity: 0.55;
+}
+
+.home-heading {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(32px, 3.6vw, 52px);
+  line-height: 1.16;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  max-width: 16ch;
+}
+
+.home-lead {
+  color: color-mix(in srgb, var(--text) 72%, transparent);
+  font-size: clamp(16px, 1.25vw, 19px);
+  line-height: 1.8;
+  font-weight: 300;
+  max-width: 58ch;
+}
+
+.home-lead + .home-lead {
+  margin-top: 20px;
+}
+
+/* Buttons — reuse hero language */
+.home-cta {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-top: 44px;
+}
+
+.btn-gold,
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 38px;
+  border-radius: 40px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: background 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+    border-color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+    color 0.4s cubic-bezier(0.25, 0.1, 0.25, 1), transform 0.3s ease;
+}
+
+.btn-gold {
+  border: 1px solid var(--advida-accent, var(--gold));
+  background: var(--advida-accent, var(--gold));
+  color: var(--bg);
+  font-weight: 500;
+}
+
+.btn-gold:hover {
+  background: transparent;
+  color: var(--advida-accent, var(--gold));
+  transform: translateY(-2px);
+}
+
+.btn-gold:active {
+  transform: scale(0.98);
+}
+
+.btn-ghost {
+  border: 1px solid color-mix(in srgb, var(--text) 16%, transparent);
+  color: var(--text);
+  font-weight: 300;
+}
+
+.btn-ghost:hover {
+  border-color: var(--advida-accent, var(--gold));
+  color: var(--advida-accent, var(--gold));
+  background: color-mix(in srgb, var(--gold) 6%, transparent);
+  transform: translateY(-1px);
+}
+
+/* ---------- About Preview ---------- */
+.hp-about .about-grid {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: clamp(40px, 6vw, 120px);
+  align-items: center;
+}
+
+.hp-about .about-grid .lead-col p {
+  margin: 0;
+}
+
+/* ---------- Global Presence Preview ---------- */
+.hp-global {
+  text-align: center;
+  padding: 190px 0;
+}
+
+.hp-global .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hp-global .home-heading {
+  max-width: 20ch;
+}
+
+.hp-global .home-lead {
+  text-align: center;
+}
+
+/* Desktop: the particle globe is parked on the RIGHT (see particle-scene.ts
+   sweep(".hp-global", side)), so all of the section's copy is left-aligned and
+   held in the left ~half to sit clear of it. Mobile keeps the centred stack. */
+@media (min-width: 900px) {
+  .hp-global .container {
+    align-items: flex-start;
+    padding-right: min(52%, 700px);
+  }
+  .hp-global .home-eyebrow,
+  .hp-global .home-heading,
+  .hp-global .home-lead {
+    text-align: left;
+  }
+  .hp-global .home-heading {
+    max-width: 22ch;
+  }
+  .presence-vision {
+    margin-left: 0;
+    margin-right: 0;
+    text-align: left;
+    max-width: 100%;
+  }
+  .presence-vision p {
+    /* slightly smaller here so the quote fits the narrower left column cleanly */
+    font-size: clamp(1.25rem, 1.9vw, 1.85rem);
+  }
+  .hp-global .home-cta {
+    justify-content: flex-start !important;
+  }
+}
+
+.hp-global .globe-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(32px, 5vw, 80px);
+  margin-top: 56px;
+}
+
+.hp-global .globe-stats .stat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hp-global .globe-stats .stat .k {
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--trivoxa-gold, var(--gold-hover));
+}
+
+.hp-global .globe-stats .stat .v {
+  font-size: 15px;
+  color: color-mix(in srgb, var(--text) 70%, transparent);
+  font-weight: 300;
+}
+
+/* ---------- Insights Preview ---------- */
+.hp-insights .insights-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 40px;
+  margin-bottom: 64px;
+}
+
+.hp-insights .insights-head .home-lead {
+  max-width: 46ch;
+}
+
+/* Below ~1080px the heading + lead can't sit comfortably side-by-side; relying
+   on flex-wrap dropped the lead awkwardly below a short heading with a big empty
+   gap to the right. Stack them cleanly instead (heading, then lead under it). */
+@media (max-width: 1080px) {
+  .hp-insights .insights-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+  .hp-insights .insights-head .home-lead {
+    max-width: 60ch;
+  }
+}
+
+.hp-insights .article-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+.article-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
+  border-radius: 18px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--bg-card) 55%, transparent);
+  backdrop-filter: blur(6px);
+  transition: transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1),
+    border-color 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.article-card:hover {
+  transform: translateY(-6px);
+  border-color: color-mix(in srgb, var(--gold) 50%, transparent);
+}
+
+.article-card .thumb {
+  height: 168px;
+  background: linear-gradient(135deg, color-mix(in oklab, var(--gold) 40%, var(--bg)) 0%, var(--bg) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.article-card .thumb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 30% 20%,
+    color-mix(in srgb, var(--gold-hover) 45%, transparent),
+    transparent 60%
+  );
+  mix-blend-mode: screen;
+}
+
+.article-card .body {
+  padding: 26px 28px 30px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.article-card .tag {
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--trivoxa-gold, var(--gold-hover));
+  margin-bottom: 16px;
+}
+
+.article-card h4 {
+  font-size: 21px;
+  line-height: 1.35;
+  margin: 0 0 22px;
+}
+
+.article-card .read {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: color-mix(in srgb, var(--text) 75%, transparent);
+  transition: gap 0.3s ease, color 0.3s ease;
+}
+
+.article-card:hover .read {
+  gap: 16px;
+  color: var(--advida-accent, var(--gold));
+}
+
+/* ---------- Careers Preview ---------- */
+.hp-careers .careers-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: clamp(40px, 6vw, 110px);
+  align-items: center;
+}
+
+.hp-careers .highlights {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.hp-careers .highlight {
+  border: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
+  border-radius: 14px;
+  padding: 26px 24px;
+  background: color-mix(in srgb, var(--bg-card) 50%, transparent);
+  transition: border-color 0.4s ease, transform 0.4s ease;
+}
+
+.hp-careers .highlight:hover {
+  border-color: color-mix(in srgb, var(--gold) 45%, transparent);
+  transform: translateY(-4px);
+}
+
+.hp-careers .highlight .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--trivoxa-gold, var(--gold-hover));
+  margin-bottom: 18px;
+}
+
+.hp-careers .highlight h5 {
+  font-size: 18px;
+  margin: 0 0 8px;
+}
+
+.hp-careers .highlight p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--text) 62%, transparent);
+  font-weight: 300;
+}
+
+/* ---------- Final CTA ---------- */
+.hp-cta {
+  text-align: center;
+  padding: 200px 0 210px;
+}
+
+.hp-cta .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hp-cta .home-heading {
+  max-width: 22ch;
+  font-size: clamp(38px, 4.4vw, 64px);
+}
+
+.hp-cta .home-lead {
+  text-align: center;
+  margin-top: 26px;
+}
+
+.hp-cta .home-cta {
+  justify-content: center;
+  margin-top: 52px;
+}
+
+/* ---------- Reveal defaults ---------- */
+.home-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  will-change: opacity, transform;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 991px) {
+  .home-sec {
+    padding: 110px 0;
+  }
+  .hp-about .about-grid,
+  .hp-careers .careers-grid {
+    grid-template-columns: 1fr;
+    gap: 44px;
+  }
+  .hp-insights .article-grid {
+    grid-template-columns: 1fr;
+    max-width: 460px;
+  }
+  .hp-global,
+  .hp-cta {
+    padding: 130px 0;
+  }
+}
+
+@media (max-width: 575px) {
+  .home-sec {
+    padding: 88px 0;
+  }
+  .home-cta {
+    gap: 12px;
+  }
+  .btn-gold,
+  .btn-ghost {
+    padding: 15px 30px;
+    font-size: 14px;
+  }
+  .hp-careers .highlights {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Why Buyers Trust (audit fix #5) ---------- */
+.hp-trust .head-col {
+  margin-bottom: clamp(40px, 5vw, 72px);
+}
+.hp-trust .trust-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(20px, 2.4vw, 36px);
+}
+.hp-trust .trust-card {
+  padding: clamp(24px, 2.4vw, 38px);
+  border: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--bg) 40%, transparent);
+  transition: border-color 0.4s var(--ease-out, ease),
+    transform 0.3s var(--ease-out, ease);
+}
+/* Entrance direction override: .home-reveal's shared translateY doesn't
+   apply here — trust-cards slide in on x instead, alternating by column,
+   so the 2x2 grid doesn't repeat one motion four times (see
+   WhyBuyersTrust.tsx, which tweens x instead of y for this selector). */
+.hp-trust .trust-card.home-reveal {
+  transform: translateX(-24px);
+}
+.hp-trust .trust-card.home-reveal:nth-child(even) {
+  transform: translateX(24px);
+}
+.hp-trust .trust-card:hover {
+  border-color: var(--advida-accent, var(--gold));
+  transform: translateY(-3px);
+}
+.hp-trust .trust-card__title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(18px, 1.5vw, 22px);
+  letter-spacing: -0.01em;
+  color: var(--text);
+  margin: 0 0 12px;
+}
+.hp-trust .trust-card__body {
+  font-size: clamp(14px, 1.1vw, 16px);
+  line-height: 1.7;
+  font-weight: 300;
+  color: color-mix(in srgb, var(--text) 68%, transparent);
+  margin: 0;
+}
+.hp-trust .trust-note {
+  margin-top: clamp(28px, 3vw, 44px);
+  max-width: 64ch;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: color-mix(in srgb, var(--text) 50%, transparent);
+}
+@media (max-width: 768px) {
+  .hp-trust .trust-grid {
+    grid-template-columns: 1fr;
+  }
+}

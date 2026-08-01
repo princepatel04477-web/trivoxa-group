@@ -33,18 +33,4 @@ export function CircleProgressIcon({ className }: { className?: string }) {
   );
 }
 
-/** Paths of the downloaded advida icon files, for `<img src>` usage that matches the original DOM. */
-export const iconPaths = {
-  arrowRight: "/images/icons/arrow-right.svg",
-  bookCall: "/images/icons/book-call.svg",
-  check: "/images/icons/check.svg",
-  chevronDown: "/images/icons/chevron-down.svg",
-  chevronDownLg: "/images/icons/chevron-down-lg.svg",
-  close: "/images/icons/close.svg",
-  envelopeSend: "/images/icons/envelope-send.svg",
-  facebook: "/images/icons/facebook.svg",
-  linkedin: "/images/icons/linkedin.svg",
-  tickCircle: "/images/icons/tick-circle.svg",
-  twitter: "/images/icons/twitter.svg",
-  logo: "/images/logo.svg",
-} as const;
+

@@ -4,6 +4,8 @@ import { useState } from "react";
 import { contactSchema } from "@/lib/validation/contact";
 import { useRouter } from "@/i18n/navigation";
 
+import LazyCrane from "@/components/LazyCrane";
+
 type Status = "idle" | "submitting" | "success" | "error";
 
 export default function ContactForm({
@@ -56,6 +58,7 @@ export default function ContactForm({
   if (status === "success") {
     return (
       <div className={`contact-form ${className ?? ""}`}>
+        <LazyCrane variant="success" />
         <p className="form-status form-status--success" role="status">
           Message sent — our team will get back to you within 24 business hours (IST).
         </p>

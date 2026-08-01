@@ -4,7 +4,7 @@ import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section } from "@/components/trivoxa/ui";
 import ContactForm from "@/components/ContactForm";
 import { PageAccent } from "@/components/visuals/PageAccent";
-import "@/app/styles/industries-page.css";
+import "@/styles/industries-page.css";
 
 export const metadata: Metadata = {
   title: "Contact | Trivoxa Group",

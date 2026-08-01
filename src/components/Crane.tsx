@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
 
 export type CraneVariant = "loader" | "hero" | "success" | "subtle";
@@ -19,7 +19,7 @@ export type CraneVariant = "loader" | "hero" | "success" | "subtle";
  * touch transforms/attributes — the DOM tree is never restructured, so this
  * is safe to unmount mid-navigation.
  */
-export default function Crane({
+function Crane({
   variant,
   className,
   onComplete,
@@ -33,6 +33,9 @@ export default function Crane({
   const cableRef = useRef<SVGLineElement>(null);
   const loadRef = useRef<SVGGElement>(null);
   const logoRef = useRef<SVGGElement>(null);
+
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
 
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -53,7 +56,7 @@ export default function Crane({
       // Static, meaningful frame per variant — no motion at all.
       setHoist(variant === "success" ? 150 : 90);
       gsap.set(trolley, { x: variant === "success" ? 120 : 40 });
-      if (variant === "success") onComplete?.();
+      if (variant === "success") onCompleteRef.current?.();
       return;
     }
 
@@ -119,7 +122,7 @@ export default function Crane({
         gsap.set(load, { opacity: 1 });
         const hoist = { d: 70 };
         const tl = gsap.timeline({
-          onComplete: () => onComplete?.(),
+          onComplete: () => onCompleteRef.current?.(),
         });
         tl.to(trolley, { x: 120, duration: 1.3, ease: "power1.inOut" })
           .to(hoist, {
@@ -147,7 +150,7 @@ export default function Crane({
     }, rootRef);
 
     return () => ctx.revert();
-  }, [variant, onComplete]);
+  }, [variant]);
 
   return (
     <svg
@@ -210,3 +213,5 @@ export default function Crane({
     </svg>
   );
 }
+
+export default memo(Crane);

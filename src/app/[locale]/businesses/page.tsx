@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import "@/app/styles/patterns.css";
-import "@/app/styles/businesses-page.css";
-import "@/app/styles/signature-canvas.css";
+import "@/styles/patterns.css";
+import "@/styles/businesses-page.css";
+import "@/styles/signature-canvas.css";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import BusinessesCube from "@/components/businesses/BusinessesCube";
 import { PageHero, Section, CtaBand } from "@/components/trivoxa/ui";

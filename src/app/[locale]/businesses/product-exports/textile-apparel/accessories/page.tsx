@@ -4,7 +4,7 @@ import { PageHero, Section, Checklist, CtaBand } from "@/components/trivoxa/ui";
 import ProductTable from "@/components/products/ProductTable";
 import { getSubCategory } from "@/lib/data/product-categories";
 import { PageAccent } from "@/components/visuals/PageAccent";
-import "@/app/styles/patterns.css";
+import "@/styles/patterns.css";
 
 export const metadata: Metadata = {
   title: "Textile & Apparel Accessories | Trivoxa Group",

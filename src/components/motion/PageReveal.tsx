@@ -1,16 +1,16 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { type ReactNode, useEffect, useRef } from "react";
+import { gsap } from "@/lib/gsap";
 
 const TAGS = {
-  div: motion.div,
-  section: motion.section,
-  h1: motion.h1,
-  h2: motion.h2,
-  h3: motion.h3,
-  p: motion.p,
-  span: motion.span,
+  div: "div",
+  section: "section",
+  h1: "h1",
+  h2: "h2",
+  h3: "h3",
+  p: "p",
+  span: "span",
 } as const;
 
 type Tag = keyof typeof TAGS;
@@ -29,9 +29,7 @@ export interface PageRevealProps {
   amount?: number;
 }
 
-/** Scroll-triggered fade + rise, used for hero and section text blocks.
- * Falls back to a static element (no motion props) when the user prefers
- * reduced motion — content is always present, just never animated. */
+/** Scroll-triggered fade + rise, refactored to use GSAP ScrollTrigger. */
 export function PageReveal({
   children,
   as = "div",
@@ -41,22 +39,43 @@ export function PageReveal({
   duration = 0.7,
   amount = 0.3,
 }: PageRevealProps) {
-  const reduceMotion = useReducedMotion();
+  const elRef = useRef<HTMLElement>(null);
+  const Comp = TAGS[as] as React.ElementType;
 
-  if (reduceMotion) {
-    const Static = as;
-    return <Static className={className}>{children}</Static>;
-  }
+  useEffect(() => {
+    const el = elRef.current;
+    if (!el) return;
 
-  const Comp = TAGS[as];
+    const reduceMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion) return;
+
+    const startPct = Math.round(100 - amount * 100);
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        el,
+        { opacity: 0, y },
+        {
+          opacity: 1,
+          y: 0,
+          duration,
+          delay,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: el,
+            start: `top ${startPct}%`,
+            once: true,
+          },
+        }
+      );
+    }, el);
+
+    return () => ctx.revert();
+  }, [delay, y, duration, amount]);
+
   return (
-    <Comp
-      className={className}
-      initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount }}
-      transition={{ duration, ease: [0.16, 1, 0.3, 1], delay }}
-    >
+    <Comp ref={elRef} className={className}>
       {children}
     </Comp>
   );

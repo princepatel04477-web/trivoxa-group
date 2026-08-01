@@ -4,7 +4,7 @@ import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, Checklist, CtaBand } from "@/components/trivoxa/ui";
 import { PageAccent } from "@/components/visuals/PageAccent";
 import { PageReveal } from "@/components/motion/PageReveal";
-import "@/app/styles/textile-apparel-page.css";
+import "@/styles/textile-apparel-page.css";
 
 export const metadata: Metadata = {
   title: "Textile & Apparel | Trivoxa Group",

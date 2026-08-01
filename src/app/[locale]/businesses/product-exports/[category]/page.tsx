@@ -9,8 +9,8 @@ import OnePagerButton from "@/components/products/OnePagerButton";
 import { exportCategories, getExportCategory } from "@/lib/data/product-categories";
 import { getIndustryBySlug } from "@/lib/data/industries";
 import { PageAccent } from "@/components/visuals/PageAccent";
-import "@/app/styles/patterns.css";
-import "@/app/styles/product-grid.css";
+import "@/styles/patterns.css";
+import "@/styles/product-grid.css";
 
 /** Category pages for every product-export division EXCEPT textile-apparel,
  * which has its own richer static route (and sub-category children). */

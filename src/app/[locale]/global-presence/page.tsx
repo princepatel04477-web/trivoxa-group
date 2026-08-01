@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import "@/app/styles/global-presence-page.css";
-import "@/app/styles/signature-canvas.css";
+import "@/styles/global-presence-page.css";
+import "@/styles/signature-canvas.css";
 import TrivoxaShell from "@/components/trivoxa/TrivoxaShell";
 import { PageHero, Section, Checklist, CtaBand } from "@/components/trivoxa/ui";
 import PresenceGlobe from "@/components/presence/PresenceGlobe";

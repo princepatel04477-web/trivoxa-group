@@ -14,6 +14,7 @@ import { routing, isRtl } from "@/i18n/routing";
 // `latin` is missing.
 const workSans = Work_Sans({
   variable: "--font-work-sans",
+  display: "swap",
   subsets: ["latin", "latin-ext"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
@@ -22,6 +23,7 @@ const workSans = Work_Sans({
 // Single weight (400) by design; italic carried for emphasis.
 const instrumentSerif = Instrument_Serif({
   variable: "--font-instrument-serif",
+  display: "swap",
   subsets: ["latin", "latin-ext"],
   weight: ["400"],
   style: ["normal", "italic"],
@@ -30,6 +32,7 @@ const instrumentSerif = Instrument_Serif({
 // Instrument Sans — body / UI / navigation voice.
 const instrumentSans = Instrument_Sans({
   variable: "--font-instrument-sans",
+  display: "swap",
   subsets: ["latin", "latin-ext"],
   weight: ["400", "500", "600", "700"],
 });
@@ -39,6 +42,7 @@ const instrumentSans = Instrument_Sans({
 // Self-hosted by next/font at build time; nothing fetched at runtime.
 const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-ibm-plex-mono",
+  display: "swap",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
 });
@@ -49,39 +53,44 @@ const ibmPlexMono = IBM_Plex_Mono({
 // Google at runtime.
 const notoArabic = Noto_Sans_Arabic({
   variable: "--font-noto-arabic",
+  display: "swap",
   subsets: ["arabic"],
   weight: ["300", "400", "500", "600", "700"],
 });
 
 const notoDevanagari = Noto_Sans_Devanagari({
   variable: "--font-noto-devanagari",
+  display: "swap",
   subsets: ["devanagari"],
   weight: ["300", "400", "500", "600", "700"],
 });
 
 const notoCyrillic = Noto_Sans({
   variable: "--font-noto-cyrillic",
+  display: "swap",
   subsets: ["cyrillic", "cyrillic-ext"],
   weight: ["300", "400", "500", "600", "700"],
 });
 
 const lufga = localFont({
   variable: "--font-lufga",
+  display: "swap",
   src: [
-    { path: "../../fonts/lufga/Lufga-Thin.woff", weight: "100", style: "normal" },
-    { path: "../../fonts/lufga/Lufga-ExtraLight.woff", weight: "200", style: "normal" },
-    { path: "../../fonts/lufga/Lufga-Light.woff", weight: "300", style: "normal" },
-    { path: "../../fonts/lufga/Lufga-Light-Italic.woff", weight: "300", style: "italic" },
-    { path: "../../fonts/lufga/Lufga-Regular.woff", weight: "400", style: "normal" },
-    { path: "../../fonts/lufga/Lufga-Medium.woff", weight: "500", style: "normal" },
-    { path: "../../fonts/lufga/Lufga-SemiBold.woff", weight: "600", style: "normal" },
-    { path: "../../fonts/lufga/Lufga-Bold.woff", weight: "700", style: "normal" },
+    { path: "../../fonts/lufga/Lufga-Thin.woff2", weight: "100", style: "normal" },
+    { path: "../../fonts/lufga/Lufga-ExtraLight.woff2", weight: "200", style: "normal" },
+    { path: "../../fonts/lufga/Lufga-Light.woff2", weight: "300", style: "normal" },
+    { path: "../../fonts/lufga/Lufga-Light-Italic.woff2", weight: "300", style: "italic" },
+    { path: "../../fonts/lufga/Lufga-Regular.woff2", weight: "400", style: "normal" },
+    { path: "../../fonts/lufga/Lufga-Medium.woff2", weight: "500", style: "normal" },
+    { path: "../../fonts/lufga/Lufga-SemiBold.woff2", weight: "600", style: "normal" },
+    { path: "../../fonts/lufga/Lufga-Bold.woff2", weight: "700", style: "normal" },
   ],
 });
 
 const calisto = localFont({
   variable: "--font-calisto",
-  src: [{ path: "../../fonts/calisto/Calisto-MT-Italic.woff", weight: "400", style: "italic" }],
+  display: "swap",
+  src: [{ path: "../../fonts/calisto/Calisto-MT-Italic.woff2", weight: "400", style: "italic" }],
 });
 
 export const metadata: Metadata = {

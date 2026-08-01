@@ -8,9 +8,9 @@ import DeliveryModelDiagram from "@/components/services/DeliveryModelDiagram";
 import { serviceCategories, getServiceCategory, getRelatedServices } from "@/lib/data/services";
 import { PageAccent } from "@/components/visuals/PageAccent";
 import { AnimatedCard } from "@/components/motion/AnimatedCard";
-import "@/app/styles/patterns.css";
-import "@/app/styles/industries-page.css";
-import "@/app/styles/service-exports-page.css";
+import "@/styles/patterns.css";
+import "@/styles/industries-page.css";
+import "@/styles/service-exports-page.css";
 
 const BASE = "/businesses/service-exports";
 

@@ -13,11 +13,13 @@ function splitChars(text: string, spanClass: string) {
   return text.split(" ").map((word, wi) => (
     <Fragment key={wi}>
       {wi > 0 && " "}
-      {word.split("").map((ch, ci) => (
-        <span key={ci} className={spanClass}>
-          {ch}
-        </span>
-      ))}
+      <span className="split-word" style={{ display: "inline-block", whiteSpace: "nowrap" }}>
+        {word.split("").map((ch, ci) => (
+          <span key={ci} className={spanClass}>
+            {ch}
+          </span>
+        ))}
+      </span>
     </Fragment>
   ));
 }
