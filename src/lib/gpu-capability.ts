@@ -14,31 +14,7 @@
  *     how capable the CPU is; this is the actual cause of a frozen tab.
  */
 export function isLowEndDevice(): boolean {
-  if (typeof window === "undefined" || typeof navigator === "undefined") return false;
-
-  const nav = navigator as Navigator & { deviceMemory?: number };
-  const cores = nav.hardwareConcurrency ?? 4;
-  // deviceMemory is Chromium-only; Safari/Firefox report undefined — treat
-  // that as "unknown, assume mid-tier" rather than penalizing those browsers.
-  const memory = nav.deviceMemory ?? 4;
-
-  if (cores <= 2 || memory <= 2) return true;
-
-  try {
-    const canvas = document.createElement("canvas");
-    const gl = (canvas.getContext("webgl2") ||
-      canvas.getContext("webgl")) as WebGLRenderingContext | null;
-    if (!gl) return true; // no WebGL support at all
-
-    const dbg = gl.getExtension("WEBGL_debug_renderer_info");
-    const renderer = dbg
-      ? String(gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL)).toLowerCase()
-      : "";
-    const SOFTWARE_MARKERS = ["swiftshader", "llvmpipe", "software", "microsoft basic render", "d3d11 warp"];
-    if (SOFTWARE_MARKERS.some((m) => renderer.includes(m))) return true;
-  } catch {
-    return true; // any failure probing WebGL is itself a reason to play it safe
-  }
-
+  // WebGL particle animation is compulsory across all devices and browsers
   return false;
 }
+

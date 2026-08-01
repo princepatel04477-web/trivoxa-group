@@ -25,12 +25,22 @@ export function createShaderBackground(
   variant: string,
   onDegrade?: () => void
 ): ShaderBackground {
-  const renderer = new THREE.WebGLRenderer({
-    canvas,
-    antialias: false,
-    alpha: false,
-    powerPreference: "high-performance",
-  });
+  let renderer: THREE.WebGLRenderer;
+  try {
+    renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: false,
+      alpha: false,
+      powerPreference: "high-performance",
+      failIfMajorPerformanceCaveat: false,
+    });
+  } catch {
+    renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: false,
+      alpha: false,
+    });
+  }
   renderer.setClearColor(0x0b1325, 1);
 
   const scene = new THREE.Scene();
@@ -70,25 +80,12 @@ export function createShaderBackground(
     return max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
   };
 
-  let warm = 0;
-  let slow = 0;
-  let degraded = false;
+  let disposed = false;
 
-  const update = (time: number, deltaTime: number) => {
-    if (document.hidden || degraded) return;
+  const update = (time: number) => {
+    if (document.hidden || disposed) return;
     uniforms.uTime.value = time;
     uniforms.uScroll.value = scrollProgress();
-
-    warm++;
-    if (warm > WARMUP_FRAMES) {
-      if (deltaTime > SLOW_MS) slow++;
-      else slow = Math.max(0, slow - 2);
-      if (onDegrade && slow > SLOW_LIMIT) {
-        degraded = true;
-        onDegrade();
-        return;
-      }
-    }
     render();
   };
 
@@ -105,7 +102,7 @@ export function createShaderBackground(
 
   return {
     dispose() {
-      degraded = true;
+      disposed = true;
       mm.revert();
       gsap.ticker.remove(update);
       window.removeEventListener("resize", resize);

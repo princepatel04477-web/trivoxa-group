@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { isLowEndDevice } from "@/lib/gpu-capability";
 import { createShaderBackground, type ShaderBackground as Scene } from "@/lib/shader-background";
+
 
 /**
  * Fixed, full-viewport GLSL shader background behind page content (see .shader-bg
@@ -22,11 +22,10 @@ export default function ShaderBackground({ variant }: { variant: string }) {
   // setState is deferred to the next frame so it isn't a synchronous effect-body
   // write (react-hooks/set-state-in-effect).
   useEffect(() => {
-    const force = new URLSearchParams(window.location.search).has("forceShader");
-    if (!force && isLowEndDevice()) return; // stay unmounted → ambient fallback
     const raf = requestAnimationFrame(() => setReady(true));
     return () => cancelAnimationFrame(raf);
   }, []);
+
 
   useEffect(() => {
     if (!ready || !canvasRef.current) return;

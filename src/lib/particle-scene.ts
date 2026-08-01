@@ -302,13 +302,30 @@ export async function createParticleScene(config: SceneConfig): Promise<Particle
   const camera = new THREE.PerspectiveCamera(35, width / height, 1, 10000);
   camera.position.z = 36;
 
-  const renderer = new THREE.WebGLRenderer({
-    alpha: true,
-    antialias: false, // round point sprites don't benefit; MSAA costs fill rate
-    powerPreference: "high-performance",
-  });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxDpr));
+  let renderer: THREE.WebGLRenderer;
+  try {
+    renderer = new THREE.WebGLRenderer({
+      alpha: true,
+      antialias: false,
+      powerPreference: "high-performance",
+      failIfMajorPerformanceCaveat: false,
+    });
+  } catch {
+    try {
+      renderer = new THREE.WebGLRenderer({
+        alpha: true,
+        antialias: false,
+        failIfMajorPerformanceCaveat: false,
+      });
+    } catch {
+      renderer = new THREE.WebGLRenderer({
+        alpha: true,
+      });
+    }
+  }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, maxDpr));
   renderer.setSize(width, height);
+
   // Alpha 0 — a fully transparent canvas so the page background token shows
   // through. The RGB is unused and is not a palette value.
   renderer.setClearColor(0x000000, 0);
@@ -876,20 +893,8 @@ ${
     const delta = Math.min(rawDelta, 0.05);
     const dt60 = delta * 60; // frames-equivalent, for the old per-frame rates
 
-    if (onDegrade && !degraded) {
-      warmupElapsed += rawDelta;
-      if (warmupElapsed > WARMUP_SECONDS) {
-        if (rawDelta * 1000 > FRAME_BUDGET_MS) {
-          overBudgetStreak++;
-          if (overBudgetStreak >= FRAME_BUDGET_STREAK) {
-            degraded = true;
-            onDegrade();
-          }
-        } else {
-          overBudgetStreak = 0;
-        }
-      }
-    }
+    // WebGL animation is compulsory; scene degradation is disabled.
+
     // prefers-reduced-motion: freeze the per-particle twinkle too, not just spin.
     if (!reducedMotion) shimmerUniform.value += delta * 2.2; // GPU per-particle shimmer clock
 
@@ -1099,17 +1104,21 @@ ${
     const h = window.innerHeight;
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, maxDpr));
     renderer.setSize(w, h);
     composer?.setSize(w, h);
-    holder.scale.setScalar(fitScale()); // keep the globe proportionate on resize
-    // Re-place the field for the new viewport. Only snap it while the hero is on
-    // screen (before the first scroll formation) so a mid-page resize doesn't
-    // yank the field sideways under the reader; deeper sections re-place on
-    // their next scroll trigger.
+    holder.scale.setScalar(fitScale());
     side = computeSide();
     if (!centred && window.scrollY < window.innerHeight * 0.6) scene.position.x = side;
+    ScrollTrigger.refresh();
   }
   window.addEventListener("resize", handleResize);
+  if (typeof document !== "undefined" && document.fonts) {
+    document.fonts.ready.then(() => {
+      handleResize();
+    }).catch(() => {});
+  }
+
 
   // Same value as globeRadius above, aliased under the name the port overlay
   // and hero assembly below already use.

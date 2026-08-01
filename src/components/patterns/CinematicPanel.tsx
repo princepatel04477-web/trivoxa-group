@@ -95,21 +95,8 @@ export default function CinematicPanel({
 
   return (
     <div id={id} ref={ref} className={`arm-panel${align === "right" ? " arm-panel--right" : ""}`}>
-      <div className="arm-panel__bg" style={{ backgroundImage: `url(${image})` }}>
-        {wantsVideo && videoSrc && (
-          <video
-            ref={videoRef}
-            className="arm-panel__video"
-            src={videoSrc}
-            poster={image}
-            muted
-            loop
-            playsInline
-            preload="none"
-            aria-hidden="true"
-          />
-        )}
-      </div>
+      <div className="arm-panel__bg" style={{ backgroundImage: `url(${image})` }} />
+
       <div className="arm-panel__overlay" />
       <div className="arm-panel__content">
         <span className="arm-panel__eyebrow">{eyebrow}</span>
