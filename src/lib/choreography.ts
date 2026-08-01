@@ -64,12 +64,29 @@ export const HOME: Omit<SceneConfig, "onDegrade"> = {
   beats: [
     // Trust ("A sourcing partner, not just a supplier directory") — a cargo
     // vessel. The hero globe flies straight into the ship. Sits to the side.
-    { trigger: ".hp-trust", shape: "cargo-ship", sweep: 1 },
+    // Scrolling back up into the hero restores the hero globe with ports.
+    {
+      trigger: ".hp-trust",
+      shape: "cargo-ship",
+      sweep: 1,
+      onLeaveBack: { shape: "globe", ports: true, sweep: 0, opacity: 1 },
+    },
     // About ("A Vision Beyond Business") — a single small container.
-    { trigger: ".hp-about", shape: "container", sweep: 0.7 },
+    // Scrolling back up into Trust restores the cargo-ship.
+    {
+      trigger: ".hp-about",
+      shape: "container",
+      sweep: 0.7,
+      onLeaveBack: { shape: "cargo-ship", ports: false, sweep: 1, opacity: 1 },
+    },
     // Business Arms + Industries carousel — NO animation. Fade the field fully
     // out and hold it hidden across both content-dense sections.
-    { trigger: ".hp-sec-4", opacity: 0 },
+    // Scrolling back up into About restores the container.
+    {
+      trigger: ".hp-sec-4",
+      opacity: 0,
+      onLeaveBack: { shape: "container", opacity: 1, sweep: 0.7 },
+    },
     // Global Presence ("Connecting Opportunities Across Borders") — the big
     // ports globe with named markers, parked on the RIGHT so the section's copy
     // (left-aligned in CSS) sits clear of it.

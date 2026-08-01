@@ -110,7 +110,7 @@ export interface Beat {
   /** ScrollTrigger start (default "top center"). */
   start?: string;
   /** Applied on scroll-up past the trigger, if the beat needs to undo itself. */
-  onLeaveBack?: Pick<Beat, "opacity" | "ports" | "fadeDuration">;
+  onLeaveBack?: Pick<Beat, "opacity" | "ports" | "fadeDuration" | "shape" | "sweep">;
 }
 
 /**
@@ -1849,8 +1849,14 @@ ${
         onEnterBack: apply,
         ...(leaveBack && {
           onLeaveBack: () => {
-            if (!leaveBack.ports) hidePorts();
-            fade(capOpacity(leaveBack.opacity ?? 0), leaveBack.fadeDuration);
+            if (leaveBack.ports) showPorts();
+            else if (leaveBack.ports === false) hidePorts();
+            fade(capOpacity(leaveBack.opacity ?? (leaveBack.shape ? 1 : 0)), leaveBack.fadeDuration);
+            if (leaveBack.shape) {
+              const prevShape = shapes.get(leaveBack.shape);
+              if (prevShape) morphTo(prevShape);
+            }
+            if (leaveBack.sweep !== undefined) sweep(beat.trigger + "-lb", side * leaveBack.sweep);
           },
         }),
       });
